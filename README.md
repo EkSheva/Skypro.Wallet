@@ -1,1 +1,1 @@
-# Skypro.Wallet
+Командная работа над проектом SkyproWallet
