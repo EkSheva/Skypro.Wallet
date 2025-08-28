@@ -1,4 +1,4 @@
-import "../../App.css";
+/*import "../../App.css";
 import { Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import ExpensesPage from "../../pages/ExpensesPage";
@@ -29,4 +29,19 @@ function AppRoutes() {
   );
 }
 
+export default AppRoutes;*/
+
+import { Routes, Route } from "react-router-dom";
+import AnalysisPage from "../../pages/AnalysisPage";
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/analysis" element={<AnalysisPage />} />
+      <Route path="/*" element={<div>Страница не найдена</div>} />
+    </Routes>
+  );
+}
+
 export default AppRoutes;
+
