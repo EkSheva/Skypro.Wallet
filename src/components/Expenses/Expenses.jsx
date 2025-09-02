@@ -1,4 +1,8 @@
 const Expenses = () => {
-  return <div></div>;
+  return (
+    <div>
+      <p>Page</p>
+    </div>
+  );
 };
 export default Expenses;
