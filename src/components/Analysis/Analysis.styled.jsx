@@ -52,7 +52,7 @@ export const PeriodHeader = styled.div`
 export const CalendarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 540px;
+  height: 440px;
   overflow: hidden;
 `;
 
@@ -79,7 +79,7 @@ export const DayHeader = styled.div`
 
 export const CalendarScroll = styled.div`
   overflow-y: auto;
-  height: 350px;
+  height: 380px;
   padding-right: 4px;
   
   &::-webkit-scrollbar {
@@ -104,7 +104,7 @@ export const CalendarScroll = styled.div`
 export const MonthTitle = styled.h4`
   display: flex;
   margin: 16px 0 8px 0;
-  color: #050505;
+  color: #7c3aed;
   font-weight: 600;
   font-size: 16px;
   font-family: 'Montserrat';
