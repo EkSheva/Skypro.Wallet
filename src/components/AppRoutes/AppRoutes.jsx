@@ -9,7 +9,7 @@ import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import MainPage from "../../pages/MainPage";
 import { AuthContext } from "../../context/AuthContext";
 function AppRoutes() {
-  const { isAuth } = useContext(AuthContext); // Получаем isAuth из контекста
+  const { isAuth } = useContext(AuthContext);
 
   return (
     <Routes>
