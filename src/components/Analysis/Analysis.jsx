@@ -7,161 +7,205 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
-
 import {
-  AnalysisWrapper,
-  Card,
+  Container,
   Title,
-  WeekDays,
+  CalendarBox,
+  CalendarWrapper,
+  PeriodHeader,
+  CalendarContainer,
+  CalendarScroll,
+  FixedDaysHeader,
+  DayHeader,
   DaysGrid,
-  DayButton,
-  Summary,
-  Period,
+  DayCell,
+  ChartWrapper,
+  ChartHeader,
+  Total,
+  Subtitle,
+  MonthTitle,
 } from "./Analysis.styled";
 
-const daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
-const categories = ["Еда", "Транспорт", "Жилье", "Развлечения", "Образование", "Другое"];
+const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"];
+const months = [
+  "Январь","Февраль","Март","Апрель","Май","Июнь",
+  "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"
+];
 
-// 🔹 Генерация дней месяца
-const generateDays = (year, month) => {
-  const days = [];
-  const date = new Date(year, month, 1);
-  while (date.getMonth() === month) {
-    days.push(new Date(date));
-    date.setDate(date.getDate() + 1);
-  }
-  return days;
+const categories = [
+  { name: "Еда", color: "#c19aff" },
+  { name: "Транспорт", color: "#ffb347" },
+  { name: "Жильё", color: "#6be5c3" },
+  { name: "Развлечения", color: "#9ec6ff" },
+  { name: "Образование", color: "#b5e06c" },
+  { name: "Другое", color: "#ff8b94" },
+];
+
+// форматируем дату для хранения
+const formatDate = (year, month, day) =>
+  `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+// форматируем дату для отображения
+const formatDisplayDate = (dateStr) => {
+  const [year, month, day] = dateStr.split("-");
+  const monthsRu = [
+    "января","февраля","марта","апреля","мая","июня",
+    "июля","августа","сентября","октября","ноября","декабря"
+  ];
+  return `${parseInt(day, 10)} ${monthsRu[parseInt(month, 10) - 1]} ${year}`;
 };
 
-// 🔹 Случайные расходы
-const randomInt = (min, max) =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
+function generateExpenses() {
+  return categories.map((cat) => ({
+    name: cat.name,
+    value: Math.floor(Math.random() * 4000),
+    color: cat.color,
+  }));
+}
 
-const generateExpenses = (year, month) => {
-  const days = generateDays(year, month);
-  const expenses = [];
+export default function Analysis() {
+  const [selectedDays, setSelectedDays] = useState([]); // храним даты в формате YYYY-MM-DD
+  const [expenses] = useState(generateExpenses());
 
-  days.forEach((day) => {
-    const numExpenses = randomInt(1, 3);
-    for (let i = 0; i < numExpenses; i++) {
-      const category = categories[randomInt(0, categories.length - 1)];
-      const amount = randomInt(100, 3000);
-      expenses.push({
-        category,
-        amount,
-        date: day.toISOString().split("T")[0],
+  const total = expenses.reduce((acc, cur) => acc + cur.value, 0);
+
+  // генерируем месяцы для скролла
+  const generateScrollMonths = () => {
+    const monthsData = [];
+    const currentDate = new Date();
+
+    for (let i = 0; i < 3; i++) {
+      const date = new Date();
+      date.setMonth(currentDate.getMonth() + i);
+
+      const year = date.getFullYear();
+      const month = date.getMonth();
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+
+      const days = [];
+
+      for (let j = 0; j < (firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1); j++) {
+        days.push(null);
+      }
+
+      for (let j = 1; j <= daysInMonth; j++) {
+        days.push(j);
+      }
+
+      monthsData.push({
+        month,
+        year,
+        days,
+        title: `${months[month]} ${year}`,
       });
     }
-  });
 
-  return expenses;
-};
+    return monthsData;
+  };
 
-// Автогенерация данных на текущий месяц
-const today = new Date();
-const allExpenses = generateExpenses(today.getFullYear(), today.getMonth());
+  const scrollMonths = generateScrollMonths();
 
-const Analysis = () => {
-  const [selectedRange, setSelectedRange] = useState([]);
-  const days = generateDays(today.getFullYear(), today.getMonth());
+  // выбор дня
+  const handleDaySelect = (year, month, day) => {
+    if (!day) return;
+    const dateStr = formatDate(year, month, day);
 
-  const toggleDay = (day) => {
-    if (
-      selectedRange.length === 2 ||
-      selectedRange.find((d) => d.getTime() === day.getTime())
-    ) {
-      setSelectedRange([day]);
+    if (selectedDays.length === 0) {
+      setSelectedDays([dateStr]);
+    } else if (selectedDays.length === 1) {
+      setSelectedDays([...selectedDays, dateStr]);
     } else {
-      setSelectedRange((prev) => [...prev, day].sort((a, b) => a - b));
+      // если выбрали третью дату — сброс
+      setSelectedDays([dateStr]);
     }
   };
 
-  const isSelected = (day) => {
-    if (selectedRange.length === 1) {
-      return day.getTime() === selectedRange[0].getTime();
-    }
-    if (selectedRange.length === 2) {
-      return (
-        day.getTime() >= selectedRange[0].getTime() &&
-        day.getTime() <= selectedRange[1].getTime()
-      );
-    }
-    return false;
+  // проверка — выделен ли день
+  const isDaySelected = (year, month, day) => {
+    if (!day) return false;
+    const dateStr = formatDate(year, month, day);
+
+    if (selectedDays.length === 0) return false;
+    if (selectedDays.length === 1) return selectedDays.includes(dateStr);
+
+    const sorted = [...selectedDays].sort();
+    return dateStr >= sorted[0] && dateStr <= sorted[1];
   };
 
-  const filteredExpenses = allExpenses.filter((exp) => {
-    const expDate = new Date(exp.date);
-    if (selectedRange.length === 1) {
-      return expDate.toDateString() === selectedRange[0].toDateString();
-    }
-    if (selectedRange.length === 2) {
-      return expDate >= selectedRange[0] && expDate <= selectedRange[1];
-    }
-    return false;
-  });
-
-  const groupedData = filteredExpenses.reduce((acc, exp) => {
-    const found = acc.find((item) => item.category === exp.category);
-    if (found) {
-      found.amount += exp.amount;
+  // подпись под графиком
+  const getSelectedPeriodText = () => {
+    if (selectedDays.length === 0) {
+      return "Расходы за период";
+    } else if (selectedDays.length === 1) {
+      return `Расходы за ${formatDisplayDate(selectedDays[0])}`;
     } else {
-      acc.push({ category: exp.category, amount: exp.amount });
+      const sorted = [...selectedDays].sort();
+      return `Расходы за период с ${formatDisplayDate(sorted[0])} по ${formatDisplayDate(sorted[1])}`;
     }
-    return acc;
-  }, []);
-
-  const total = groupedData.reduce((sum, d) => sum + d.amount, 0);
+  };
 
   return (
-    <AnalysisWrapper>
-      {/* 📅 Календарь */}
-      <Card>
-        <Title>Период</Title>
-        <WeekDays>
-          {daysOfWeek.map((d) => (
-            <div key={d}>{d}</div>
-          ))}
-        </WeekDays>
-        <DaysGrid>
-          {days.map((day, i) => (
-            <DayButton
-              key={i}
-              onClick={() => toggleDay(day)}
-              $selected={isSelected(day)}
-            >
-              {day.getDate()}
-            </DayButton>
-          ))}
-        </DaysGrid>
-      </Card>
+    <Container>
+      <Title>Анализ расходов</Title>
 
-      {/* 📊 График */}
-      <Card>
-        <Summary>
-          {total > 0 ? `${total.toLocaleString("ru-RU")} ₽` : "Нет расходов"}
-        </Summary>
-        <Period>
-          {selectedRange.length === 1
-            ? selectedRange[0].toLocaleDateString("ru-RU")
-            : selectedRange.length === 2
-            ? `${selectedRange[0].toLocaleDateString(
-                "ru-RU"
-              )} - ${selectedRange[1].toLocaleDateString("ru-RU")}`
-            : "Не выбран"}
-        </Period>
+      <CalendarBox>
+        <CalendarWrapper>
+          <PeriodHeader>Период</PeriodHeader>
 
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={groupedData}>
-            <XAxis dataKey="category" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="amount" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
-    </AnalysisWrapper>
+          <CalendarContainer>
+            <FixedDaysHeader>
+              {weekDays.map((day) => (
+                <DayHeader key={day}>{day}</DayHeader>
+              ))}
+            </FixedDaysHeader>
+
+            <CalendarScroll>
+              {scrollMonths.map((monthData, index) => (
+                <div key={index}>
+                  <MonthTitle>{monthData.title}</MonthTitle>
+                  <DaysGrid>
+                    {monthData.days.map((day, dayIndex) => (
+                      <DayCell
+                        key={dayIndex}
+                        selected={isDaySelected(monthData.year, monthData.month, day)}
+                        disabled={!day}
+                        onClick={() => handleDaySelect(monthData.year, monthData.month, day)}
+                      >
+                        {day}
+                      </DayCell>
+                    ))}
+                  </DaysGrid>
+                </div>
+              ))}
+            </CalendarScroll>
+          </CalendarContainer>
+        </CalendarWrapper>
+
+        <ChartWrapper>
+          <ChartHeader>
+            <Total>{total.toLocaleString("ru-RU")} ₽</Total>
+            <Subtitle>{getSelectedPeriodText()}</Subtitle>
+          </ChartHeader>
+
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={expenses} margin={{ top: 20 }}>
+              <XAxis dataKey="name" />
+              <YAxis hide />
+              <Tooltip formatter={(value) => [`${value} ₽`, "Сумма"]} />
+              <Bar dataKey="value">
+                {expenses.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartWrapper>
+      </CalendarBox>
+    </Container>
   );
-};
-
-export default Analysis;
+}

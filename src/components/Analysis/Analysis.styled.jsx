@@ -1,103 +1,168 @@
+// Analysis.styled.jsx
 import styled from "styled-components";
 
-// Контейнер аналитики (календарь + график)
-export const AnalysisWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  padding: 20px 50px;
+  background: #f8fafc;
+  min-height: 100vh;
+`;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+export const Title = styled.h2`
+  text-align: left;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 150%;
+  color: #1f2937;
+`;
+
+export const CalendarBox = styled.div`
+  display: flex;
+  gap: 32px;
+  
+  @media (max-width: 1024px) {
+    flex-direction: column;
   }
 `;
 
-// Общая карточка (фон + тень)
-export const Card = styled.div`
-  background: #e4e2e2;
+export const CalendarWrapper = styled.div`
+  width: 379px;
+  background: #fff;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  padding: 16px;
+  padding: 24px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
 `;
 
-// Заголовок блока
-export const Title = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 12px;
+export const PeriodHeader = styled.div`
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #1f2937;
+  margin-bottom: 20px;
 `;
 
-// Дни недели (фиксируются сверху)
-export const WeekDays = styled.div`
+export const CalendarContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 540px;
+  overflow: hidden;
+`;
+
+export const FixedDaysHeader = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-weight: 600;
+  gap: 4px;
+  margin-bottom: 8px;
+  background: #fff;
+  padding: 8px 0;
+  border-bottom: 2px solid #e5e7eb;
   position: sticky;
   top: 0;
-  background: #fff;
-  z-index: 2;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  z-index: 10;
 `;
 
-// Сетка чисел календаря
+export const DayHeader = styled.div`
+  text-align: center;
+  font-weight: 600;
+  font-size: 12px;
+  color: #6b7280;
+  padding: 6px;
+`;
+
+export const CalendarScroll = styled.div`
+  overflow-y: auto;
+  height: 350px;
+  padding-right: 4px;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c4b5fd;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #7c3aed;
+  }
+`;
+
+export const MonthTitle = styled.h4`
+  display: flex;
+  margin: 16px 0 8px 0;
+  color: #050505;
+  font-weight: 600;
+  font-size: 16px;
+  font-family: 'Montserrat';
+`;
+
 export const DaysGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  max-height: 250px;
-  overflow-y: auto;
-  margin-top: 8px;
-  padding-right: 4px;
-
-  /* 🔹 Стилизация скроллбара */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #c448a5; /* фиолетовый */
-    border-radius: 8px;
-  }
-
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: #8b5cf6 transparent;
+  gap: 4px;
+  margin-bottom: 20px;
 `;
 
-// Кнопка-день
-export const DayButton = styled.button`
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
-  background: ${({ $selected }) => ($selected ? "#b7b5b9" : "transparent")};
-  color: ${({ $selected }) => ($selected ? "#fff" : "#333")};
-  font-weight: ${({ $selected }) => ($selected ? "600" : "400")};
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${({ $selected }) => ($selected ? "#7c3aed" : "#f3f4f6")};
-  }
-`;
-
-// Итоговая сумма расходов
-export const Summary = styled.div`
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 8px;
-`;
-
-// Текст выбранного периода
-export const Period = styled.div`
+export const DayCell = styled.div`
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: ${props => props.selected ? "#7c3aed" : "transparent"};
+  color: ${props => {
+    if (props.disabled) return "#d1d5db";
+    return props.selected ? "#fff" : "#374151";
+  }};
+  font-weight: ${props => props.selected ? 600 : 400};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${props => props.disabled ? "default" : "pointer"};
+  transition: all 0.2s ease;
   font-size: 14px;
+  
+  &:hover {
+    background: ${props => props.disabled ? "transparent" : "#ede9fe"};
+    color: ${props => props.disabled ? "#d1d5db" : "#7c3aed"};
+  }
+`;
+
+export const ChartWrapper = styled.div`
+  flex: 1;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+`;
+
+export const ChartHeader = styled.div`
+  text-align: left;
+  margin-bottom: 24px;
+`;
+
+export const Total = styled.h3`
+  margin: 0;
+  font-size: 28px;
+  color: #1f2937;
+  font-weight: 700;
+`;
+
+export const Subtitle = styled.p`
+  margin: 8px 0 0 0;
+  font-size: 16px;
   color: #6b7280;
-  margin-bottom: 16px;
 `;
