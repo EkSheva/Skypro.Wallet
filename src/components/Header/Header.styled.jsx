@@ -72,3 +72,4 @@ export const ButtonExit = styled.a`
     color: rgba(115, 52, 234, 1);
   }
 `;
+
