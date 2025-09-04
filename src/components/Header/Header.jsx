@@ -27,7 +27,7 @@ const Header = () => {
       <SContainer>
         <HeaderBlock>
           <HeaderLogo>
-            <Img src="../Logo.png" alt="logo" />
+            <Img src="../Logo.svg" alt="logo" />
           </HeaderLogo>
           {user && (
             <>
