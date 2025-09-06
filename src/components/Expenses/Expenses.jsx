@@ -1,4 +1,3 @@
-// Expenses.jsx
 import React, { useState, useMemo } from "react";
 import Categories from "./Categories"; // ожидается, что Categories.jsx рядом
 import * as S from "./ExpensesStyled";
@@ -14,6 +13,7 @@ const initialExpenses = [
 ];
 
 const Expenses = () => {
+
   // По умолчанию активна категория "food" — соответствует defaultCategories в Categories.jsx
   const [selectedCategories, setSelectedCategories] = useState(["food"]);
 
