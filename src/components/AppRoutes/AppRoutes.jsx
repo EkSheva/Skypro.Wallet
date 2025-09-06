@@ -25,6 +25,7 @@ function AppRoutes() {
         <Route element={<PrivateRoute />}>
           <Route path="expenses" element={<ExpensesPage />} />
           <Route path="analysis" element={<AnalysisPage />} />
+          <Route index element={<ExpensesPage />} />
         </Route>
       </Route>
 
