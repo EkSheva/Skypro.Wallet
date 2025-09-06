@@ -30,7 +30,7 @@ export const CalendarBox = styled.div`
 export const CalendarWrapper = styled.div`
   width: 379px;
   background: #fff;
-  border-radius: 16px;
+  border-radius: 30px;
   padding: 24px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
