@@ -5,10 +5,8 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
-  width: 100%;
   padding: 20px 50px;
-  background: #f8fafc;
-  min-height: 100vh;
+  background: #ffffff;
 `;
 
 export const Title = styled.h2`
@@ -22,7 +20,7 @@ export const Title = styled.h2`
 
 export const CalendarBox = styled.div`
   display: flex;
-  gap: 32px;
+  gap: 35px;
   
   @media (max-width: 1024px) {
     flex-direction: column;
@@ -39,6 +37,7 @@ export const CalendarWrapper = styled.div`
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+  align-items: stretch;
 `;
 
 export const PeriodHeader = styled.div`
@@ -47,6 +46,7 @@ export const PeriodHeader = styled.div`
   font-size: 24px;
   color: #1f2937;
   margin-bottom: 20px;
+  text-align: start;
 `;
 
 export const CalendarContainer = styled.div`
@@ -80,7 +80,6 @@ export const DayHeader = styled.div`
 export const CalendarScroll = styled.div`
   overflow-y: auto;
   height: 380px;
-  padding-right: 4px;
   
   &::-webkit-scrollbar {
     width: 8px;
@@ -104,7 +103,7 @@ export const CalendarScroll = styled.div`
 export const MonthTitle = styled.h4`
   display: flex;
   margin: 16px 0 8px 0;
-  color: #7c3aed;
+  color: #000000;
   font-weight: 600;
   font-size: 16px;
   font-family: 'Montserrat';
@@ -113,30 +112,34 @@ export const MonthTitle = styled.h4`
 export const DaysGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 20px;
 `;
 
 export const DayCell = styled.div`
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  background: ${props => props.selected ? "#7c3aed" : "transparent"};
-  color: ${props => {
-    if (props.disabled) return "#d1d5db";
-    return props.selected ? "#fff" : "#374151";
+  width: 40px;
+  height: 40px;
+  border-radius: 60px;
+  background: ${({ selected, $current }) =>
+    selected ? "#dddbdb" : $current ? "#96f78d" : "transparent"};
+  color: ${({ disabled, selected, $current }) => {
+    if (disabled) return "#c3c1c5";
+    if (selected) return "#ab6ff0";
+    if ($current) return "#b45309"; 
+    return "#374151";
   }};
-  font-weight: ${props => props.selected ? 600 : 400};
+  font-weight: ${({ selected, $current }) =>
+    selected || $current ? 600 : 400};
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: ${props => props.disabled ? "default" : "pointer"};
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
   transition: all 0.2s ease;
   font-size: 14px;
   
   &:hover {
-    background: ${props => props.disabled ? "transparent" : "#ede9fe"};
-    color: ${props => props.disabled ? "#d1d5db" : "#7c3aed"};
+    background: ${({ disabled }) => (disabled ? "transparent" : "#eeeef0")};
+    color: ${({ disabled }) => (disabled ? "#d1d5db" : "#7c3aed")};
   }
 `;
 
