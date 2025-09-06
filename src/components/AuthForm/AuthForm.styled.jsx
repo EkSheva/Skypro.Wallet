@@ -22,13 +22,14 @@ export const Modal = styled.div`
 export const FWrapper = styled.div`
   display: block;
   margin: 0 auto;
-  background-color:rgba(255, 255, 255, 1);
-  max-width: 372px;
+  background-color: rgba(255, 255, 255, 1);
+  max-width: 379px;
   width: 100%;
   padding: 32px;
   border-radius: 30px;
-  border: 0.7px solid rgba(212, 219, 229, 1);
-  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);`;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
+`;
 
 export const FTitle = styled.h2`
   font-weight: 700;
@@ -36,7 +37,6 @@ export const FTitle = styled.h2`
   line-height: 100%;
   color: rgba(0, 0, 0, 1);
   font-style: bold;
-  letter-spacing: -3%;
   text-align: center;
   margin-bottom: 24px;
 `;
@@ -46,7 +46,7 @@ export const Form = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 24px;
   width: 100%;
 `;
 
@@ -54,14 +54,18 @@ export const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 7px;
+  gap: 12px;
 `;
 
 export const FormGroupP = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 4px;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 150%;
-  color: rgba(148, 166, 190, 0.4);
+  color: rgba(153, 153, 153, 1);
   text-align: center;
 `;
 
