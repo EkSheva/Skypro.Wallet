@@ -1,76 +1,47 @@
 import "../../App.css";
-import { Route, Routes } from "react-router-dom";
-import { useContext } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import ExpensesPage from "../../pages/ExpensesPage";
 import AnalysisPage from "../../pages/AnalysisPage";
 import NotFoundPage from "../../pages/NotFoundPage";
 import AuthForm from "../AuthForm/AuthForm";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import MainPage from "../../pages/MainPage";
+import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+
 function AppRoutes() {
-  const { isAuth } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return <div>Загрузка...</div>; // пока проверяем пользователя
 
   return (
     <Routes>
-      <Route path="/" element={<MainPage />}>
-        <Route
-          path="expenses"
-          element={
-            <PrivateRoute isAuth={isAuth}>
-              <ExpensesPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="analysis"
-          element={
-            <PrivateRoute isAuth={isAuth}>
-              <AnalysisPage />
-            </PrivateRoute>
-          }
-        />
+      {/* Главная страница */}
+      <Route
+        path="/"
+        element={user ? <MainPage /> : <Navigate to="/sign-in" replace />}
+      >
+        {/* Приватные маршруты */}
+        <Route element={<PrivateRoute />}>
+          <Route path="expenses" element={<ExpensesPage />} />
+          <Route path="analysis" element={<AnalysisPage />} />
+        </Route>
       </Route>
+
+      {/* Страницы аутентификации */}
       <Route
         path="/sign-in"
-        element={
-          isAuth ? <Navigate to="/" replace /> : <AuthForm isSignUp={false} />
-        }
+        element={user ? <Navigate to="/" replace /> : <AuthForm isSignUp={false} />}
       />
       <Route
         path="/sign-up"
-        element={
-          isAuth ? <Navigate to="/" replace /> : <AuthForm isSignUp={true} />
-        }
+        element={user ? <Navigate to="/" replace /> : <AuthForm isSignUp={true} />}
       />
+
+      {/* 404 */}
       <Route path="/*" element={<NotFoundPage />} />
     </Routes>
   );
 }
 
 export default AppRoutes;
-// function AppRoutes() {
-//   const [isAuth, setIsAuth] = useState(false);
-
-//   return (
-//     <Routes>
-//       <Route element={<PrivateRoute isAuth={isAuth} />}>
-//         <Route path="/" element={<MainPage />}>
-//           <Route path="/expenses" element={<ExpensesPage />} />
-//           <Route path="/analysis" element={<AnalysisPage />} />
-//         </Route>
-//       </Route>
-//       <Route
-//         path="/sign-in"
-//         element={<AuthForm isSignUp={false} setIsAuth={setIsAuth} />}
-//       />
-//       <Route
-//         path="/sign-up"
-//         element={<AuthForm isSignUp={true} setIsAuth={setIsAuth} />}
-//       />
-//       <Route path="/*" element={<NotFoundPage />} />
-//     </Routes>
-//   );
-// }
-
-// export default AppRoutes;

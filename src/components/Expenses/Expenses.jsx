@@ -1,67 +1,89 @@
-import React, { useState, useMemo } from "react";
-import Categories from "./Categories"; // ожидается, что Categories.jsx рядом
-import * as S from "./ExpensesStyled";
-
-/* Пример данных расходов */
-const initialExpenses = [
-  { id: 1, title: "Обед в кафе", amount: 750, date: "2025-09-01", category: "food" },
-  { id: 2, title: "Поездка на такси", amount: 420, date: "2025-09-02", category: "transport" },
-  { id: 3, title: "Аренда жилья", amount: 25000, date: "2025-09-01", category: "housing" },
-  { id: 4, title: "Кинотеатр", amount: 600, date: "2025-09-03", category: "entertainment" },
-  { id: 5, title: "Курс по React", amount: 12000, date: "2025-08-20", category: "education" },
-  { id: 6, title: "Канцелярия", amount: 300, date: "2025-09-04", category: "other" },
-];
+import React, { useState } from "react";
+import * as S from "./Expenses.styled";
+import Input from "../Input/Input";
+import BaseButton from "../BaseButton/BaseButton";
 
 const Expenses = () => {
+  const [expenses, setExpenses] = useState([]);
+  const [form, setForm] = useState({ title: "", amount: "" });
 
-  // По умолчанию активна категория "food" — соответствует defaultCategories в Categories.jsx
-  const [selectedCategories, setSelectedCategories] = useState(["food"]);
-
-  // Получаем обновлённый массив категорий из компонента Categories через onChange
-  const handleCategoriesChange = (nextCategories) => {
-    const active = nextCategories.filter((c) => c.active).map((c) => c.id);
-    setSelectedCategories(active);
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Фильтрация расходов по выбранным категориям
-  const filteredExpenses = useMemo(() => {
-    if (!selectedCategories || selectedCategories.length === 0) return initialExpenses;
-    return initialExpenses.filter((e) => selectedCategories.includes(e.category));
-  }, [selectedCategories]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.title || !form.amount) return;
+    const newExpense = {
+      id: Date.now(),
+      title: form.title,
+      amount: parseFloat(form.amount),
+    };
+    setExpenses([...expenses, newExpense]);
+    setForm({ title: "", amount: "" });
+  };
 
-  // Сумма отображаемых расходов
-  const total = useMemo(
-    () => filteredExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0),
-    [filteredExpenses]
-  );
+  const handleDelete = (id) => {
+    setExpenses(expenses.filter((e) => e.id !== id));
+  };
+
+  const handleEdit = (id) => {
+    const exp = expenses.find((e) => e.id === id);
+    if (exp) {
+      setForm({ title: exp.title, amount: exp.amount });
+      setExpenses(expenses.filter((e) => e.id !== id));
+    }
+  };
 
   return (
     <S.Container>
-      <S.Header>
-        <S.Title>Расходы</S.Title>
-        <S.Total>{total.toLocaleString("ru-RU")} ₽</S.Total>
-      </S.Header>
+      <S.Title>Мои расходы</S.Title>
 
-      <S.ChipsWrapper>
-        <Categories onChange={handleCategoriesChange} />
-      </S.ChipsWrapper>
+      <form onSubmit={handleSubmit}>
+        <Input
+          id="title"
+          name="title"
+          placeholder="Название"
+          type="text"
+          value={form.title}
+          onChange={handleChange}
+        />
+        <Input
+          id="amount"
+          name="amount"
+          placeholder="Сумма"
+          type="number"
+          value={form.amount}
+          onChange={handleChange}
+        />
+        <BaseButton type="submit" text="Сохранить" />
+      </form>
 
       <S.List>
-        {filteredExpenses.length === 0 ? (
-          <S.NoExpenses>Нет расходов в выбранных категориях.</S.NoExpenses>
-        ) : (
-          filteredExpenses.map((e) => (
-            <S.Item key={e.id}>
-              <S.ItemLeft>
-                <S.ItemTitle>{e.title}</S.ItemTitle>
-                <S.ItemMeta>
-                  {e.date} · <S.CategoryBadge>{e.category}</S.CategoryBadge>
-                </S.ItemMeta>
-              </S.ItemLeft>
-              <S.ItemRight>{e.amount.toLocaleString("ru-RU")} ₽</S.ItemRight>
-            </S.Item>
-          ))
-        )}
+        {expenses.map((e) => (
+          <S.Item key={e.id}>
+            <S.Info>
+              <S.Name>{e.title}</S.Name>
+              <S.Amount>{e.amount} ₽</S.Amount>
+            </S.Info>
+            <S.Actions>
+              <button
+                type="button"
+                className="btn-icon edit"
+                onClick={() => handleEdit(e.id)}
+              >
+                ✏️
+              </button>
+              <button
+                type="button"
+                className="btn-icon delete"
+                onClick={() => handleDelete(e.id)}
+              >
+                🗑
+              </button>
+            </S.Actions>
+          </S.Item>
+        ))}
       </S.List>
     </S.Container>
   );

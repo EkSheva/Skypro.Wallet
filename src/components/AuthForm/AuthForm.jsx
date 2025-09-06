@@ -18,6 +18,7 @@ import {
 } from "./AuthForm.styled";
 import Header from "../Header/Header";
 
+
 const AuthForm = ({ isSignUp }) => {
   const navigate = useNavigate();
   const { updateUserInfo } = useContext(AuthContext);
