@@ -54,7 +54,6 @@ export const Table = styled.table`
   }
 
   /* Кнопка удаления */
-  /* Кнопка удаления */
 button {
   background: none;
   border: none;
@@ -136,6 +135,10 @@ export const Categories = styled.div`
 `;
 
 export const CategoryButton = styled.button`
+  display: inline-flex;      /* иконка + текст рядом */
+  align-items: center;
+  gap: 6px;
+
   padding: 8px 12px;
   border-radius: 20px;
   border: 1px solid #ddd;
@@ -143,12 +146,18 @@ export const CategoryButton = styled.button`
   cursor: pointer;
   transition: 0.2s;
 
+  font-size: 14px;           /* явно задаём размер текста */
+  line-height: 1.2;
+  color: #333;               /* всегда тёмный текст */
+
   ${(p) =>
     p.$active &&
     css`
       background: #f5eaff;
       border-color: #7b2cbf;
-      color: #5a189a;
+      color: #7631bb;        /* цвет текста в активном */
       font-weight: 600;
     `}
 `;
+
+
