@@ -1,5 +1,11 @@
 // Expenses.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import {
+  getTransactions,
+  addTransaction,
+  deleteTransaction,
+} from "../../services/transactions";
 import * as S from "./Expenses.styled";
 import BaseButton from "../BaseButton/BaseButton";
 
@@ -7,13 +13,15 @@ const categories = [
   { id: "food", label: "Еда", icon: "🍔" },
   { id: "transport", label: "Транспорт", icon: "🚕" },
   { id: "housing", label: "Жилье", icon: "🏠" },
-  { id: "fun", label: "Развлечения", icon: "🎮" },
+  { id: "joy", label: "Развлечения", icon: "🎮" },
   { id: "education", label: "Образование", icon: "📚" },
-  { id: "other", label: "Другое", icon: "📦" },
+  { id: "others", label: "Другое", icon: "📦" },
 ];
 
 const Expenses = () => {
-  const [expenses, setExpenses] = useState([]);
+  const { user } = useContext(AuthContext);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
     title: "",
     category: "",
@@ -22,7 +30,26 @@ const Expenses = () => {
   });
   const [errors, setErrors] = useState({});
 
-  // Проверка и установка ошибок
+// --- функция загрузки транзакций ---
+const fetchExpenses = useCallback(async () => {
+  if (!user?.token) return;
+  setLoading(true);
+  try {
+    const data = await getTransactions(user.token);
+    setTransactions(data || []);
+  } catch (err) {
+    console.error("Ошибка загрузки транзакций:", err.message);
+  } finally {
+    setLoading(false);
+  }
+}, [user?.token]);
+
+  // --- загрузка при монтировании и смене пользователя ---
+  useEffect(() => {
+  fetchExpenses();
+}, [fetchExpenses]);
+
+  // --- валидация формы ---
   const validate = () => {
     const newErrors = {};
     if (!form.title.trim()) newErrors.title = "*";
@@ -34,34 +61,43 @@ const Expenses = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e) => {
+  // --- изменение формы ---
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleCategorySelect = (id) => setForm({ ...form, category: id });
 
-  const handleCategorySelect = (id) => {
-    setForm({ ...form, category: id });
-  };
-
-  const handleSubmit = (e) => {
+  // --- добавление транзакции ---
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const newExpense = {
-      id: Date.now(),
-      ...form,
-      amount: parseFloat(form.amount),
+    const newTransaction = {
+      description: form.title,
+      category: form.category,
+      date: form.date,
+      sum: Number(form.amount),
     };
 
-    setExpenses([...expenses, newExpense]);
-    setForm({ title: "", category: "", date: "", amount: "" });
-    setErrors({});
+    try {
+      await addTransaction(newTransaction, user.token);
+      await fetchExpenses(); // подгрузка списка
+      setForm({ title: "", category: "", date: "", amount: "" });
+      setErrors({});
+    } catch (err) {
+      console.error("Ошибка добавления транзакции:", err.message);
+    }
   };
 
-  const handleDelete = (id) => {
-    setExpenses(expenses.filter((e) => e.id !== id));
+  // --- удаление транзакции ---
+  const handleDeleteTransaction = async (id) => {
+    try {
+      await deleteTransaction(id, user.token);
+      await fetchExpenses(); // подгрузка списка
+    } catch (err) {
+      console.error("Ошибка удаления транзакции:", err.message);
+    }
   };
 
-  // Простая проверка формы без setState
   const isFormValid =
     form.title.trim() &&
     form.category &&
@@ -69,6 +105,8 @@ const Expenses = () => {
     form.amount &&
     !isNaN(form.amount) &&
     +form.amount > 0;
+
+  if (loading) return <p>Загрузка...</p>;
 
   return (
     <S.Container>
@@ -89,36 +127,49 @@ const Expenses = () => {
               </tr>
             </thead>
             <tbody>
-              {expenses.map((e) => (
-                <tr key={e.id}>
-                  <td>{e.title}</td>
-                  <td>
-                    {categories.find((c) => c.id === e.category)?.label || e.category}
-                  </td>
-                  <td>{new Date(e.date).toLocaleDateString("ru-RU")}</td>
-                  <td>{e.amount} ₽</td>
-                  <td>
-                    <button onClick={() => handleDelete(e.id)}>
-                      <svg
-                        width="12"
-                        height="13"
-                        viewBox="0 0 12 13"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M9.62 3.29003H9.42L7.73 1.60003C7.595 1.46503 7.375 1.46503 7.235 1.60003C7.1 1.73503 7.1 1.95503 7.235 2.09503L8.43 3.29003H3.57L4.765 2.09503C4.9 1.96003 4.9 1.74003 4.765 1.60003C4.63 1.46503 4.41 1.46503 4.27 1.60003L2.585 3.29003H2.385C1.935 3.29003 1 3.29003 1 4.57003C1 5.05503 1.1 5.37503 1.31 5.58503C1.43 5.71003 1.575 5.77503 1.73 5.81003C1.875 5.84503 2.03 5.85003 2.18 5.85003H9.82C9.975 5.85003 10.12 5.84003 10.26 5.81003C10.68 5.71003 11 5.41003 11 4.57003C11 3.29003 10.065 3.29003 9.62 3.29003Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          d="M9.52502 6.5H2.43502C2.12502 6.5 1.89002 6.775 1.94002 7.08L2.36002 9.65C2.50002 10.51 2.87502 11.5 4.54002 11.5H7.34502C9.03002 11.5 9.33002 10.655 9.51002 9.71L10.015 7.095C10.075 6.785 9.84002 6.5 9.52502 6.5ZM5.30502 9.725C5.30502 9.92 5.15002 10.075 4.96002 10.075C4.76502 10.075 4.61002 9.92 4.61002 9.725V8.075C4.61002 7.885 4.76502 7.725 4.96002 7.725C5.15002 7.725 5.30502 7.885 5.30502 8.075V9.725ZM7.44502 9.725C7.44502 9.92 7.29002 10.075 7.09502 10.075C6.90502 10.075 6.74502 9.92 6.74502 9.725V8.075C6.74502 7.885 6.90502 7.725 7.09502 7.725C7.29002 7.725 7.44502 7.885 7.44502 8.075V9.725Z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </button>
-                  </td>
+              {transactions && transactions.length > 0 ? (
+                transactions.map((t) => (
+                  <tr key={t._id}>
+                    <td>{t.description}</td>
+                    <td>
+                      {categories.find((c) => c.id === t.category)?.label ||
+                        t.category}
+                    </td>
+                    <td>
+                      {new Date(t.date).toLocaleDateString("ru-RU", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td>{t.sum} ₽</td>
+                    <td>
+                      <button onClick={() => handleDeleteTransaction(t._id)}>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M9.62 3.29003H9.42L7.73 1.60003C7.595 1.46503 7.375 1.46503 7.235 1.60003C7.1 1.73503 7.1 1.95503 7.235 2.09503L8.43 3.29003H3.57L4.765 2.09503C4.9 1.96003 4.9 1.74003 4.765 1.60003C4.63 1.46503 4.41 1.46503 4.27 1.60003L2.585 3.29003H2.385C1.935 3.29003 1 3.29003 1 4.57003C1 5.05503 1.1 5.37503 1.31 5.58503C1.43 5.71003 1.575 5.77503 1.73 5.81003C1.875 5.84503 2.03 5.85003 2.18 5.85003H9.82C9.975 5.85003 10.12 5.84003 10.26 5.81003C10.68 5.71003 11 5.41003 11 4.57003C11 3.29003 10.065 3.29003 9.62 3.29003Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M9.52502 6.5H2.43502C2.12502 6.5 1.89002 6.775 1.94002 7.08L2.36002 9.65C2.50002 10.51 2.87502 11.5 4.54002 11.5H7.34502C9.03002 11.5 9.33002 10.655 9.51002 9.71L10.015 7.095C10.075 6.785 9.84002 6.5 9.52502 6.5ZM5.30502 9.725C5.30502 9.92 5.15002 10.075 4.96002 10.075C4.76502 10.075 4.61002 9.92 4.61002 9.725V8.075C4.61002 7.885 4.76502 7.725 4.96002 7.725C5.15002 7.725 5.30502 7.885 5.30502 8.075V9.725ZM7.44502 9.725C7.44502 9.92 7.29002 10.075 7.09502 10.075C6.90502 10.075 6.74502 9.92 6.74502 9.725V8.075C6.74502 7.885 6.90502 7.725 7.09502 7.725C7.29002 7.725 7.44502 7.885 7.44502 8.075V9.725Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5}>Нет транзакций</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </S.Table>
         </S.TableWrapper>
