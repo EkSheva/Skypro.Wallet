@@ -1,9 +1,7 @@
-// Expenses.jsx
 import React, { useState, useMemo } from "react";
-import Categories from "./Categories"; // ожидается, что Categories.jsx рядом
+import Categories from "./Categories"; 
 import * as S from "./ExpensesStyled";
 
-/* Пример данных расходов */
 const initialExpenses = [
   { id: 1, title: "Обед в кафе", amount: 750, date: "2025-09-01", category: "food" },
   { id: 2, title: "Поездка на такси", amount: 420, date: "2025-09-02", category: "transport" },

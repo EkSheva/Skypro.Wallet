@@ -1,7 +1,6 @@
-// ExpensesStyled.jsx
 import styled, { createGlobalStyle } from "styled-components";
 
-/* Глобальные переменные и базовые стили (взято из вашего CSS) */
+/* Глобальные переменные и базовые стили */
 export const GlobalStyle = createGlobalStyle`
   :root{
     --bg:#f3f5f7;
