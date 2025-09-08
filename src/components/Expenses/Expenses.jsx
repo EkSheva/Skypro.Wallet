@@ -209,12 +209,13 @@ const fetchExpenses = useCallback(async () => {
           <label>
             Дата {errors.date && <span>{errors.date}</span>}
             <S.Input
-              type="date"
+              type="amount"
               name="date"
               value={form.date}
               onChange={handleChange}
               $error={errors.date}
               $valid={form.date && !errors.date}
+              placeholder="Введите дату"
             />
           </label>
 
