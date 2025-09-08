@@ -8,7 +8,7 @@ export const SHeader = styled.header`
 `;
 
 export const SContainer = styled.div`
-  max-width: 1200px;
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
   padding: 0 30px;
