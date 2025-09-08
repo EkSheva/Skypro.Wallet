@@ -1,4 +1,4 @@
-// Analysis.jsx
+
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { getTransactions } from "../services/transactions";
