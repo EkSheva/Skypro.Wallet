@@ -12,6 +12,7 @@ const initialExpenses = [
 ];
 
 const Expenses = () => {
+
   // По умолчанию активна категория "food" — соответствует defaultCategories в Categories.jsx
   const [selectedCategories, setSelectedCategories] = useState(["food"]);
 
