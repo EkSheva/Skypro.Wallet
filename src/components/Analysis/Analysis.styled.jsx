@@ -1,5 +1,9 @@
 // Analysis.styled.jsx
 import styled from "styled-components";
+import {
+  ResponsiveContainer as RC,
+  BarChart as BC,
+} from "recharts";
 
 export const Container = styled.div`
   display: flex;
@@ -169,3 +173,11 @@ export const Subtitle = styled.p`
   font-size: 16px;
   color: #6b7280;
 `;
+export const ResponsiveContainer = styled(RC).attrs({
+  width: "100%",
+  height: 387,
+})``;
+
+export const BarChart = styled(BC).attrs({
+  margin: { top: 20 },
+})``;
