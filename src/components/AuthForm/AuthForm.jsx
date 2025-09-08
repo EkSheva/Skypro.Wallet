@@ -18,7 +18,6 @@ import {
 } from "./AuthForm.styled";
 import Header from "../Header/Header";
 
-
 const AuthForm = ({ isSignUp }) => {
   const navigate = useNavigate();
   const { updateUserInfo } = useContext(AuthContext);
@@ -125,7 +124,7 @@ const AuthForm = ({ isSignUp }) => {
                   placeholder="Имя"
                   value={formData.name}
                   onChange={handleChange}
-                  $valid={validateForm}
+                  required={!!error}
                 />
               )}
               <Input
@@ -136,7 +135,7 @@ const AuthForm = ({ isSignUp }) => {
                 placeholder="Эл. почта"
                 value={formData.login}
                 onChange={handleChange}
-                $valid={validateForm}
+                required={!!error}
               />
               <Input
                 error={errors.password}
@@ -146,11 +145,10 @@ const AuthForm = ({ isSignUp }) => {
                 placeholder="Пароль"
                 value={formData.password}
                 onChange={handleChange}
-                $valid={() => validateForm()}
+                required={!!error}
               />
               <ErrorP>{error}</ErrorP>
             </InputWrapper>
-
             <BaseButton
               onClick={handleSubmit}
               type="submit"

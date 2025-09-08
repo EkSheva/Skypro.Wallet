@@ -55,6 +55,23 @@ export const InputWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 12px;
+  position: relative;
+
+  /* Звездочка для обязательного поля */
+  ${({ $required }) =>
+    $required &&
+    `
+    &::before {
+      content: "*";
+      position: absolute;
+      right: 10px;
+      top: 5px; 
+      color: rgba(242, 80, 80, 1);
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 1; 
+    }
+  `}
 `;
 
 export const FormGroupP = styled.div`
