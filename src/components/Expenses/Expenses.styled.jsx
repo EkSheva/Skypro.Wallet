@@ -1,56 +1,163 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 /* Контейнер */
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  padding: 24px;
+`;
+
+export const Title = styled.h2`
+  font-size: 22px;
+  font-weight: 700;
+`;
+
+/* Контент */
+export const Content = styled.div`
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+/* Таблица */
+export const TableWrapper = styled.div`
+  flex: 2;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #ccc;
   padding: 16px;
 `;
 
-/* Заголовок */
-export const Title = styled.h2`
-  font-size: 18px;
+export const TableTitle = styled.h3`
+  margin-bottom: 12px;
   font-weight: 600;
 `;
 
-/* Список */
-export const List = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
+export const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
 
-/* Каждый элемент */
-export const Item = styled.li`
+  th,
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+
+  th {
+    font-weight: 600;
+  }
+
+  /* Кнопка удаления */
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: var(--panel, #fff);
-  border: 1px solid #eee;
+  justify-content: center;
+  transition: transform 0.2s ease, color 0.2s ease; /* анимация цвета */
+  color: #999999; /* начальный цвет иконки */
+}
+
+button:hover {
+  transform: scale(1.6); /* увеличение иконки */
+  color: #7b2cbf; /* цвет при наведении */
+}
+
 `;
 
-/* Левая часть (название и сумма) */
-export const Info = styled.div`
+/* Форма */
+export const Form = styled.form`
+  flex: 1;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #ccc;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 16px;
+
+  h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+
+    span {
+      color: red;
+      margin-left: 4px;
+    }
+  }
 `;
 
-export const Name = styled.span`
-  font-size: 14px;
-  font-weight: 500;
+/* Поля */
+export const Input = styled.input`
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  outline: none;
+  transition: 0.2s;
+
+  ${(p) =>
+    p.$valid &&
+    css`
+      background: #f5eaff;
+      border-color: #7b2cbf;
+      color: #5a189a;
+    `}
+
+  ${(p) =>
+    p.$error &&
+    css`
+      background: #ffe5e5;
+      border-color: #d00000;
+      color: #9d0208;
+    `}
 `;
 
-export const Amount = styled.span`
-  font-size: 13px;
-  color: #555;
-`;
-
-/* Правая часть (кнопки) */
-export const Actions = styled.div`
+/* Категории */
+export const Categories = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 `;
+
+export const CategoryButton = styled.button`
+  display: inline-flex;      /* иконка + текст рядом */
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  cursor: pointer;
+  transition: 0.2s;
+
+  font-size: 14px;           /* явно задаём размер текста */
+  line-height: 1.2;
+  color: #333;               /* всегда тёмный текст */
+
+  ${(p) =>
+    p.$active &&
+    css`
+      background: #f5eaff;
+      border-color: #7b2cbf;
+      color: #7631bb;        /* цвет текста в активном */
+      font-weight: 600;
+    `}
+`;
+
+
