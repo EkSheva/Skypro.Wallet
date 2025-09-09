@@ -1,48 +1,25 @@
-import React, { useState, useRef, useEffect } from "react";
 
+import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { getTransactions } from "../services/transactions";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
-import {
-  Container,
-  Title,
-  CalendarBox,
-  CalendarWrapper,
-  PeriodHeader,
-  CalendarContainer,
-  CalendarScroll,
-  FixedDaysHeader,
-  DayHeader,
-  DaysGrid,
-  DayCell,
-  ChartWrapper,
-  ChartHeader,
-  Total,
-  Subtitle,
-  MonthTitle,
+  Container, Title, CalendarBox, CalendarWrapper, PeriodHeader,
+  CalendarContainer, CalendarScroll, FixedDaysHeader, DayHeader,
+  DaysGrid, DayCell, ChartWrapper, ChartHeader, Total,
+  Subtitle, MonthTitle, ResponsiveContainer, BarChart
 } from "./Analysis.styled";
-
-const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"];
-const months = [
-  "Январь","Февраль","Март","Апрель","Май","Июнь",
-  "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"
-];
+import { Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
 
 const categories = [
-  { name: "Еда", color: "#c19aff" },
-  { name: "Транспорт", color: "#ffb347" },
-  { name: "Жильё", color: "#6be5c3" },
-  { name: "Развлечения", color: "#9ec6ff" },
-  { name: "Образование", color: "#b5e06c" },
-  { name: "Другое", color: "#ff8b94" },
+  { id: "food", name: "Еда", color: "#c19aff" },
+  { id: "transport", name: "Транспорт", color: "#ffb347" },
+  { id: "housing", name: "Жильё", color: "#6be5c3" },
+  { id: "joy", name: "Развлечения", color: "#9ec6ff" },
+  { id: "education", name: "Образование", color: "#b5e06c" },
+  { id: "others", name: "Другое", color: "#ff8b94" },
 ];
 
+// --- утилиты ---
 const formatDate = (year, month, day) =>
   `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
@@ -55,27 +32,34 @@ const formatDisplayDate = (dateStr) => {
   return `${parseInt(day, 10)} ${monthsRu[parseInt(month, 10) - 1]} ${year}`;
 };
 
-function generateExpenses() {
-  return categories.map((cat) => ({
-    name: cat.name,
-    value: Math.floor(Math.random() * 4000),
-    color: cat.color,
-  }));
-}
+const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"];
+const months = [
+  "Январь","Февраль","Март","Апрель","Май","Июнь",
+  "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"
+];
 
 export default function Analysis() {
-  const getCurrentDate = () => {
-    const today = new Date();
-    return formatDate(today.getFullYear(), today.getMonth(), today.getDate());
-  };
-
-  const [selectedDays, setSelectedDays] = useState([getCurrentDate()]);
-  const [expenses] = useState(generateExpenses());
+  const { user } = useContext(AuthContext);
+  const [transactions, setTransactions] = useState([]);
+  const [selectedDays, setSelectedDays] = useState([]);
   const calendarScrollRef = useRef(null);
 
-  const total = expenses.reduce((acc, cur) => acc + cur.value, 0);
+  // --- загрузка транзакций ---
+  const fetchTransactions = useCallback(async () => {
+    if (!user?.token) return;
+    try {
+      const data = await getTransactions(user.token);
+      setTransactions(data || []);
+    } catch (err) {
+      console.error("Ошибка загрузки:", err.message);
+    }
+  }, [user?.token]);
 
-  // генерируем месяцы (год назад и год вперёд)
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
+
+  // --- генерация календаря ---
   const generateScrollMonths = () => {
     const monthsData = [];
     const currentDate = new Date();
@@ -176,19 +160,12 @@ export default function Analysis() {
         "[data-current-month='true']"
       );
       if (currentMonthElement) {
-        currentMonthElement.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+        currentMonthElement.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
   }, []);
 
-  const isCurrentDay = (year, month, day, monthData) => {
-    if (!day || !monthData.isCurrentMonth) return false;
-    return day === monthData.currentDay;
-  };
-
+  // --- выбор дат ---
   const handleDaySelect = (year, month, day) => {
     if (!day) return;
     const dateStr = formatDate(year, month, day);
@@ -213,15 +190,36 @@ export default function Analysis() {
     return dateStr >= sorted[0] && dateStr <= sorted[1];
   };
 
+  const isCurrentDay = (year, month, day, monthData) => {
+    if (!day || !monthData.isCurrentMonth) return false;
+    return day === monthData.currentDay;
+  };
+
+  // --- фильтрация по периоду ---
+  let filtered = transactions;
+  if (selectedDays.length === 2) {
+    const [start, end] = [...selectedDays].sort();
+    filtered = transactions.filter((t) => {
+      const d = new Date(t.date);
+      return d >= new Date(start) && d <= new Date(end);
+    });
+  }
+
+  // --- группировка по категориям ---
+  const expenses = categories.map((cat) => {
+    const sum = filtered
+      .filter((t) => t.category === cat.id)
+      .reduce((acc, cur) => acc + cur.sum, 0);
+    return { name: cat.name, value: sum, color: cat.color };
+  });
+
+  const total = expenses.reduce((acc, cur) => acc + cur.value, 0);
+
   const getSelectedPeriodText = () => {
-    if (selectedDays.length === 0) {
-      return "Расходы за период";
-    } else if (selectedDays.length === 1) {
-      return `Расходы за ${formatDisplayDate(selectedDays[0])}`;
-    } else {
-      const sorted = [...selectedDays].sort();
-      return `Расходы за период с ${formatDisplayDate(sorted[0])} по ${formatDisplayDate(sorted[1])}`;
-    }
+    if (selectedDays.length === 0) return "Расходы за весь период";
+    if (selectedDays.length === 1) return `Расходы за ${formatDisplayDate(selectedDays[0])}`;
+    const sorted = [...selectedDays].sort();
+    return `Расходы с ${formatDisplayDate(sorted[0])} по ${formatDisplayDate(sorted[1])}`;
   };
 
   return (
@@ -271,8 +269,8 @@ export default function Analysis() {
             <Subtitle>{getSelectedPeriodText()}</Subtitle>
           </ChartHeader>
 
-          <ResponsiveContainer width="100%" height={387}>
-            <BarChart data={expenses} margin={{ top: 20 }}>
+          <ResponsiveContainer>
+            <BarChart data={expenses}>
               <XAxis dataKey="name" />
               <YAxis hide />
               <Tooltip formatter={(value) => [`${value} ₽`, "Сумма"]} />

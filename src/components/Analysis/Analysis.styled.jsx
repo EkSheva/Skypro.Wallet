@@ -1,5 +1,9 @@
 // Analysis.styled.jsx
 import styled from "styled-components";
+import {
+  ResponsiveContainer as RC,
+  BarChart as BC,
+} from "recharts";
 
 export const Container = styled.div`
   display: flex;
@@ -30,7 +34,7 @@ export const CalendarBox = styled.div`
 export const CalendarWrapper = styled.div`
   width: 379px;
   background: #fff;
-  border-radius: 16px;
+  border-radius: 30px;
   padding: 24px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
@@ -169,3 +173,11 @@ export const Subtitle = styled.p`
   font-size: 16px;
   color: #6b7280;
 `;
+export const ResponsiveContainer = styled(RC).attrs({
+  width: "100%",
+  height: 387,
+})``;
+
+export const BarChart = styled(BC).attrs({
+  margin: { top: 20 },
+})``;
