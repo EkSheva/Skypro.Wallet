@@ -1,21 +1,20 @@
 // Analysis.styled.jsx
 import styled from "styled-components";
-import {
-  ResponsiveContainer as RC,
-  BarChart as BC,
-} from "recharts";
+import { ResponsiveContainer as RC, BarChart as BC } from "recharts";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding: 20px 50px;
-  background: #ffffff;
+  padding: 20px;
+  background-color: rgba(244, 245, 246, 1);
+  padding-left: calc(50% - 600px);
+  padding-right: calc(50% - 600px);
 `;
 
 export const Title = styled.h2`
   text-align: left;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: 32px;
   line-height: 150%;
@@ -25,7 +24,7 @@ export const Title = styled.h2`
 export const CalendarBox = styled.div`
   display: flex;
   gap: 35px;
-  
+
   @media (max-width: 1024px) {
     flex-direction: column;
   }
@@ -45,7 +44,7 @@ export const CalendarWrapper = styled.div`
 `;
 
 export const PeriodHeader = styled.div`
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: 24px;
   color: #1f2937;
@@ -84,21 +83,21 @@ export const DayHeader = styled.div`
 export const CalendarScroll = styled.div`
   overflow-y: auto;
   height: 380px;
-  
+
   &::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: #c4b5fd;
     border-radius: 4px;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
     background: #7c3aed;
   }
@@ -110,7 +109,7 @@ export const MonthTitle = styled.h4`
   color: #000000;
   font-weight: 600;
   font-size: 16px;
-  font-family: 'Montserrat';
+  font-family: "Montserrat";
 `;
 
 export const DaysGrid = styled.div`
@@ -129,7 +128,7 @@ export const DayCell = styled.div`
   color: ${({ disabled, selected, $current }) => {
     if (disabled) return "#c3c1c5";
     if (selected) return "#ab6ff0";
-    if ($current) return "#b45309"; 
+    if ($current) return "#b45309";
     return "#374151";
   }};
   font-weight: ${({ selected, $current }) =>
@@ -140,7 +139,7 @@ export const DayCell = styled.div`
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
   transition: all 0.2s ease;
   font-size: 14px;
-  
+
   &:hover {
     background: ${({ disabled }) => (disabled ? "transparent" : "#eeeef0")};
     color: ${({ disabled }) => (disabled ? "#d1d5db" : "#7c3aed")};

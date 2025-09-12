@@ -5,18 +5,15 @@ export const SHeader = styled.header`
   width: 100%;
   margin: 0 auto;
   background-color: #ffffff;
-`;
-
-export const SContainer = styled.div`
-  max-width: 1440px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 30px;
+  padding-left: calc(50% - 600px);
+  padding-right: calc(50% - 600px);
   @media screen and (max-width: 495px) {
     width: 100%;
     padding: 0 16px;
   }
 `;
+
+export const SContainer = styled.div``;
 
 export const HeaderBlock = styled.div`
   height: 64px;
@@ -24,9 +21,6 @@ export const HeaderBlock = styled.div`
   flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  position: relative;
-  top: 0;
-  left: 0;
   padding: 0px;
 `;
 
@@ -72,4 +66,3 @@ export const ButtonExit = styled.a`
     color: rgba(115, 52, 234, 1);
   }
 `;
-

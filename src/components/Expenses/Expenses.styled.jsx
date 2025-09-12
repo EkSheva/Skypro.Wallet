@@ -6,11 +6,18 @@ export const Container = styled.div`
   flex-direction: column;
   gap: 24px;
   padding: 24px;
+  background-color: rgba(244, 245, 246, 1);
+  padding-left: calc(50% - 600px);
+  padding-right: calc(50% - 600px);
 `;
 
 export const Title = styled.h2`
-  font-size: 22px;
+  text-align: left;
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
+  font-size: 32px;
+  line-height: 150%;
+  color: #1f2937;
 `;
 
 /* Контент */
@@ -54,23 +61,24 @@ export const Table = styled.table`
   }
 
   /* Кнопка удаления */
-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease, color 0.2s ease; /* анимация цвета */
-  color: #999999; /* начальный цвет иконки */
-}
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease; /* анимация цвета */
+    color: #999999; /* начальный цвет иконки */
+  }
 
-button:hover {
-  transform: scale(1.6); /* увеличение иконки */
-  color: #7b2cbf; /* цвет при наведении */
-}
-
+  button:hover {
+    transform: scale(1.6); /* увеличение иконки */
+    color: #7b2cbf; /* цвет при наведении */
+  }
 `;
 
 /* Форма */
@@ -135,7 +143,7 @@ export const Categories = styled.div`
 `;
 
 export const CategoryButton = styled.button`
-  display: inline-flex;      /* иконка + текст рядом */
+  display: inline-flex; /* иконка + текст рядом */
   align-items: center;
   gap: 6px;
 
@@ -146,18 +154,16 @@ export const CategoryButton = styled.button`
   cursor: pointer;
   transition: 0.2s;
 
-  font-size: 14px;           /* явно задаём размер текста */
+  font-size: 14px; /* явно задаём размер текста */
   line-height: 1.2;
-  color: #333;               /* всегда тёмный текст */
+  color: #333; /* всегда тёмный текст */
 
   ${(p) =>
     p.$active &&
     css`
       background: #f5eaff;
       border-color: #7b2cbf;
-      color: #7631bb;        /* цвет текста в активном */
+      color: #7631bb; /* цвет текста в активном */
       font-weight: 600;
     `}
 `;
-
-
