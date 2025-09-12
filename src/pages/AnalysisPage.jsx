@@ -1,7 +1,7 @@
 import Analysis from "../components/Analysis/Analysis";
 
-const AnalysisPage = () => {
-  return <Analysis />;
+const AnalysisPage = ({isAuth}) => {
+  return <Analysis isAuth={isAuth}/>;
 };
 
 export default AnalysisPage;

@@ -1,7 +1,8 @@
+import "../App.css";
 import Expenses from "../components/Expenses/Expenses";
 
-const ExpensesPage = () => {
-  return <Expenses />;
-};
+function ExpensesPage({isAuth}) {
+  return <Expenses isAuth={isAuth}/>;
+}
 
 export default ExpensesPage;
