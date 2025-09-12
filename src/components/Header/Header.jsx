@@ -2,21 +2,47 @@ import { useNavigate } from "react-router-dom";
 import {
   ButtonExit,
   HeaderBlock,
+  HeaderLinkMobil,
   HeaderLogo,
   HeaderNav,
   Img,
+  MobilNav,
   NavLinkS,
   SContainer,
   SHeader,
 } from "./Header.styled";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-
+import ModalMobil from "../MadalMobil/ModalMobil";
 
 const Header = () => {
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const getLinkText = () => {
+    switch (location.pathname) {
+      case "/expenses":
+        return "Мои расходы";
+      case "/analysis":
+        return "Анализ расходов";
+      case "/newExpense":
+        return "Новый расход";
+      default:
+        return "Навигация";
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      setIsModalOpen(false);
+    }
+  }, [location.pathname]);
+  
   function handleLogout(e) {
     e.preventDefault();
     logout();
@@ -36,9 +62,15 @@ const Header = () => {
                 <NavLinkS to="expenses">Мои расходы</NavLinkS>
                 <NavLinkS to="analysis">Анализ расходов</NavLinkS>
               </HeaderNav>
-              <div>
-                <ButtonExit onClick={handleLogout}>Выйти</ButtonExit>
-              </div>
+              <MobilNav>
+                <HeaderLinkMobil onClick={toggleModal}>
+                  {getLinkText()}
+                </HeaderLinkMobil>
+                {isModalOpen ? <ModalMobil isModalOpen={isModalOpen} /> : null}
+                <div>
+                  <ButtonExit onClick={handleLogout}>Выйти</ButtonExit>
+                </div>
+              </MobilNav>
             </>
           )}
         </HeaderBlock>

@@ -41,7 +41,7 @@ const AuthForm = ({ isSignUp }) => {
 
   // функция валидации
   const validateForm = () => {
-    const newErrors = { name: "", login: "", password: "" };
+    const newErrors = { name: "", login: "email", password: "" };
     let isValid = true;
 
     if (isSignUp && !formData.name.trim()) {
@@ -129,7 +129,7 @@ const AuthForm = ({ isSignUp }) => {
               )}
               <Input
                 error={errors.login}
-                type="text"
+                type="email"
                 name="login"
                 id="formlogin"
                 placeholder="Эл. почта"

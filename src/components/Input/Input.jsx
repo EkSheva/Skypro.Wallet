@@ -6,7 +6,7 @@ const Input = ({
   id,
   name,
   placeholder = "",
-  type = "text",
+  type = "",
   error = false,
   onChange,
   required = false,

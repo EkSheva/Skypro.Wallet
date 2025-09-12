@@ -15,11 +15,6 @@ export const SBaseButton = styled.button`
     cursor: not-allowed;
   }
   @media screen and (max-width: 495px) and (min-width: 375px) {
-    z-index: 3;
-    position: fixed;
-    left: 16px;
-    bottom: 30px;
-    top: auto;
     width: calc(100vw - 32px);
   }
 `;

@@ -29,6 +29,9 @@ export const HeaderLogo = styled.div`
 `;
 export const Img = styled.img`
   width: 144px;
+  @media screen and (max-width: 495px) {
+    width: 109px;
+  }
 `;
 
 export const HeaderNav = styled.div`
@@ -53,9 +56,11 @@ export const NavLinkS = styled(RouterNavLink)`
   &.active {
     ${activeLinkStyles}
   }
+  @media screen and (max-width: 495px) {
+    display: none;
+  }
 `;
 
-export const ButtonContainer = styled.div``;
 export const ButtonExit = styled.a`
   font-weight: 600;
   font-size: 14px;
@@ -65,4 +70,40 @@ export const ButtonExit = styled.a`
   &:hover {
     color: rgba(115, 52, 234, 1);
   }
+  @media screen and (max-width: 495px) {
+    font-size: 12px;
+    line-height: 150%;
+  }
+`;
+export const HeaderLinkMobil = styled(RouterNavLink)`
+  display: none;
+  @media screen and (max-width: 495px) and (min-width: 375px) {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 150%;
+    color: rgba(115, 52, 234, 1);
+    text-decoration: 1px underline rgba(115, 52, 234, 1);
+    text-align: center;
+
+    &::after {
+      content: "";
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 1px;
+      border-left: 1.9px rgba(0, 0, 0, 1);
+      border-bottom: 1.9px rgba(0, 0, 0, 1);
+      transform: rotate(-45deg);
+      margin: 4px 0 0 5px;
+      padding: 0;
+    }
+  }
+`;
+export const MobilNav = styled.nav`
+  display: flex;
+  gap: 20px;
 `;
