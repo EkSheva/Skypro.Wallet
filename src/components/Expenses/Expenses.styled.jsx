@@ -10,6 +10,14 @@ export const Container = styled.div`
   padding-left: calc(50% - 600px);
   padding-right: calc(50% - 600px);
 `;
+export const ContainerFilters = styled.div`
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 56px; 
+  
+`;
 
 export const Title = styled.h2`
   text-align: left;
@@ -161,9 +169,137 @@ export const CategoryButton = styled.button`
   ${(p) =>
     p.$active &&
     css`
-      background: #f5eaff;
+      background: #d6cbe0;
       border-color: #7b2cbf;
       color: #7631bb; /* цвет текста в активном */
       font-weight: 600;
     `}
 `;
+/* Фильтры */
+export const Filters = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+`;
+
+export const Dropdown = styled.div`
+  display: inline-block;
+  position: relative;
+`;
+
+export const DropdownToggle = styled.span`
+  cursor: pointer;
+  font-size: 14px;
+  color: #1f2937;
+  text-decoration: underline;
+  &:hover {
+    color: #7b2cbf;
+  }
+`;
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  margin-top: 4px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  min-width: 120px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+`;
+
+export const DropdownItem = styled.div`
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: 0.2s;
+
+  &:hover {
+    background: #f5eaff;
+    color: #7b2cbf;
+  }
+`;
+
+export const FilterButton = styled.button`
+  padding: 6px 10px;
+  border-radius: 16px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 14px;
+
+  ${(p) =>
+    p.$active &&
+    css`
+      background: #f5eaff;
+      border-color: #7b2cbf;
+      color: #7631bb;
+      font-weight: 600;
+    `}
+`;
+
+/* Кнопки действий */
+export const ActionButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 6px;
+  font-size: 16px;
+
+  &:hover {
+    color: #7b2cbf;
+    transform: scale(1.2);
+  }
+`;
+
+/* Модалка */
+export const ModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const Modal = styled.div`
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+/* Select (выпадающий список) */
+export const Select = styled.select`
+  width: auto; /* ширина по содержимому */
+  min-width: fit-content; /* чтобы не схлопывалось */
+  max-width: 100%; /* ограничение */
+
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #7b2cbf;
+    background: #f5eaff;
+    color: #7631bb;
+    font-weight: 600;
+    text-decoration: underline; /* Подчёркивание выбранного */
+  }
+
+  option {
+    background: #fff;
+    color: #333;
+  }
+`;
+
+

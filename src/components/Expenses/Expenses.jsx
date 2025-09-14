@@ -10,18 +10,19 @@ import * as S from "./Expenses.styled";
 import BaseButton from "../BaseButton/BaseButton";
 
 const categories = [
-  { id: "food", label: "Еда", icon: "🍔" },
-  { id: "transport", label: "Транспорт", icon: "🚕" },
-  { id: "housing", label: "Жилье", icon: "🏠" },
-  { id: "joy", label: "Развлечения", icon: "🎮" },
-  { id: "education", label: "Образование", icon: "📚" },
-  { id: "others", label: "Другое", icon: "📦" },
+  { id: "food", label: "Еда" },
+  { id: "transport", label: "Транспорт" },
+  { id: "housing", label: "Жилье" },
+  { id: "joy", label: "Развлечения" },
+  { id: "education", label: "Образование" },
+  { id: "others", label: "Другое" },
 ];
 
 const Expenses = () => {
   const { user } = useContext(AuthContext);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [form, setForm] = useState({
     title: "",
     category: "",
@@ -30,24 +31,31 @@ const Expenses = () => {
   });
   const [errors, setErrors] = useState({});
 
-// --- функция загрузки транзакций ---
-const fetchExpenses = useCallback(async () => {
-  if (!user?.token) return;
-  setLoading(true);
-  try {
-    const data = await getTransactions(user.token);
-    setTransactions(data || []);
-  } catch (err) {
-    console.error("Ошибка загрузки транзакций:", err.message);
-  } finally {
-    setLoading(false);
-  }
-}, [user?.token]);
+  const [filter, setFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
+  const [editModal, setEditModal] = useState(null);
 
-  // --- загрузка при монтировании и смене пользователя ---
+  const [openCategory, setOpenCategory] = useState(false);
+  const [openSort, setOpenSort] = useState(false);
+
+
+  // --- загрузка транзакций ---
+  const fetchExpenses = useCallback(async () => {
+    if (!user?.token) return;
+    setLoading(true);
+    try {
+      const data = await getTransactions(user.token);
+      setTransactions(data || []);
+    } catch (err) {
+      console.error("Ошибка загрузки транзакций:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.token]);
+
   useEffect(() => {
-  fetchExpenses();
-}, [fetchExpenses]);
+    fetchExpenses();
+  }, [fetchExpenses]);
 
   // --- валидация формы ---
   const validate = () => {
@@ -80,7 +88,7 @@ const fetchExpenses = useCallback(async () => {
 
     try {
       await addTransaction(newTransaction, user.token);
-      await fetchExpenses(); // подгрузка списка
+      await fetchExpenses();
       setForm({ title: "", category: "", date: "", amount: "" });
       setErrors({});
     } catch (err) {
@@ -92,28 +100,116 @@ const fetchExpenses = useCallback(async () => {
   const handleDeleteTransaction = async (id) => {
     try {
       await deleteTransaction(id, user.token);
-      await fetchExpenses(); // подгрузка списка
+      await fetchExpenses();
     } catch (err) {
       console.error("Ошибка удаления транзакции:", err.message);
     }
   };
 
-  const isFormValid =
-    form.title.trim() &&
-    form.category &&
-    form.date &&
-    form.amount &&
-    !isNaN(form.amount) &&
-    +form.amount > 0;
+  // --- открыть модал редактирования ---
+  const handleEdit = (t) => setEditModal(t);
+
+  // --- сохранить изменения ---
+  const handleSaveEdit = async () => {
+    try {
+      await deleteTransaction(editModal._id, user.token);
+      await addTransaction(
+        {
+          description: editModal.description,
+          category: editModal.category,
+          date: editModal.date,
+          sum: Number(editModal.sum),
+        },
+        user.token
+      );
+      setEditModal(null);
+      await fetchExpenses();
+    } catch (err) {
+      console.error("Ошибка редактирования транзакции:", err.message);
+    }
+  };
+
+  // --- фильтрация + сортировка ---
+  const filteredTransactions = transactions
+    .filter((t) => (filter === "all" ? true : t.category === filter))
+    .sort((a, b) => {
+      if (sortBy === "date") return new Date(b.date) - new Date(a.date);
+      if (sortBy === "sum") return b.sum - a.sum;
+      return 0;
+    });
 
   if (loading) return <p>Загрузка...</p>;
 
   return (
     <S.Container>
-      <S.Title>Мои расходы</S.Title>
+      <S.ContainerFilters>
+        <S.Title>Мои расходы</S.Title>
+        {/* Фильтры */}
+        <S.Filters>
+          <div>
+            Фильтровать по категории:{" "}
+            <S.Dropdown>
+              <S.DropdownToggle onClick={() => setOpenCategory((p) => !p)}>
+                {categories.find((c) => c.id === filter)?.label || "Все"}
+              </S.DropdownToggle>
+              {openCategory && (
+                <S.DropdownMenu>
+                  <S.DropdownItem
+                    onClick={() => {
+                      setFilter("all");
+                      setOpenCategory(false);
+                    }}
+                  >
+                    Все
+                  </S.DropdownItem>
+                  {categories.map((c) => (
+                    <S.DropdownItem
+                      key={c.id}
+                      onClick={() => {
+                        setFilter(c.id);
+                        setOpenCategory(false);
+                      }}
+                    >
+                      {c.label}
+                    </S.DropdownItem>
+                  ))}
+                </S.DropdownMenu>
+              )}
+            </S.Dropdown>
+          </div>
 
+          <div>
+            Сортировать по:{" "}
+            <S.Dropdown>
+              <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
+                {sortBy === "date" ? "Дате" : "Сумме"}
+              </S.DropdownToggle>
+              {openSort && (
+                <S.DropdownMenu>
+                  <S.DropdownItem
+                    onClick={() => {
+                      setSortBy("date");
+                      setOpenSort(false);
+                    }}
+                  >
+                    Дате
+                  </S.DropdownItem>
+                  <S.DropdownItem
+                    onClick={() => {
+                      setSortBy("sum");
+                      setOpenSort(false);
+                    }}
+                  >
+                    Сумме
+                  </S.DropdownItem>
+                </S.DropdownMenu>
+              )}
+            </S.Dropdown>
+          </div>
+        </S.Filters>
+      </S.ContainerFilters>
+      {/* Контент */}
       <S.Content>
-        {/* Таблица */}
         <S.TableWrapper>
           <S.TableTitle>Таблица расходов</S.TableTitle>
           <S.Table>
@@ -127,8 +223,8 @@ const fetchExpenses = useCallback(async () => {
               </tr>
             </thead>
             <tbody>
-              {transactions && transactions.length > 0 ? (
-                transactions.map((t) => (
+              {filteredTransactions.length > 0 ? (
+                filteredTransactions.map((t) => (
                   <tr key={t._id}>
                     <td>{t.description}</td>
                     <td>
@@ -143,25 +239,11 @@ const fetchExpenses = useCallback(async () => {
                       })}
                     </td>
                     <td>{t.sum} ₽</td>
-                    <td>
-                      <button onClick={() => handleDeleteTransaction(t._id)}>
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 12 12"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M9.62 3.29003H9.42L7.73 1.60003C7.595 1.46503 7.375 1.46503 7.235 1.60003C7.1 1.73503 7.1 1.95503 7.235 2.09503L8.43 3.29003H3.57L4.765 2.09503C4.9 1.96003 4.9 1.74003 4.765 1.60003C4.63 1.46503 4.41 1.46503 4.27 1.60003L2.585 3.29003H2.385C1.935 3.29003 1 3.29003 1 4.57003C1 5.05503 1.1 5.37503 1.31 5.58503C1.43 5.71003 1.575 5.77503 1.73 5.81003C1.875 5.84503 2.03 5.85003 2.18 5.85003H9.82C9.975 5.85003 10.12 5.84003 10.26 5.81003C10.68 5.71003 11 5.41003 11 4.57003C11 3.29003 10.065 3.29003 9.62 3.29003Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            d="M9.52502 6.5H2.43502C2.12502 6.5 1.89002 6.775 1.94002 7.08L2.36002 9.65C2.50002 10.51 2.87502 11.5 4.54002 11.5H7.34502C9.03002 11.5 9.33002 10.655 9.51002 9.71L10.015 7.095C10.075 6.785 9.84002 6.5 9.52502 6.5ZM5.30502 9.725C5.30502 9.92 5.15002 10.075 4.96002 10.075C4.76502 10.075 4.61002 9.92 4.61002 9.725V8.075C4.61002 7.885 4.76502 7.725 4.96002 7.725C5.15002 7.725 5.30502 7.885 5.30502 8.075V9.725ZM7.44502 9.725C7.44502 9.92 7.29002 10.075 7.09502 10.075C6.90502 10.075 6.74502 9.92 6.74502 9.725V8.075C6.74502 7.885 6.90502 7.725 7.09502 7.725C7.29002 7.725 7.44502 7.885 7.44502 8.075V9.725Z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                      </button>
+                    <td style={{ display: "flex", gap: "5px", alignItems: "center", justifyContent: "flex-end" }}>
+                      <S.ActionButton onClick={() => handleEdit(t)}>✏️</S.ActionButton>
+                      <S.ActionButton onClick={() => handleDeleteTransaction(t._id)}>
+                        🗑️
+                      </S.ActionButton>
                     </td>
                   </tr>
                 ))
@@ -173,11 +255,9 @@ const fetchExpenses = useCallback(async () => {
             </tbody>
           </S.Table>
         </S.TableWrapper>
-
         {/* Форма */}
         <S.Form onSubmit={handleSubmit}>
           <h3>Новый расход</h3>
-
           <label>
             Описание {errors.title && <span>{errors.title}</span>}
             <S.Input
@@ -189,7 +269,6 @@ const fetchExpenses = useCallback(async () => {
               placeholder="Введите описание"
             />
           </label>
-
           <div>
             Категория {errors.category && <span>{errors.category}</span>}
             <S.Categories>
@@ -200,12 +279,11 @@ const fetchExpenses = useCallback(async () => {
                   $active={form.category === c.id}
                   onClick={() => handleCategorySelect(c.id)}
                 >
-                  {c.icon} {c.label}
+                  {c.label}
                 </S.CategoryButton>
               ))}
             </S.Categories>
           </div>
-
           <label>
             Дата {errors.date && <span>{errors.date}</span>}
             <S.Input
@@ -217,7 +295,6 @@ const fetchExpenses = useCallback(async () => {
               $valid={form.date && !errors.date}
             />
           </label>
-
           <label>
             Сумма {errors.amount && <span>{errors.amount}</span>}
             <S.Input
@@ -230,14 +307,64 @@ const fetchExpenses = useCallback(async () => {
               placeholder="Введите сумму"
             />
           </label>
-
           <BaseButton
             type="submit"
             text="Добавить новый расход"
-            disabled={!isFormValid}
+            disabled={
+              !form.title.trim() ||
+              !form.category ||
+              !form.date ||
+              !form.amount ||
+              isNaN(form.amount) ||
+              +form.amount <= 0
+            }
           />
         </S.Form>
       </S.Content>
+
+      {/* Модалка редактирования */}
+      {editModal && (
+        <S.ModalOverlay>
+          <S.Modal>
+            <h3>Редактирование</h3>
+            <input
+              value={editModal.description}
+              onChange={(e) =>
+                setEditModal({ ...editModal, description: e.target.value })
+              }
+            />
+            <input
+              type="date"
+              value={editModal.date.split("T")[0]}
+              onChange={(e) =>
+                setEditModal({ ...editModal, date: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              value={editModal.sum}
+              onChange={(e) =>
+                setEditModal({ ...editModal, sum: e.target.value })
+              }
+            />
+            <S.Categories>
+              {categories.map((c) => (
+                <S.CategoryButton
+                  key={c.id}
+                  $active={editModal.category === c.id}
+                  onClick={() => setEditModal({ ...editModal, category: c.id })}
+                >
+                  {c.label}
+                </S.CategoryButton>
+              ))}
+            </S.Categories>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <BaseButton  text="Сохранить" onClick={handleSaveEdit} />
+              <BaseButton text="Отмена" onClick={() => setEditModal(null)} />
+            </div>
+          </S.Modal>
+        </S.ModalOverlay>
+      )}
     </S.Container>
   );
 };
