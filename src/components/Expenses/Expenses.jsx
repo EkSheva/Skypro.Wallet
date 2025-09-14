@@ -10,12 +10,12 @@ import * as S from "./Expenses.styled";
 import BaseButton from "../BaseButton/BaseButton";
 
 const categories = [
-  { id: "food", label: "Еда" },
-  { id: "transport", label: "Транспорт" },
-  { id: "housing", label: "Жилье" },
-  { id: "joy", label: "Развлечения" },
-  { id: "education", label: "Образование" },
-  { id: "others", label: "Другое" },
+   { id: "food", label: "Еда", icon: "🍔" },
+  { id: "transport", label: "Транспорт", icon: "🚕" },
+  { id: "housing", label: "Жилье", icon: "🏠" },
+  { id: "joy", label: "Развлечения", icon: "🎮" },
+ { id: "education", label: "Образование", icon: "📚" },
+  { id: "others", label: "Другое", icon: "📦" },
 ];
 
 const Expenses = () => {
@@ -141,77 +141,77 @@ const Expenses = () => {
   if (loading) return <p>Загрузка...</p>;
 
   return (
-    <S.Container>
-      <S.ContainerFilters>
-        <S.Title>Мои расходы</S.Title>
-        {/* Фильтры */}
-        <S.Filters>
-          <div>
-            Фильтровать по категории:{" "}
-            <S.Dropdown>
-              <S.DropdownToggle onClick={() => setOpenCategory((p) => !p)}>
-                {categories.find((c) => c.id === filter)?.label || "Все"}
-              </S.DropdownToggle>
-              {openCategory && (
-                <S.DropdownMenu>
-                  <S.DropdownItem
-                    onClick={() => {
-                      setFilter("all");
-                      setOpenCategory(false);
-                    }}
-                  >
-                    Все
-                  </S.DropdownItem>
-                  {categories.map((c) => (
-                    <S.DropdownItem
-                      key={c.id}
-                      onClick={() => {
-                        setFilter(c.id);
-                        setOpenCategory(false);
-                      }}
-                    >
-                      {c.label}
-                    </S.DropdownItem>
-                  ))}
-                </S.DropdownMenu>
-              )}
-            </S.Dropdown>
-          </div>
-
-          <div>
-            Сортировать по:{" "}
-            <S.Dropdown>
-              <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
-                {sortBy === "date" ? "Дате" : "Сумме"}
-              </S.DropdownToggle>
-              {openSort && (
-                <S.DropdownMenu>
-                  <S.DropdownItem
-                    onClick={() => {
-                      setSortBy("date");
-                      setOpenSort(false);
-                    }}
-                  >
-                    Дате
-                  </S.DropdownItem>
-                  <S.DropdownItem
-                    onClick={() => {
-                      setSortBy("sum");
-                      setOpenSort(false);
-                    }}
-                  >
-                    Сумме
-                  </S.DropdownItem>
-                </S.DropdownMenu>
-              )}
-            </S.Dropdown>
-          </div>
-        </S.Filters>
-      </S.ContainerFilters>
+    <S.Container>      
+      <S.Title>Мои расходы</S.Title>    
       {/* Контент */}
       <S.Content>
-        <S.TableWrapper>
-          <S.TableTitle>Таблица расходов</S.TableTitle>
+        <S.TableWrapper>          
+          <S.ContainerFilters>
+            <S.TableTitle>Таблица расходов</S.TableTitle>
+             {/* Фильтры */}
+            <S.Filters>
+              <div>
+                Фильтровать по категории:{" "}
+                <S.Dropdown>
+                  <S.DropdownToggle onClick={() => setOpenCategory((p) => !p)}>
+                    {categories.find((c) => c.id === filter)?.label || "все"}
+                  </S.DropdownToggle>
+                  {openCategory && (
+                    <S.DropdownMenu>
+                      <S.DropdownItem
+                        onClick={() => {
+                          setFilter("all");
+                          setOpenCategory(false);
+                        }}
+                      >
+                        Все
+                      </S.DropdownItem>
+                      {categories.map((c) => (
+                        <S.DropdownItem
+                          key={c.id}
+                          onClick={() => {
+                            setFilter(c.id);
+                            setOpenCategory(false);
+                          }}
+                        >
+                          {c.label}
+                        </S.DropdownItem>
+                      ))}
+                    </S.DropdownMenu>
+                  )}
+                </S.Dropdown>
+              </div>
+
+              <div>
+                Сортировать по:{" "}
+                <S.Dropdown>
+                  <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
+                    {sortBy === "date" ? "дате" : "сумме"}
+                  </S.DropdownToggle>
+                  {openSort && (
+                    <S.DropdownMenu>
+                      <S.DropdownItem
+                        onClick={() => {
+                          setSortBy("date");
+                          setOpenSort(false);
+                        }}
+                      >
+                        Дате
+                      </S.DropdownItem>
+                      <S.DropdownItem
+                        onClick={() => {
+                          setSortBy("sum");
+                          setOpenSort(false);
+                        }}
+                      >
+                        Сумме
+                      </S.DropdownItem>
+                    </S.DropdownMenu>
+                  )}
+                </S.Dropdown>
+              </div>
+            </S.Filters>
+          </S.ContainerFilters>
           <S.Table>
             <thead>
               <tr>
@@ -269,7 +269,7 @@ const Expenses = () => {
               placeholder="Введите описание"
             />
           </label>
-          <div>
+          <label>
             Категория {errors.category && <span>{errors.category}</span>}
             <S.Categories>
               {categories.map((c) => (
@@ -279,11 +279,11 @@ const Expenses = () => {
                   $active={form.category === c.id}
                   onClick={() => handleCategorySelect(c.id)}
                 >
-                  {c.label}
+                  {c.icon} {c.label}
                 </S.CategoryButton>
               ))}
             </S.Categories>
-          </div>
+          </label>
           <label>
             Дата {errors.date && <span>{errors.date}</span>}
             <S.Input
@@ -321,7 +321,6 @@ const Expenses = () => {
           />
         </S.Form>
       </S.Content>
-
       {/* Модалка редактирования */}
       {editModal && (
         <S.ModalOverlay>

@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
   padding: 24px;
   background-color: rgba(244, 245, 246, 1);
   padding-left: calc(50% - 600px);
@@ -14,8 +14,9 @@ export const ContainerFilters = styled.div`
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 56px; 
+  justify-content: space-between;
+  gap: 46px; 
+  
   
 `;
 
@@ -31,7 +32,7 @@ export const Title = styled.h2`
 /* Контент */
 export const Content = styled.div`
   display: flex;
-  gap: 24px;
+  gap: 34px;
   align-items: flex-start;
 
   @media (max-width: 768px) {
@@ -45,27 +46,31 @@ export const TableWrapper = styled.div`
   background: #fff;
   border-radius: 16px;
   border: 1px solid #ccc;
-  padding: 16px;
+  padding: 32px;
 `;
 
 export const TableTitle = styled.h3`
-  margin-bottom: 12px;
-  font-weight: 600;
+  font-family: Montserrat;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 100%;
 `;
 
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  
 
   th,
   td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #eee;
     text-align: left;
+    padding-top: 24px;
   }
 
   th {
     font-weight: 600;
+    border-bottom: 1px solid #eee;
+    
   }
 
   /* Кнопка удаления */
@@ -92,24 +97,30 @@ export const Table = styled.table`
 /* Форма */
 export const Form = styled.form`
   flex: 1;
+  max-width: 379px;
   background: #fff;
-  border-radius: 16px;
+  border-radius: 30px;
   border: 1px solid #ccc;
-  padding: 16px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 
   h3 {
-    font-size: 18px;
-    margin-bottom: 8px;
+    font-family: Montserrat;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
   }
 
   label {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    font-size: 14px;
+    gap: 16px;
+    font-family: Montserrat;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 100%;
 
     span {
       color: red;
@@ -120,11 +131,14 @@ export const Form = styled.form`
 
 /* Поля */
 export const Input = styled.input`
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 6px;
   border: 2px solid #ddd;
-  outline: none;
   transition: 0.2s;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  font-family: Montserrat;
 
   ${(p) =>
     p.$valid &&
@@ -147,24 +161,23 @@ export const Input = styled.input`
 export const Categories = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 `;
 
 export const CategoryButton = styled.button`
   display: inline-flex; /* иконка + текст рядом */
   align-items: center;
-  gap: 6px;
-
-  padding: 8px 12px;
-  border-radius: 20px;
+  padding: 8px 20px 8px 20px;
+  border-radius: 30px;
   border: 1px solid #ddd;
   background: #f5f5f5;
   cursor: pointer;
   transition: 0.2s;
-
-  font-size: 14px; /* явно задаём размер текста */
+  font-size: 12px; /* явно задаём размер текста */
   line-height: 1.2;
-  color: #333; /* всегда тёмный текст */
+  color: #070707; /* всегда тёмный текст */
+  font-family: Montserrat;
+  font-weight: 400;
 
   ${(p) =>
     p.$active &&
@@ -178,9 +191,11 @@ export const CategoryButton = styled.button`
 /* Фильтры */
 export const Filters = styled.div`
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 12px;
+  gap: 24px;
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
 `;
 
 export const Dropdown = styled.div`
@@ -190,7 +205,9 @@ export const Dropdown = styled.div`
 
 export const DropdownToggle = styled.span`
   cursor: pointer;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
   color: #1f2937;
   text-decoration: underline;
   &:hover {
