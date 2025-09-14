@@ -208,7 +208,7 @@ export const DropdownToggle = styled.span`
   font-weight: 600;
   font-size: 12px;
   line-height: 150%;
-  color: #1f2937;
+  color: #7c3aed;
   text-decoration: underline;
   &:hover {
     color: #7b2cbf;
