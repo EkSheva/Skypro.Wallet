@@ -10,6 +10,7 @@ export const SHeader = styled.header`
   @media screen and (max-width: 495px) {
     width: 100%;
     padding: 0 16px;
+    background-color: rgba(244, 245, 246, 1);
   }
 `;
 
