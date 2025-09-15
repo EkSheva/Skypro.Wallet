@@ -3,9 +3,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import ExpensesPage from "../../pages/ExpensesPage";
 import AnalysisPage from "../../pages/AnalysisPage";
 import NotFoundPage from "../../pages/NotFoundPage";
-import AuthForm from "../AuthForm/AuthForm";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import MainPage from "../../pages/MainPage";
+import SignInPage from "../../pages/SignInPage";
+import SignUpPage from "../../pages/SignUpPage";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -32,11 +33,11 @@ function AppRoutes() {
       {/* Страницы аутентификации */}
       <Route
         path="/sign-in"
-        element={user ? <Navigate to="/" replace /> : <AuthForm isSignUp={false} />}
+        element={user ? <Navigate to="/" replace /> : <SignInPage />}
       />
       <Route
         path="/sign-up"
-        element={user ? <Navigate to="/" replace /> : <AuthForm isSignUp={true} />}
+        element={user ? <Navigate to="/" replace /> : <SignUpPage />}
       />
 
       {/* 404 */}
