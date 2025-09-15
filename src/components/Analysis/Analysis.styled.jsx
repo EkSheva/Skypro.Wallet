@@ -148,11 +148,11 @@ export const DayCell = styled.div`
   height: 40px;
   border-radius: 60px;
   background: ${({ selected, $current }) =>
-    selected ? "#DBFFE9" : $current ? "#DBFFE9" : "transparent"};
+    selected ? "#ceb8e0" : $current ? "#ceb8e0" : "transparent"};
   color: ${({ disabled, selected, $current }) => {
     if (disabled) return "#DBFFE9";
-    if (selected) return "#1FA46C";
-    if ($current) return "#1FA46C";
+    if (selected) return "#855bb9";
+    if ($current) return "#855bb9";
     return "#374151";
   }};
   font-weight: ${({ selected, $current }) =>
@@ -179,17 +179,12 @@ export const YearMonthsGrid = styled.div`
 
 export const MonthSelectButton = styled.button`
   width: 101px;
-  height: 34px;
   border-radius: 30px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  background: ${({ $active }) => ($active ? "#7c3aed" : "#F4F5F6")};
-  border: none;
+  background: ${({ $active }) => ($active ? "#d7c9ec" : "#e4e4e4")};
   font-family: "Montserrat";
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
   font-size: 12px;
-  line-height: 100%;
-  color: ${({ $active }) => ($active ? "#FFFFFF" : "#000000")};
+  color: ${({ $active }) => ($active ? "#b24aee" : "#000000")};
   cursor: pointer;
   transition: all 0.2s;
 
@@ -200,13 +195,11 @@ export const MonthSelectButton = styled.button`
   }
 `;
 
-
 export const ChartWrapper = styled.div`
   flex: 1;
   background: #fff;
   border-radius: 30px;
   padding: 24px;
-  border: none;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   @media screen and (max-width: 495px) {
     box-shadow: none;
