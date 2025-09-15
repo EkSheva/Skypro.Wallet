@@ -135,11 +135,11 @@ export const DayCell = styled.div`
   height: 40px;
   border-radius: 60px;
   background: ${({ selected, $current }) =>
-    selected ? "#dddbdb" : $current ? "#96f78d" : "transparent"};
+    selected ? "#DBFFE9" : $current ? "#DBFFE9" : "transparent"};
   color: ${({ disabled, selected, $current }) => {
-    if (disabled) return "#c3c1c5";
-    if (selected) return "#ab6ff0";
-    if ($current) return "#b45309";
+    if (disabled) return "#DBFFE9";
+    if (selected) return "#1FA46C";
+    if ($current) return "#1FA46C";
     return "#374151";
   }};
   font-weight: ${({ selected, $current }) =>
@@ -160,7 +160,7 @@ export const DayCell = styled.div`
 export const ChartWrapper = styled.div`
   flex: 1;
   background: #fff;
-  border-radius: 16px;
+  border-radius: 30px;
   padding: 24px;
   border: none;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
@@ -177,15 +177,16 @@ export const ChartHeader = styled.div`
 
 export const Total = styled.h3`
   margin: 0;
-  font-size: 28px;
-  color: #1f2937;
+  font-family: "Montserrat";
+  font-size: 24px;
+  color: #000000;
   font-weight: 700;
 `;
 
 export const Subtitle = styled.p`
   margin: 8px 0 0 0;
-  font-size: 16px;
-  color: #6b7280;
+  font-size: 12px;
+  color: #999999;
 `;
 export const ResponsiveContainer = styled(RC).attrs({
   width: "100%",

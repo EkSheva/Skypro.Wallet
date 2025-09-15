@@ -8,7 +8,7 @@ import {
   DaysGrid, DayCell, ChartWrapper, ChartHeader, Total,
   Subtitle, MonthTitle, ResponsiveContainer, BarChart
 } from "./Analysis.styled";
-import { Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
+import { Bar, XAxis, YAxis, Tooltip, Cell, LabelList } from "recharts";
 
 const categories = [
   { id: "food", name: "Еда", color: "#c19aff" },
@@ -266,13 +266,29 @@ export default function Analysis() {
           </ChartHeader>
           <ResponsiveContainer>
             <BarChart data={expenses}>
-              <XAxis dataKey="name" />
+              <XAxis
+                dataKey="name"
+                tick={{ fontSize: 12, fontWeight: 400, fill: "#000000" }}
+                axisLine={false}
+                tickLine={false}
+              />
               <YAxis hide />
               <Tooltip formatter={(value) => [`${value} ₽`, "Сумма"]} />
-              <Bar dataKey="value">
+              <Bar dataKey="value" radius={[12, 12, 12, 12]} barSize={94}>
                 {expenses.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
+                <LabelList
+                  dataKey="value"
+                  position="top"
+                  formatter={(value) => value.toLocaleString("ru-RU") + " ₽"}
+                  style={{
+                    fontFamily: "Montserrat",
+                    fontWeight: 600,
+                    fontSize: 16,
+                    fill: "#000000", // цвет текста
+                  }}
+                />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
