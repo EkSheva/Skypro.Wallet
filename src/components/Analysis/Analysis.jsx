@@ -1,13 +1,7 @@
-// Analysis.jsx
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { getTransactions } from "../../services/transactions";
-import {
-  Container, Title, CalendarBox, CalendarWrapper, PeriodHeader,
-  CalendarContainer, CalendarScroll, FixedDaysHeader, DayHeader,
-  DaysGrid, DayCell, ChartWrapper, ChartHeader, Total,
-  Subtitle, MonthTitle, ResponsiveContainer, BarChart
-} from "./Analysis.styled";
+import * as S from "./Analysis.styled";
 import { Bar, XAxis, YAxis, Tooltip, Cell, LabelList } from "recharts";
 
 const categories = [
@@ -19,29 +13,19 @@ const categories = [
   { id: "others", name: "Другое", color: "#ff8b94" },
 ];
 
-// --- утилиты ---
-const formatDate = (year, month, day) =>
-  `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-const formatDisplayDate = (dateStr) => {
-  const [year, month, day] = dateStr.split("-");
-  const monthsRu = [
-    "января","февраля","марта","апреля","мая","июня",
-    "июля","августа","сентября","октября","ноября","декабря"
-  ];
-  return `${parseInt(day, 10)} ${monthsRu[parseInt(month, 10) - 1]} ${year}`;
-};
-
-const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"];
 const months = [
   "Январь","Февраль","Март","Апрель","Май","Июнь",
   "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"
 ];
 
+const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"];
+
 export default function Analysis() {
   const { user } = useContext(AuthContext);
   const [transactions, setTransactions] = useState([]);
   const [selectedDays, setSelectedDays] = useState([]);
+  const [viewMode, setViewMode] = useState("month"); // "month" или "year"
+  const [selectedMonths, setSelectedMonths] = useState([]); // для годового выбора
   const calendarScrollRef = useRef(null);
 
   // --- загрузка транзакций ---
@@ -55,73 +39,18 @@ export default function Analysis() {
     }
   }, [user?.token]);
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
+  useEffect(() => { fetchTransactions(); }, [fetchTransactions]);
 
-  // --- генерация календаря ---
+  // --- генерация месяцев для календаря ---
   const generateScrollMonths = () => {
     const monthsData = [];
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
-    const currentDay = currentDate.getDate();
-
     const monthsBefore = 12;
     const monthsAfter = 12;
 
-    // прошлые месяцы
-    for (let i = monthsBefore; i > 0; i--) {
-      const date = new Date(currentYear, currentMonth - i, 1);
-      const year = date.getFullYear();
-      const month = date.getMonth();
-
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const daysInMonth = lastDay.getDate();
-
-      const days = [];
-      for (let j = 0; j < (firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1); j++) {
-        days.push(null);
-      }
-      for (let j = 1; j <= daysInMonth; j++) {
-        days.push(j);
-      }
-
-      monthsData.push({
-        month,
-        year,
-        days,
-        title: `${months[month]} ${year}`,
-        isCurrentMonth: false,
-        currentDay: null,
-      });
-    }
-
-    // текущий месяц
-    const currentFirstDay = new Date(currentYear, currentMonth, 1);
-    const currentLastDay = new Date(currentYear, currentMonth + 1, 0);
-    const currentDaysInMonth = currentLastDay.getDate();
-
-    const currentDays = [];
-    for (let j = 0; j < (currentFirstDay.getDay() === 0 ? 6 : currentFirstDay.getDay() - 1); j++) {
-      currentDays.push(null);
-    }
-    for (let j = 1; j <= currentDaysInMonth; j++) {
-      currentDays.push(j);
-    }
-
-    monthsData.push({
-      month: currentMonth,
-      year: currentYear,
-      days: currentDays,
-      title: `${months[currentMonth]} ${currentYear}`,
-      isCurrentMonth: true,
-      currentDay: currentDay,
-    });
-
-    // будущие месяцы
-    for (let i = 1; i <= monthsAfter; i++) {
+    for (let i = -monthsBefore; i <= monthsAfter; i++) {
       const date = new Date(currentYear, currentMonth + i, 1);
       const year = date.getFullYear();
       const month = date.getMonth();
@@ -131,61 +60,52 @@ export default function Analysis() {
       const daysInMonth = lastDay.getDate();
 
       const days = [];
-      for (let j = 0; j < (firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1); j++) {
-        days.push(null);
-      }
-      for (let j = 1; j <= daysInMonth; j++) {
-        days.push(j);
-      }
+      for (let j = 0; j < (firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1); j++) days.push(null);
+      for (let j = 1; j <= daysInMonth; j++) days.push(j);
 
       monthsData.push({
-        month,
-        year,
-        days,
+        month, year, days,
         title: `${months[month]} ${year}`,
-        isCurrentMonth: false,
-        currentDay: null,
+        isCurrentMonth: i === 0,
+        currentDay: i === 0 ? currentDate.getDate() : null,
       });
     }
-
     return monthsData;
   };
 
   const scrollMonths = generateScrollMonths();
 
-  // Автоскролл к текущему месяцу
+  // --- автоскролл к текущему месяцу ---
   useEffect(() => {
     if (calendarScrollRef.current) {
-      const currentMonthElement = calendarScrollRef.current.querySelector(
-        "[data-current-month='true']"
-      );
-      if (currentMonthElement) {
-        currentMonthElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      const currentMonthElement = calendarScrollRef.current.querySelector("[data-current-month='true']");
+      if (currentMonthElement) currentMonthElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, []);
 
-  // --- выбор дат ---
+  // --- выбор дней и месяцев ---
   const handleDaySelect = (year, month, day) => {
     if (!day) return;
-    const dateStr = formatDate(year, month, day);
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    if (selectedDays.length === 0) setSelectedDays([dateStr]);
+    else if (selectedDays.length === 1) setSelectedDays([...selectedDays, dateStr]);
+    else setSelectedDays([dateStr]);
+  };
 
-    if (selectedDays.length === 0) {
-      setSelectedDays([dateStr]);
-    } else if (selectedDays.length === 1) {
-      setSelectedDays([...selectedDays, dateStr]);
+  const handleMonthClick = (year, month) => {
+    const monthStr = `${year}-${month}`;
+    if (selectedMonths.includes(monthStr)) {
+      setSelectedMonths(selectedMonths.filter(m => m !== monthStr));
     } else {
-      setSelectedDays([dateStr]);
+      setSelectedMonths([...selectedMonths, monthStr]);
     }
   };
 
   const isDaySelected = (year, month, day) => {
     if (!day) return false;
-    const dateStr = formatDate(year, month, day);
-
+    const dateStr = `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
     if (selectedDays.length === 0) return false;
     if (selectedDays.length === 1) return selectedDays.includes(dateStr);
-
     const sorted = [...selectedDays].sort();
     return dateStr >= sorted[0] && dateStr <= sorted[1];
   };
@@ -197,75 +117,137 @@ export default function Analysis() {
 
   // --- фильтрация по периоду ---
   let filtered = transactions;
-  if (selectedDays.length === 2) {
+  if (viewMode === "month" && selectedDays.length === 2) {
     const [start, end] = [...selectedDays].sort();
-    filtered = transactions.filter((t) => {
+    filtered = transactions.filter(t => {
       const d = new Date(t.date);
       return d >= new Date(start) && d <= new Date(end);
     });
   }
 
+  if (viewMode === "year" && selectedMonths.length > 0) {
+    filtered = transactions.filter(t => {
+      const tDate = new Date(t.date);
+      return selectedMonths.some(m => {
+        const [y, mo] = m.split("-").map(Number);
+        return tDate.getFullYear() === y && tDate.getMonth() === mo;
+      });
+    });
+  }
+
   // --- группировка по категориям ---
-  const expenses = categories.map((cat) => {
-    const sum = filtered
-      .filter((t) => t.category === cat.id)
-      .reduce((acc, cur) => acc + cur.sum, 0);
-    return { name: cat.name, value: sum, color: cat.color };
-  });
+  const expenses = categories.map(cat => ({
+    name: cat.name,
+    value: filtered.filter(t => t.category === cat.id).reduce((acc, cur) => acc + cur.sum, 0),
+    color: cat.color
+  }));
 
   const total = expenses.reduce((acc, cur) => acc + cur.value, 0);
 
+  const formatDisplayDate = dateStr => {
+    const [year, month, day] = dateStr.split("-");
+    const monthsRu = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+    return `${parseInt(day, 10)} ${monthsRu[parseInt(month,10)-1]} ${year}`;
+  };
+
   const getSelectedPeriodText = () => {
-    if (selectedDays.length === 0) return "Расходы за весь период";
-    if (selectedDays.length === 1) return `Расходы за ${formatDisplayDate(selectedDays[0])}`;
-    const sorted = [...selectedDays].sort();
-    return `Расходы с ${formatDisplayDate(sorted[0])} по ${formatDisplayDate(sorted[1])}`;
+    if (viewMode === "month") {
+      if (selectedDays.length === 0) return "Расходы за весь период";
+      if (selectedDays.length === 1) return `Расходы за ${formatDisplayDate(selectedDays[0])}`;
+      const sorted = [...selectedDays].sort();
+      return `Расходы с ${formatDisplayDate(sorted[0])} по ${formatDisplayDate(sorted[1])}`;
+    }
+    if (viewMode === "year") {
+      if (selectedMonths.length === 0) return "Расходы за весь период";
+      return `Расходы за ${selectedMonths.map(m => {
+        const [y, mo] = m.split("-");
+        return `${months[Number(mo)]} ${y}`;
+      }).join(", ")}`;
+    }
   };
 
   return (
-    <Container>
-      <Title>Анализ расходов</Title>
-      <CalendarBox>
-        <CalendarWrapper>
-          <PeriodHeader>Период</PeriodHeader>
-          <CalendarContainer>
-            <FixedDaysHeader>
-              {weekDays.map((day) => (
-                <DayHeader key={day}>{day}</DayHeader>
+    <S.Container>
+      <S.Title>Анализ расходов</S.Title>
+
+      <S.CalendarBox>
+        <S.CalendarWrapper>
+          {/* Период с кнопками справа */}
+          <S.PeriodHeader>
+            <span style={{ fontFamily: "Montserrat", fontWeight: 700, fontSize: 24 }}>Период</span>
+            <div style={{ marginLeft: "auto", display: "flex", gap: "12px", alignItems: "center", paddingRight: "32px" }}>
+              <S.ToggleButton $active={viewMode === "month"} onClick={() => setViewMode("month")}>
+                Месяц
+              </S.ToggleButton>
+              <S.ToggleButton $active={viewMode === "year"} onClick={() => setViewMode("year")}>
+                Год
+              </S.ToggleButton>
+            </div>
+          </S.PeriodHeader>
+
+          {/* Годовой выбор месяцев */}
+          {viewMode === "year" && (
+            <S.CalendarScroll style={{ height: "380px" }}>
+              {Array.from(new Set(scrollMonths.map(m => m.year))).map(year => (
+                <div key={year}>
+                  <S.MonthTitle>{year}</S.MonthTitle> {/* только год */}
+                  <S.YearMonthsGrid style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                    {months.map((monthName, idx) => {
+                      const monthStr = `${year}-${idx}`;
+                      const active = selectedMonths.includes(monthStr);
+                      return (
+                        <S.MonthSelectButton
+                          key={monthStr}
+                          $active={active}
+                          onClick={() => handleMonthClick(year, idx)}
+                        >
+                          {monthName}
+                        </S.MonthSelectButton>
+                      );
+                    })}
+                  </S.YearMonthsGrid>
+
+                </div>
               ))}
-            </FixedDaysHeader>
-            <CalendarScroll ref={calendarScrollRef}>
-              {scrollMonths.map((monthData) => (
-                <label
-                  key={`${monthData.year}-${monthData.month}`}
-                  data-current-month={monthData.isCurrentMonth ? "true" : "false"}
-                >
-                  <MonthTitle>{monthData.title}</MonthTitle>
-                  <DaysGrid>
-                    {monthData.days.map((day, dayIndex) => (
-                      <DayCell
-                        key={dayIndex}
-                        selected={isDaySelected(monthData.year, monthData.month, day)}
-                        $current={isCurrentDay(monthData.year, monthData.month, day, monthData)}
-                        disabled={!day}
-                        onClick={() => handleDaySelect(monthData.year, monthData.month, day)}
-                      >
-                        {day}
-                      </DayCell>
-                    ))}
-                  </DaysGrid>
-                </label>
-              ))}
-            </CalendarScroll>
-          </CalendarContainer>
-        </CalendarWrapper>
-        <ChartWrapper>
-          <ChartHeader>
-            <Total>{total.toLocaleString("ru-RU")} ₽</Total>
-            <Subtitle>{getSelectedPeriodText()}</Subtitle>
-          </ChartHeader>
-          <ResponsiveContainer>
-            <BarChart data={expenses}>
+            </S.CalendarScroll>
+          )}
+
+          {/* Месячный календарь */}
+          {viewMode === "month" && (
+            <S.CalendarContainer>
+              <S.FixedDaysHeader>{weekDays.map(d => <S.DayHeader key={d}>{d}</S.DayHeader>)}</S.FixedDaysHeader>
+              <S.CalendarScroll ref={calendarScrollRef}>
+                {scrollMonths.map(md => (
+                  <label key={`${md.year}-${md.month}`} data-current-month={md.isCurrentMonth ? "true" : "false"}>
+                    <S.MonthTitle>{md.title}</S.MonthTitle>
+                    <S.DaysGrid>
+                                            {md.days.map((day, idx) => (
+                        <S.DayCell
+                          key={idx}
+                          selected={isDaySelected(md.year, md.month, day)}
+                          $current={isCurrentDay(md.year, md.month, day, md)}
+                          disabled={!day}
+                          onClick={() => handleDaySelect(md.year, md.month, day)}
+                        >
+                          {day}
+                        </S.DayCell>
+                      ))}
+                    </S.DaysGrid>
+                  </label>
+                ))}
+              </S.CalendarScroll>
+            </S.CalendarContainer>
+          )}
+        </S.CalendarWrapper>
+
+        {/* График расходов */}
+        <S.ChartWrapper>
+          <S.ChartHeader>
+            <S.Total>{total.toLocaleString("ru-RU")} ₽</S.Total>
+            <S.Subtitle>{getSelectedPeriodText()}</S.Subtitle>
+          </S.ChartHeader>
+          <S.ResponsiveContainer>
+            <S.BarChart data={expenses}>
               <XAxis
                 dataKey="name"
                 tick={{ fontSize: 12, fontWeight: 400, fill: "#000000" }}
@@ -286,14 +268,15 @@ export default function Analysis() {
                     fontFamily: "Montserrat",
                     fontWeight: 600,
                     fontSize: 16,
-                    fill: "#000000", // цвет текста
+                    fill: "#000000",
                   }}
                 />
               </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartWrapper>
-      </CalendarBox>
-    </Container>
+            </S.BarChart>
+          </S.ResponsiveContainer>
+        </S.ChartWrapper>
+      </S.CalendarBox>
+    </S.Container>
   );
 }
+

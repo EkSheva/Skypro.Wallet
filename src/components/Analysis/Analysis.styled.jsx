@@ -1,4 +1,3 @@
-// Analysis.styled.jsx
 import styled from "styled-components";
 import { ResponsiveContainer as RC, BarChart as BC } from "recharts";
 
@@ -32,7 +31,6 @@ export const Title = styled.h2`
 export const CalendarBox = styled.div`
   display: flex;
   gap: 35px;
-
   @media (max-width: 1024px) {
     flex-direction: column;
   }
@@ -46,7 +44,6 @@ export const CalendarWrapper = styled.div`
   border: none;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
   align-items: stretch;
   @media screen and (max-width: 495px) {
@@ -56,11 +53,27 @@ export const CalendarWrapper = styled.div`
 `;
 
 export const PeriodHeader = styled.div`
-  font-weight: 700;
-  font-size: 24px;
-  color: #1f2937;
-  margin-bottom: 20px;
-  text-align: start;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 16px;
+`;
+
+export const ToggleButton = styled.span`
+  font-family: "Montserrat";
+  font-size: 12px;
+  line-height: 150%;
+  font-weight: ${({ $active }) => ($active ? 600 : 400)};
+  color: ${({ $active }) => ($active ? "#7c3aed" : "#000000")};
+  text-decoration: ${({ $active }) => ($active ? "underline" : "none")};
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #7c3aed;
+    font-weight: 600;
+    text-decoration: underline;
+  }
 `;
 
 export const CalendarContainer = styled.div`
@@ -157,6 +170,37 @@ export const DayCell = styled.div`
   }
 `;
 
+export const YearMonthsGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+`;
+
+export const MonthSelectButton = styled.button`
+  width: 101px;
+  height: 34px;
+  border-radius: 30px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  background: ${({ $active }) => ($active ? "#7c3aed" : "#F4F5F6")};
+  border: none;
+  font-family: "Montserrat";
+  font-weight: ${({ $active }) => ($active ? 600 : 400)};
+  font-size: 12px;
+  line-height: 100%;
+  color: ${({ $active }) => ($active ? "#FFFFFF" : "#000000")};
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #7c3aed;
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+`;
+
+
 export const ChartWrapper = styled.div`
   flex: 1;
   background: #fff;
@@ -188,6 +232,7 @@ export const Subtitle = styled.p`
   font-size: 12px;
   color: #999999;
 `;
+
 export const ResponsiveContainer = styled(RC).attrs({
   width: "100%",
   height: 387,
