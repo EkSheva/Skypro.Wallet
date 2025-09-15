@@ -42,7 +42,7 @@ const Header = () => {
       setIsModalOpen(false);
     }
   }, [location.pathname]);
-  
+
   function handleLogout(e) {
     e.preventDefault();
     logout();
@@ -54,7 +54,7 @@ const Header = () => {
       <SContainer>
         <HeaderBlock>
           <HeaderLogo>
-            <Img src="../Logo.svg" alt="logo" />
+            <Img user src="../Logo.svg" alt="logo" />
           </HeaderLogo>
           {user && (
             <>

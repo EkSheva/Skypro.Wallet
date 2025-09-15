@@ -9,24 +9,29 @@ export const Container = styled.div`
   background-color: rgba(244, 245, 246, 1);
   padding-left: calc(50% - 600px);
   padding-right: calc(50% - 600px);
+  @media screen and (max-width: 495px) {
+    gap: 24px;
+    padding: 24px 16px;
+    background-color: rgba(255, 255, 255, 1);
+  }
 `;
 export const ContainerFilters = styled.div`
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 46px; 
-  
-  
+  gap: 46px;
 `;
 
 export const Title = styled.h2`
   text-align: left;
-  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: 32px;
   line-height: 150%;
   color: #1f2937;
+  @media screen and (max-width: 495px) {
+    font-size: 24px;
+  }
 `;
 
 /* Контент */
@@ -44,33 +49,45 @@ export const Content = styled.div`
 export const TableWrapper = styled.div`
   flex: 2;
   background: #fff;
-  border-radius: 16px;
-  border: 1px solid #ccc;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   padding: 32px;
+  @media screen and (max-width: 495px) {
+    height: 100%;
+    padding: 0px;
+    box-shadow: none;
+  }
 `;
 
 export const TableTitle = styled.h3`
-  font-family: Montserrat;
   font-weight: 700;
   font-size: 24px;
   line-height: 100%;
+  @media screen and (max-width: 495px) {
+    display: none;
+  }
 `;
 
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  
+  font-weight: 400;
+  font-size: 12px;
 
   th,
   td {
     text-align: left;
     padding-top: 24px;
+    font-weight: 400;
+    font-size: 12px;
   }
 
   th {
-    font-weight: 600;
+    font-weight: 400;
+    font-size: 12px;
+    color: rgba(153, 153, 153, 1);
     border-bottom: 1px solid #eee;
-    
   }
 
   /* Кнопка удаления */
@@ -100,11 +117,17 @@ export const Form = styled.form`
   max-width: 379px;
   background: #fff;
   border-radius: 30px;
-  border: 1px solid #ccc;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  @media screen and (max-width: 495px) {
+    height: 100%;
+    padding: 0px;
+    box-shadow: none;
+  }
 
   h3 {
     font-family: Montserrat;
@@ -222,7 +245,7 @@ export const DropdownMenu = styled.div`
   border: 1px solid #ccc;
   border-radius: 8px;
   min-width: 120px;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
 `;
 
@@ -318,5 +341,3 @@ export const Select = styled.select`
     color: #333;
   }
 `;
-
-

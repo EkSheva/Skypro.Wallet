@@ -31,7 +31,7 @@ export const HeaderLogo = styled.div`
 export const Img = styled.img`
   width: 144px;
   @media screen and (max-width: 495px) {
-    width: 109px;
+    width: ${({ user }) => (user ? "109px" : "144px")};
   }
 `;
 

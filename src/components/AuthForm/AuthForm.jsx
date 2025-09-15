@@ -111,7 +111,7 @@ const AuthForm = ({ isSignUp }) => {
     <Bg>
       <Header />
       <Modal>
-        <FWrapper>
+        <FWrapper isSignUp>
           <FTitle>{isSignUp ? "Регистрация" : "Вход"}</FTitle>
           <Form id="form" onSubmit={handleSubmit}>
             <InputWrapper>

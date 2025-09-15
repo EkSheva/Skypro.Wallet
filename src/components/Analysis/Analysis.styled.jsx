@@ -10,15 +10,23 @@ export const Container = styled.div`
   background-color: rgba(244, 245, 246, 1);
   padding-left: calc(50% - 600px);
   padding-right: calc(50% - 600px);
+  @media screen and (max-width: 495px) {
+    font-size: 24px;
+    gap: 24px;
+    padding: 24px 16px;
+    background-color: rgba(255, 255, 255, 1);
+  }
 `;
 
 export const Title = styled.h2`
   text-align: left;
-  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: 32px;
   line-height: 150%;
   color: #1f2937;
+  @media screen and (max-width: 495px) {
+    font-size: 24px;
+  }
 `;
 
 export const CalendarBox = styled.div`
@@ -35,16 +43,19 @@ export const CalendarWrapper = styled.div`
   background: #fff;
   border-radius: 30px;
   padding: 24px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   align-items: stretch;
+  @media screen and (max-width: 495px) {
+    box-shadow: none;
+    padding: 0px;
+  }
 `;
 
 export const PeriodHeader = styled.div`
-  font-family: "Montserrat", sans-serif;
   font-weight: 700;
   font-size: 24px;
   color: #1f2937;
@@ -151,8 +162,12 @@ export const ChartWrapper = styled.div`
   background: #fff;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
+  @media screen and (max-width: 495px) {
+    box-shadow: none;
+    padding: 0px;
+  }
 `;
 
 export const ChartHeader = styled.div`

@@ -7,7 +7,7 @@ export const Bg = styled.div`
   right: 0;
   bottom: 0;
   background: rgba(244, 245, 246, 1);
-     @media screen and (max-width: 495px) {
+  @media screen and (max-width: 495px) {
     background-color: rgba(255, 255, 255, 1);
   }
 `;
@@ -22,6 +22,7 @@ export const Modal = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
 export const FWrapper = styled.div`
   display: block;
   margin: 0 auto;
@@ -32,9 +33,9 @@ export const FWrapper = styled.div`
   border-radius: 30px;
   border: none;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
-   @media screen and (max-width: 495px) {
+  @media screen and (max-width: 495px) {
     height: 100%;
-    margin-top:125px;
+    margin-top: ${({ isSignUp }) => (isSignUp ? "151px" : "125px")};
     padding: 0 16px;
     background-color: rgba(255, 255, 255, 1);
     box-shadow: none;
