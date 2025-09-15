@@ -150,7 +150,7 @@ const Expenses = () => {
             <S.TableTitle>Таблица расходов</S.TableTitle>
              {/* Фильтры */}
             <S.Filters>
-              <div>
+              <label>
                 Фильтровать по категории:{" "}
                 <S.Dropdown>
                   <S.DropdownToggle onClick={() => setOpenCategory((p) => !p)}>
@@ -180,9 +180,9 @@ const Expenses = () => {
                     </S.DropdownMenu>
                   )}
                 </S.Dropdown>
-              </div>
+              </label>
 
-              <div>
+              <label>
                 Сортировать по:{" "}
                 <S.Dropdown>
                   <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
@@ -209,7 +209,7 @@ const Expenses = () => {
                     </S.DropdownMenu>
                   )}
                 </S.Dropdown>
-              </div>
+              </label>
             </S.Filters>
           </S.ContainerFilters>
           <S.Table>

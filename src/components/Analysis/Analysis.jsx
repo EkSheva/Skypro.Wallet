@@ -225,21 +225,18 @@ export default function Analysis() {
   return (
     <Container>
       <Title>Анализ расходов</Title>
-
       <CalendarBox>
         <CalendarWrapper>
           <PeriodHeader>Период</PeriodHeader>
-
           <CalendarContainer>
             <FixedDaysHeader>
               {weekDays.map((day) => (
                 <DayHeader key={day}>{day}</DayHeader>
               ))}
             </FixedDaysHeader>
-
             <CalendarScroll ref={calendarScrollRef}>
               {scrollMonths.map((monthData) => (
-                <div
+                <label
                   key={`${monthData.year}-${monthData.month}`}
                   data-current-month={monthData.isCurrentMonth ? "true" : "false"}
                 >
@@ -257,18 +254,16 @@ export default function Analysis() {
                       </DayCell>
                     ))}
                   </DaysGrid>
-                </div>
+                </label>
               ))}
             </CalendarScroll>
           </CalendarContainer>
         </CalendarWrapper>
-
         <ChartWrapper>
           <ChartHeader>
             <Total>{total.toLocaleString("ru-RU")} ₽</Total>
             <Subtitle>{getSelectedPeriodText()}</Subtitle>
           </ChartHeader>
-
           <ResponsiveContainer>
             <BarChart data={expenses}>
               <XAxis dataKey="name" />

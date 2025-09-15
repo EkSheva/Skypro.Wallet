@@ -31,10 +31,9 @@ export const HeaderLogo = styled.div`
 export const Img = styled.img`
   width: 144px;
   @media screen and (max-width: 495px) {
-    width: ${({ user }) => (user ? "109px" : "144px")};
+    width: ${({ $user }) => ($user ? "109px" : "144px")};
   }
 `;
-
 export const HeaderNav = styled.div`
   max-width: 274px;
   padding: 0;

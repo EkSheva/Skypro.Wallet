@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import {
   ButtonExit,
   HeaderBlock,
@@ -17,6 +18,7 @@ import ModalMobil from "../MadalMobil/ModalMobil";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -38,11 +40,11 @@ const Header = () => {
   };
 
   useEffect(() => {
-    if (isModalOpen) {
-      setIsModalOpen(false);
+  if (isModalOpen) {
+    setIsModalOpen(false);
     }
-  }, [location.pathname]);
-
+  }, [isModalOpen, location.pathname]);
+  
   function handleLogout(e) {
     e.preventDefault();
     logout();
@@ -54,7 +56,7 @@ const Header = () => {
       <SContainer>
         <HeaderBlock>
           <HeaderLogo>
-            <Img user src="../Logo.svg" alt="logo" />
+            <Img $user={user} src="../Logo.svg" alt="logo" />
           </HeaderLogo>
           {user && (
             <>
