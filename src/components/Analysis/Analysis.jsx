@@ -1,3 +1,4 @@
+// Analysis.jsx
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { getTransactions } from "../../services/transactions";
@@ -25,8 +26,9 @@ export default function Analysis() {
   const [transactions, setTransactions] = useState([]);
   const [selectedDays, setSelectedDays] = useState([]);
   const [viewMode, setViewMode] = useState("month"); // "month" или "year"
-  const [selectedMonths, setSelectedMonths] = useState([]); // для годового выбора
+  const [selectedMonths, setSelectedMonths] = useState([]);
   const calendarScrollRef = useRef(null);
+  const yearScrollRef = useRef(null);
 
   // --- загрузка транзакций ---
   const fetchTransactions = useCallback(async () => {
@@ -75,15 +77,28 @@ export default function Analysis() {
 
   const scrollMonths = generateScrollMonths();
 
-  // --- автоскролл к текущему месяцу ---
+  // --- автоскролл к текущему месяцу (месячный режим) ---
   useEffect(() => {
-    if (calendarScrollRef.current) {
+    if (viewMode === "month" && calendarScrollRef.current) {
       const currentMonthElement = calendarScrollRef.current.querySelector("[data-current-month='true']");
       if (currentMonthElement) currentMonthElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, []);
+  }, [viewMode]);
 
-  // --- выбор дней и месяцев ---
+  // --- автоскролл к текущему месяцу (годовой режим) ---
+  useEffect(() => {
+    if (viewMode === "year" && yearScrollRef.current) {
+      const now = new Date();
+      const currentMonthElement = yearScrollRef.current.querySelector(
+        `[data-year='${now.getFullYear()}'][data-month='${now.getMonth()}']`
+      );
+      if (currentMonthElement) {
+        currentMonthElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [viewMode]);
+
+  // --- выбор дней ---
   const handleDaySelect = (year, month, day) => {
     if (!day) return;
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -92,6 +107,7 @@ export default function Analysis() {
     else setSelectedDays([dateStr]);
   };
 
+  // --- выбор месяца (с мультивыбором) ---
   const handleMonthClick = (year, month) => {
     const monthStr = `${year}-${month}`;
     if (selectedMonths.includes(monthStr)) {
@@ -101,6 +117,7 @@ export default function Analysis() {
     }
   };
 
+  // --- подсветка выбранных дней ---
   const isDaySelected = (year, month, day) => {
     if (!day) return false;
     const dateStr = `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
@@ -110,9 +127,16 @@ export default function Analysis() {
     return dateStr >= sorted[0] && dateStr <= sorted[1];
   };
 
+  // --- подсветка текущего дня ---
   const isCurrentDay = (year, month, day, monthData) => {
     if (!day || !monthData.isCurrentMonth) return false;
     return day === monthData.currentDay;
+  };
+
+  // --- подсветка текущего месяца в годовом режиме ---
+  const isCurrentMonthInYearView = (year, month) => {
+    const now = new Date();
+    return year === now.getFullYear() && month === now.getMonth();
   };
 
   // --- фильтрация по периоду ---
@@ -187,18 +211,22 @@ export default function Analysis() {
 
           {/* Годовой выбор месяцев */}
           {viewMode === "year" && (
-            <S.CalendarScroll style={{ height: "380px" }}>
+            <S.CalendarScroll ref={yearScrollRef} style={{ height: "380px" }}>
               {Array.from(new Set(scrollMonths.map(m => m.year))).map(year => (
                 <div key={year}>
-                  <S.MonthTitle>{year}</S.MonthTitle> {/* только год */}
+                  <S.MonthTitle>{year}</S.MonthTitle>
                   <S.YearMonthsGrid style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                     {months.map((monthName, idx) => {
                       const monthStr = `${year}-${idx}`;
                       const active = selectedMonths.includes(monthStr);
+                      const current = isCurrentMonthInYearView(year, idx);
                       return (
                         <S.MonthSelectButton
                           key={monthStr}
+                          data-year={year}
+                          data-month={idx}
                           $active={active}
+                          $current={current}
                           onClick={() => handleMonthClick(year, idx)}
                         >
                           {monthName}
@@ -206,7 +234,6 @@ export default function Analysis() {
                       );
                     })}
                   </S.YearMonthsGrid>
-
                 </div>
               ))}
             </S.CalendarScroll>
@@ -221,7 +248,7 @@ export default function Analysis() {
                   <label key={`${md.year}-${md.month}`} data-current-month={md.isCurrentMonth ? "true" : "false"}>
                     <S.MonthTitle>{md.title}</S.MonthTitle>
                     <S.DaysGrid>
-                                            {md.days.map((day, idx) => (
+                      {md.days.map((day, idx) => (
                         <S.DayCell
                           key={idx}
                           selected={isDaySelected(md.year, md.month, day)}
@@ -279,4 +306,3 @@ export default function Analysis() {
     </S.Container>
   );
 }
-

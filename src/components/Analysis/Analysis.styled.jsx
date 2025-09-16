@@ -180,11 +180,14 @@ export const YearMonthsGrid = styled.div`
 export const MonthSelectButton = styled.button`
   width: 101px;
   border-radius: 30px;
-  background: ${({ $active }) => ($active ? "#d7c9ec" : "#e4e4e4")};
+  background: ${({ $active, $current }) =>
+    $active || $current ? "#d7c9ec" : "#e4e4e4"};
   font-family: "Montserrat";
-  font-weight: ${({ $active }) => ($active ? 600 : 400)};
+  font-weight: ${({ $active, $current }) =>
+    $active || $current ? 600 : 400};
   font-size: 12px;
-  color: ${({ $active }) => ($active ? "#b24aee" : "#000000")};
+  color: ${({ $active, $current }) =>
+    $active || $current ? "#b24aee" : "#000000"};
   cursor: pointer;
   transition: all 0.2s;
 
@@ -194,6 +197,7 @@ export const MonthSelectButton = styled.button`
     font-weight: 600;
   }
 `;
+
 
 export const ChartWrapper = styled.div`
   flex: 1;
