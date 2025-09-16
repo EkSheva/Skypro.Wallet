@@ -43,7 +43,7 @@ const Header = () => {
   if (isModalOpen) {
     setIsModalOpen(false);
     }
-  }, [isModalOpen, location.pathname]);
+  }, [ location.pathname]);
   
   function handleLogout(e) {
     e.preventDefault();
