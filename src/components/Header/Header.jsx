@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from "react-router-dom";
-
 import {
   ButtonExit,
   HeaderBlock,
@@ -24,7 +23,7 @@ const Header = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+    setIsModalOpen((prev) => !prev);
   };
 
   const getLinkText = () => {
@@ -40,17 +39,19 @@ const Header = () => {
     }
   };
 
+  // Закрываем модалку при смене маршрута
   useEffect(() => {
-  if (isModalOpen) {
-    setIsModalOpen(false);
+    if (isModalOpen) {
+      setIsModalOpen(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
-  
-  function handleLogout(e) {
+
+  const handleLogout = (e) => {
     e.preventDefault();
     logout();
     navigate("/sign-in");
-  }
+  };
 
   return (
     <SHeader>
@@ -59,17 +60,21 @@ const Header = () => {
           <HeaderLogo>
             <Img $user={user} src="../Logo.svg" alt="logo" />
           </HeaderLogo>
+
           {user && (
             <>
               <HeaderNav>
                 <NavLinkS to="expenses">Мои расходы</NavLinkS>
                 <NavLinkS to="analysis">Анализ расходов</NavLinkS>
               </HeaderNav>
+
               <MobilNav>
                 <HeaderLinkMobil onClick={toggleModal}>
                   {getLinkText()} <Icon src="../Head3.svg" alt="Клик" /> 
                 </HeaderLinkMobil>
-                {isModalOpen ? <ModalMobil isModalOpen={isModalOpen} /> : null}
+
+                {isModalOpen && <ModalMobil />}
+
                 <div>
                   <ButtonExit onClick={handleLogout}>Выйти</ButtonExit>
                 </div>
