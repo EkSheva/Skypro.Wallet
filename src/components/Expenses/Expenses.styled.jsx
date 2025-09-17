@@ -15,6 +15,13 @@ export const Container = styled.div`
     background-color: rgba(255, 255, 255, 1);
   }
 `;
+
+export const ContainerTBM = styled.div`
+  display: flex;
+  flex-direction: row;
+      justify-content: space-between;
+    align-items: center;
+`;
 export const ContainerFilters = styled.div`
   display: flex;
   align-items: baseline;
@@ -29,8 +36,10 @@ export const Title = styled.h2`
   font-size: 32px;
   line-height: 150%;
   color: #1f2937;
+ 
   @media screen and (max-width: 495px) {
     font-size: 24px;
+     display:${({showForm}) => (showForm ? "none": "block")};
   }
 `;
 
@@ -44,15 +53,17 @@ export const Content = styled.div`
     flex-direction: column;
   }
 `;
-
 /* Таблица */
 export const TableWrapper = styled.div`
-  flex: 2;
+  /* flex: 2; */
   background: #fff;
   border-radius: 30px;
   border: none;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   padding: 32px;
+flex: ${({ isMobile }) => (isMobile ? 'none' : '1')}; 
+  width: ${({ isMobile }) => (isMobile ? '100%' : 'auto')};
+  display: ${({ isMobile, showForm }) => (isMobile && showForm ? 'none' : 'block')};
   @media screen and (max-width: 495px) {
     height: 100%;
     padding: 0px;
@@ -113,8 +124,10 @@ export const Table = styled.table`
 
 /* Форма */
 export const Form = styled.form`
-  flex: 1;
-  max-width: 379px;
+ flex: ${({ isMobile }) => (isMobile ? 'none' : '1')};
+ max-width: ${({ isMobile }) => (isMobile ? '100%' : '379px')};
+  /* flex: 1; */
+  /* max-width: 379px; */
   background: #fff;
   border-radius: 30px;
   border: none;
@@ -292,6 +305,9 @@ export const ActionButton = styled.button`
     color: #7b2cbf;
     transform: scale(1.2);
   }
+    @media screen and (max-width: 495px) {
+    display: none;
+  }
 `;
 
 /* Модалка */
@@ -339,5 +355,37 @@ export const Select = styled.select`
   option {
     background: #fff;
     color: #333;
+  }
+`;
+
+export const AddButton = styled.a`
+color:rgba(0, 0, 0, 1);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px; 
+  cursor: pointer;
+`;
+
+export const Icon = styled.img`
+  width: 12px;  
+  height: 12px;
+`;
+export const AddButtonF = styled.a`
+color:rgba(153, 153, 153, 1);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 3px; 
+  cursor: pointer;
+  display: none;
+   @media screen and (max-width: 495px) {
+    display: block;
   }
 `;

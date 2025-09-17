@@ -6,7 +6,7 @@ const ModalMobil = () => {
     <ModalConteiner>
       <ModalBlock>
         <TitleModal to="expenses">Мои расходы</TitleModal>
-        <TitleModal to="newExpense">Новый расход</TitleModal>
+        <TitleModal to="/expenses/new">Новый расход</TitleModal>
         <TitleModal to="analysis">Анализ расходов</TitleModal>
       </ModalBlock>
     </ModalConteiner>

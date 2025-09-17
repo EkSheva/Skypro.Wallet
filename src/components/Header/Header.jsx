@@ -6,6 +6,7 @@ import {
   HeaderLinkMobil,
   HeaderLogo,
   HeaderNav,
+  Icon,
   Img,
   MobilNav,
   NavLinkS,
@@ -43,7 +44,7 @@ const Header = () => {
   if (isModalOpen) {
     setIsModalOpen(false);
     }
-  }, [ location.pathname]);
+  }, [location.pathname]);
   
   function handleLogout(e) {
     e.preventDefault();
@@ -66,7 +67,7 @@ const Header = () => {
               </HeaderNav>
               <MobilNav>
                 <HeaderLinkMobil onClick={toggleModal}>
-                  {getLinkText()}
+                  {getLinkText()} <Icon src="../Head3.svg" alt="Клик" /> 
                 </HeaderLinkMobil>
                 {isModalOpen ? <ModalMobil isModalOpen={isModalOpen} /> : null}
                 <div>

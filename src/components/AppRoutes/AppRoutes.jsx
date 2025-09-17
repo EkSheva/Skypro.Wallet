@@ -24,8 +24,18 @@ function AppRoutes() {
       >
         {/* Приватные маршруты */}
         <Route element={<PrivateRoute />}>
-          <Route path="expenses" element={<ExpensesPage />} />
-          <Route path="analysis" element={<AnalysisPage />} />
+           <Route path="expenses" element={<ExpensesPage />}>
+            {/* Вложенные маршруты для мобильного отображения */}
+            <Route index element={<ExpensesPage />} /> {/* Отображает таблицу по умолчанию */}
+            <Route path="new" element={<ExpensesPage />} /> {/* Отображает форму для добавления */}
+            <Route path=":id/edit" element={<ExpensesPage />} /> {/* Отображает форму для редактирования */}
+          </Route>
+           <Route path="analysis" element={<AnalysisPage />}>
+            {/* Вложенные маршруты для мобильного отображения */}
+            <Route index element={<AnalysisPage />} /> {/* Отображает таблицу по умолчанию */}
+            <Route path="calendar" element={<AnalysisPage />} /> {/* Отображает форму для добавления */}
+            <Route path="chart" element={<AnalysisPage />} /> {/* Отображает форму для редактирования */}
+          </Route>
           <Route index element={<ExpensesPage />} />
         </Route>
       </Route>
