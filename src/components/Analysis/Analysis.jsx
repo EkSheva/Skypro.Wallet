@@ -1,9 +1,9 @@
-// Analysis.jsx
 import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { getTransactions } from "../../services/transactions";
 import * as S from "./Analysis.styled";
-import { Bar, XAxis, YAxis, Tooltip, Cell, LabelList } from "recharts";
+import { Bar, XAxis, YAxis, Tooltip, Cell, LabelList, BarChart } from "recharts";
+import { useDeviceDetect } from "../hooks/useDeviceDetect";
 
 const categories = [
   { id: "food", name: "Еда", color: "#c19aff" },
@@ -23,12 +23,27 @@ const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"];
 
 export default function Analysis() {
   const { user } = useContext(AuthContext);
+  const { isMobile } = useDeviceDetect();
   const [transactions, setTransactions] = useState([]);
   const [selectedDays, setSelectedDays] = useState([]);
-  const [viewMode, setViewMode] = useState("month"); // "month" или "year"
+  const [viewMode, setViewMode] = useState("month");
   const [selectedMonths, setSelectedMonths] = useState([]);
+  const [mobileView, setMobileView] = useState("chart"); // "chart", "period"
   const calendarScrollRef = useRef(null);
   const yearScrollRef = useRef(null);
+
+  // Функция для сокращения названий только в мобильной версии
+  const shortenLabel = (name) => {
+    if (!isMobile) return name;
+    
+    const abbreviations = {
+      'Транспорт': 'Трансп...',
+      'Развлечения': 'Развл...', 
+      'Образование': 'Образ...',
+    };
+    
+    return abbreviations[name] || name;
+  };
 
   // --- загрузка транзакций ---
   const fetchTransactions = useCallback(async () => {
@@ -77,27 +92,6 @@ export default function Analysis() {
 
   const scrollMonths = generateScrollMonths();
 
-  // --- автоскролл к текущему месяцу (месячный режим) ---
-  useEffect(() => {
-    if (viewMode === "month" && calendarScrollRef.current) {
-      const currentMonthElement = calendarScrollRef.current.querySelector("[data-current-month='true']");
-      if (currentMonthElement) currentMonthElement.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [viewMode]);
-
-  // --- автоскролл к текущему месяцу (годовой режим) ---
-  useEffect(() => {
-    if (viewMode === "year" && yearScrollRef.current) {
-      const now = new Date();
-      const currentMonthElement = yearScrollRef.current.querySelector(
-        `[data-year='${now.getFullYear()}'][data-month='${now.getMonth()}']`
-      );
-      if (currentMonthElement) {
-        currentMonthElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }
-  }, [viewMode]);
-
   // --- выбор дней ---
   const handleDaySelect = (year, month, day) => {
     if (!day) return;
@@ -107,7 +101,7 @@ export default function Analysis() {
     else setSelectedDays([dateStr]);
   };
 
-  // --- выбор месяца (с мультивыбором) ---
+  // --- выбор месяца ---
   const handleMonthClick = (year, month) => {
     const monthStr = `${year}-${month}`;
     if (selectedMonths.includes(monthStr)) {
@@ -132,8 +126,8 @@ export default function Analysis() {
     if (!day || !monthData.isCurrentMonth) return false;
     return day === monthData.currentDay;
   };
-
-  // --- подсветка текущего месяца в годовом режиме ---
+  
+  // --- функция для подсветки текущего месяца в годовом режиме ---
   const isCurrentMonthInYearView = (year, month) => {
     const now = new Date();
     return year === now.getFullYear() && month === now.getMonth();
@@ -159,12 +153,19 @@ export default function Analysis() {
     });
   }
 
-  // --- группировка по категориям ---
-  const expenses = categories.map(cat => ({
-    name: cat.name,
-    value: filtered.filter(t => t.category === cat.id).reduce((acc, cur) => acc + cur.sum, 0),
-    color: cat.color
-  }));
+  // --- группировка по категориям с минимальной высотой для нулевых значений ---
+  const expenses = categories.map(cat => {
+    const value = filtered
+      .filter(t => t.category === cat.id)
+      .reduce((acc, cur) => acc + cur.sum, 0);
+    
+    return {
+      name: cat.name,
+      value: value,
+      color: cat.color,
+      displayValue: value === 0 ? 1 : value // Минимальная высота для нулевых значений
+    };
+  });
 
   const total = expenses.reduce((acc, cur) => acc + cur.value, 0);
 
@@ -190,6 +191,173 @@ export default function Analysis() {
     }
   };
 
+  // --- кастомный форматтер для тултипа ---
+  const customTooltipFormatter = (value, name, props) => {
+    // Показываем реальное значение, а не displayValue
+    const realValue = props.payload.value;
+    return [`${realValue.toLocaleString("ru-RU")} ₽`, "Сумма"];
+  };
+
+  // --- мобильные обработчики ---
+  const handleSelectPeriod = () => {
+    setMobileView("period");
+  };
+
+  //const handleBackToChart = () => {
+  //  setMobileView("chart");
+  //};
+
+  const handleApplyPeriod = () => {
+    setMobileView("chart");
+  };
+
+  if (isMobile) {
+    return (
+      <S.MobileContainer>
+        {/* Шапка для мобильной версии */}
+        <S.MobileHeader>
+          <S.MobileTitle>
+            {mobileView === "chart" ? "Анализ расходов" : "Выбор периода"}
+          </S.MobileTitle>         
+        </S.MobileHeader>
+
+        {mobileView === "chart" ? (
+          // Страница с графиком (ТОЛЬКО ГРАФИК)
+          <>
+            <S.ChartSection>
+              <S.TotalAmount>{total.toLocaleString("ru-RU")} ₽</S.TotalAmount>
+              <S.PeriodText>{getSelectedPeriodText()}</S.PeriodText>
+              
+              <S.ChartWrapperMobile>
+                <BarChart 
+                  width={343} 
+                  height={376} 
+                  data={expenses} 
+                  margin={{ top: 20, right: 10, left: 10, bottom: 30 }}
+                >
+                  <XAxis
+                    dataKey="name"
+                    tick={{ 
+                      fontSize: 10, 
+                      fontFamily: 'Montserrat', 
+                      fontWeight: 400,
+                      fill: '#000000'
+                    }}
+                    axisLine={false}
+                    tickLine={false}
+                    tickFormatter={shortenLabel}
+                    interval={0}
+                  />
+                  <YAxis hide />
+                  <Tooltip formatter={customTooltipFormatter} />
+                  <Bar 
+                    dataKey="displayValue" 
+                    radius={[8, 8, 8, 8]} 
+                    barSize={55}
+                  >
+                    {expenses.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                    <LabelList
+                      dataKey="value"
+                      position="top"
+                      formatter={(value) => value === 0 ? "0 ₽" : value.toLocaleString("ru-RU") + " ₽"}
+                      style={{ 
+                        fontSize: 10, 
+                        fontWeight: 600,
+                        fontFamily: 'Montserrat'
+                      }}
+                    />
+                  </Bar>
+                </BarChart>
+              </S.ChartWrapperMobile>
+            </S.ChartSection>
+
+            <S.ChangePeriodButton onClick={handleSelectPeriod}>
+              Выбрать другой период
+            </S.ChangePeriodButton>
+          </>
+        ) : (
+          // Страница выбора периода
+          <S.PeriodSelection>
+            <S.ToggleGroup>
+              <S.ToggleButton 
+                $active={viewMode === "month"} 
+                onClick={() => setViewMode("month")}
+              >
+                По дням
+              </S.ToggleButton>
+              <S.ToggleButton 
+                $active={viewMode === "year"} 
+                onClick={() => setViewMode("year")}
+              >
+                По месяцам
+              </S.ToggleButton>
+            </S.ToggleGroup>
+
+            {viewMode === "year" ? (
+              <S.YearSelection>
+                {Array.from(new Set(scrollMonths.map(m => m.year))).map(year => (
+                  <div key={year}>
+                    <S.YearTitle>{year}</S.YearTitle>
+                    <S.MonthsGrid>
+                      {months.map((monthName, idx) => {
+                        const monthStr = `${year}-${idx}`;
+                        const active = selectedMonths.includes(monthStr);
+                        return (
+                          <S.MonthButton
+                            key={monthStr}
+                            $selected={active}
+                            onClick={() => handleMonthClick(year, idx)}
+                          >
+                            {monthName}
+                          </S.MonthButton>
+                        );
+                      })}
+                    </S.MonthsGrid>
+                  </div>
+                ))}
+              </S.YearSelection>
+            ) : (
+              <S.MonthSelection>
+                <S.CalendarContainer>
+                  <S.FixedDaysHeader>
+                    {weekDays.map(d => <S.DayHeader key={d}>{d}</S.DayHeader>)}
+                  </S.FixedDaysHeader>
+                  <S.CalendarScroll ref={calendarScrollRef}>
+                    {scrollMonths.map(md => (
+                      <div key={`${md.year}-${md.month}`}>
+                        <S.MonthTitle>{md.title}</S.MonthTitle>
+                        <S.DaysGrid>
+                          {md.days.map((day, idx) => (
+                            <S.DayCell
+                              key={idx}
+                              selected={isDaySelected(md.year, md.month, day)}
+                              $current={isCurrentDay(md.year, md.month, day, md)}
+                              disabled={!day}
+                              onClick={() => handleDaySelect(md.year, md.month, day)}
+                            >
+                              {day}
+                            </S.DayCell>
+                          ))}
+                        </S.DaysGrid>
+                      </div>
+                    ))}
+                  </S.CalendarScroll>
+                </S.CalendarContainer>
+              </S.MonthSelection>
+            )}
+
+            <S.ApplyButton onClick={handleApplyPeriod}>
+              Выбрать период
+            </S.ApplyButton>
+          </S.PeriodSelection>
+        )}
+      </S.MobileContainer>
+    );
+  }
+
+  // Десктопная версия
   return (
     <S.Container>
       <S.Title>Анализ расходов</S.Title>
@@ -280,17 +448,18 @@ export default function Analysis() {
                 tick={{ fontSize: 12, fontWeight: 400, fill: "#000000" }}
                 axisLine={false}
                 tickLine={false}
+                // Без tickFormatter - полные названия для десктопа
               />
               <YAxis hide />
-              <Tooltip formatter={(value) => [`${value} ₽`, "Сумма"]} />
-              <Bar dataKey="value" radius={[12, 12, 12, 12]} barSize={94}>
+              <Tooltip formatter={customTooltipFormatter} />
+              <Bar dataKey="displayValue" radius={[12, 12, 12, 12]} barSize={94}>
                 {expenses.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
                 <LabelList
                   dataKey="value"
                   position="top"
-                  formatter={(value) => value.toLocaleString("ru-RU") + " ₽"}
+                  formatter={(value) => value === 0 ? "0 ₽" : value.toLocaleString("ru-RU") + " ₽"}
                   style={{
                     fontFamily: "Montserrat",
                     fontWeight: 600,

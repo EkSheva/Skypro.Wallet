@@ -238,3 +238,142 @@ export const ResponsiveContainer = styled(RC).attrs({
 export const BarChart = styled(BC).attrs({
   margin: { top: 20 },
 })``;
+// Добавьте эти стили в Analysis.styled.jsx
+export const MobileContainer = styled.div`
+  padding: 16px;
+  background: #fff;
+  width: 375px;
+  min-height: 504px;
+  margin: 0 auto;
+  
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+export const MobileHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+`;
+
+export const BackButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #7c3aed;
+  cursor: pointer;
+  padding: 8px;
+`;
+
+export const MobileTitle = styled.h1`
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+`;
+
+export const ChartSection = styled.div`
+  text-align: center;
+  margin-bottom: 24px;
+  width: 343px;
+`;
+
+export const TotalAmount = styled.h2`
+  display: flex;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 8px;
+`;
+
+export const PeriodText = styled.p`
+  display: flex;
+  font-weight: 400;
+  font-size: 12px;
+  color: #999999;
+  margin-bottom: 24px;
+`;
+
+export const ChartWrapperMobile = styled.div`
+  width: 343px;
+  height: 376px;
+  margin-bottom: 24px;
+`;
+
+export const ChangePeriodButton = styled.button`
+  background: #7c3aed;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 24px;
+`;
+
+export const PeriodSelection = styled.div`
+  padding: 16px 0;
+`;
+
+export const ToggleGroup = styled.div`
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 24px;
+`;
+
+export const YearSelection = styled.div`
+  margin-bottom: 24px;
+`;
+
+export const YearTitle = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  margin: 16px 0 12px 0;
+  color: #374151;
+`;
+
+export const MonthsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+`;
+
+export const MonthButton = styled.button`
+  padding: 12px 8px;
+  border: 1px solid ${props => props.$selected ? "#7c3aed" : "#e5e7eb"};
+  background: ${props => props.$selected ? "#f3f0ff" : "white"};
+  color: ${props => props.$selected ? "#7c3aed" : "#374151"};
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: ${props => props.$selected ? 600 : 400};
+  cursor: pointer;
+  
+  &:hover {
+    border-color: #7c3aed;
+  }
+`;
+
+export const MonthSelection = styled.div`
+  margin-bottom: 24px;
+`;
+
+export const ApplyButton = styled.button`
+  background: #7c3aed;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+`;
