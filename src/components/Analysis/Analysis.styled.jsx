@@ -349,16 +349,28 @@ export const MonthsGrid = styled.div`
 
 export const MonthButton = styled.button`
   padding: 12px 8px;
-  border: 1px solid ${props => props.$selected ? "#7c3aed" : "#e5e7eb"};
-  background: ${props => props.$selected ? "#f3f0ff" : "white"};
-  color: ${props => props.$selected ? "#7c3aed" : "#374151"};
+  border: 1px solid ${props => {
+    if (props.$selected) return "#9653e2";
+    if (props.$current) return "#9653e2"; 
+    return "#e5e7eb";
+  }};
+  background: ${props => {
+    if (props.$selected) return "#f3f0ff";
+    if (props.$current) return "#f3f0ff"; 
+    return "white";
+  }};
+  color: ${props => {
+    if (props.$selected) return "#7c3aed";
+    if (props.$current) return "#7c3aed"; 
+    return "#374151";
+  }};
   border-radius: 8px;
   font-size: 12px;
-  font-weight: ${props => props.$selected ? 600 : 400};
+  font-weight: ${props => props.$selected || props.$current ? 600 : 400};
   cursor: pointer;
   
   &:hover {
-    border-color: #7c3aed;
+    border-color: ${props => props.$selected ? "#7c3aed" : "#10b981"};
   }
 `;
 
