@@ -91,7 +91,27 @@ export default function Analysis() {
   };
 
   const scrollMonths = generateScrollMonths();
+  
+   // --- автоскролл к текущему месяцу (месячный режим) ---
+  useEffect(() => {
+    if (viewMode === "month" && calendarScrollRef.current) {
+      const currentMonthElement = calendarScrollRef.current.querySelector("[data-current-month='true']");
+      if (currentMonthElement) currentMonthElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [viewMode]);
 
+  // --- автоскролл к текущему месяцу (годовой режим) ---
+  useEffect(() => {
+    if (viewMode === "year" && yearScrollRef.current) {
+      const now = new Date();
+      const currentMonthElement = yearScrollRef.current.querySelector(
+        `[data-year='${now.getFullYear()}'][data-month='${now.getMonth()}']`
+      );
+      if (currentMonthElement) {
+        currentMonthElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [viewMode]);
   // --- выбор дней ---
   const handleDaySelect = (year, month, day) => {
     if (!day) return;
@@ -296,57 +316,63 @@ export default function Analysis() {
             </S.ToggleGroup>
 
             {viewMode === "year" ? (
-              <S.YearSelection>
-                {Array.from(new Set(scrollMonths.map(m => m.year))).map(year => (
-                  <div key={year}>
-                    <S.YearTitle>{year}</S.YearTitle>
-                    <S.MonthsGrid>
-                      {months.map((monthName, idx) => {
-                        const monthStr = `${year}-${idx}`;
-                        const active = selectedMonths.includes(monthStr);
-                        return (
-                          <S.MonthButton
-                            key={monthStr}
-                            $selected={active}
-                            onClick={() => handleMonthClick(year, idx)}
-                          >
-                            {monthName}
-                          </S.MonthButton>
-                        );
-                      })}
-                    </S.MonthsGrid>
-                  </div>
-                ))}
-              </S.YearSelection>
-            ) : (
-              <S.MonthSelection>
-                <S.CalendarContainer>
-                  <S.FixedDaysHeader>
-                    {weekDays.map(d => <S.DayHeader key={d}>{d}</S.DayHeader>)}
-                  </S.FixedDaysHeader>
-                  <S.CalendarScroll ref={calendarScrollRef}>
-                    {scrollMonths.map(md => (
-                      <div key={`${md.year}-${md.month}`}>
-                        <S.MonthTitle>{md.title}</S.MonthTitle>
-                        <S.DaysGrid>
-                          {md.days.map((day, idx) => (
-                            <S.DayCell
-                              key={idx}
-                              selected={isDaySelected(md.year, md.month, day)}
-                              $current={isCurrentDay(md.year, md.month, day, md)}
-                              disabled={!day}
-                              onClick={() => handleDaySelect(md.year, md.month, day)}
-                            >
-                              {day}
-                            </S.DayCell>
-                          ))}
-                        </S.DaysGrid>
-                      </div>
-                    ))}
-                  </S.CalendarScroll>
-                </S.CalendarContainer>
-              </S.MonthSelection>
-            )}
+  <S.YearSelection ref={yearScrollRef}>
+    {Array.from(new Set(scrollMonths.map(m => m.year))).map(year => (
+      <div key={year}>
+        <S.YearTitle>{year}</S.YearTitle>
+        <S.MonthsGrid>
+          {months.map((monthName, idx) => {
+            const monthStr = `${year}-${idx}`;
+            const active = selectedMonths.includes(monthStr);
+            return (
+              <S.MonthButton
+                key={monthStr}
+                $selected={active}
+                $current={isCurrentMonthInYearView(year, idx)}
+                data-year={year}
+                data-month={idx}
+                onClick={() => handleMonthClick(year, idx)}
+              >
+                {monthName}
+              </S.MonthButton>
+            );
+          })}
+        </S.MonthsGrid>
+      </div>
+    ))}
+  </S.YearSelection>
+) : (
+  <S.MonthSelection>
+    <S.CalendarContainer>
+      <S.FixedDaysHeader>
+        {weekDays.map(d => <S.DayHeader key={d}>{d}</S.DayHeader>)}
+      </S.FixedDaysHeader>
+      <S.CalendarScroll ref={calendarScrollRef}>
+        {scrollMonths.map(md => (
+          <div 
+            key={`${md.year}-${md.month}`} 
+            data-current-month={md.isCurrentMonth ? "true" : "false"}
+          >
+            <S.MonthTitle>{md.title}</S.MonthTitle>
+            <S.DaysGrid>
+              {md.days.map((day, idx) => (
+                <S.DayCell
+                  key={idx}
+                  selected={isDaySelected(md.year, md.month, day)}
+                  $current={isCurrentDay(md.year, md.month, day, md)}
+                  disabled={!day}
+                  onClick={() => handleDaySelect(md.year, md.month, day)}
+                >
+                  {day}
+                </S.DayCell>
+              ))}
+            </S.DaysGrid>
+          </div>
+        ))}
+      </S.CalendarScroll>
+    </S.CalendarContainer>
+  </S.MonthSelection>
+)}
 
             <S.ApplyButton onClick={handleApplyPeriod}>
               Выбрать период
