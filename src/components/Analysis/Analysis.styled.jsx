@@ -241,9 +241,9 @@ export const BarChart = styled(BC).attrs({
 // Добавьте эти стили в Analysis.styled.jsx
 export const MobileContainer = styled.div`
   padding: 16px;
-  background: #fff;
-  width: 375px;
-  min-height: 504px;
+  //background: #fff;
+  //width: 375px;
+  //min-height: 504px;
   margin: 0 auto;
   
   @media (min-width: 768px) {
@@ -256,8 +256,7 @@ export const MobileHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e5e7eb;
+  align-items: baseline;
 `;
 
 export const BackButton = styled.button`
@@ -278,7 +277,7 @@ export const MobileTitle = styled.h1`
 
 export const ChartSection = styled.div`
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 31px;
   width: 343px;
 `;
 
@@ -299,9 +298,9 @@ export const PeriodText = styled.p`
 `;
 
 export const ChartWrapperMobile = styled.div`
-  width: 343px;
-  height: 376px;
-  margin-bottom: 24px;
+  //width: 343px;
+  //height: 376px;
+  //margin-bottom: 24px;
 `;
 
 export const ChangePeriodButton = styled.button`
@@ -323,7 +322,7 @@ export const PeriodSelection = styled.div`
 
 export const ToggleGroup = styled.div`
   display: flex;
-  background: #f3f4f6;
+  gap: 12px;
   border-radius: 8px;
   padding: 4px;
   margin-bottom: 24px;
@@ -331,6 +330,8 @@ export const ToggleGroup = styled.div`
 
 export const YearSelection = styled.div`
   margin-bottom: 24px;
+  overflow-y: auto;
+  height: 380px;
 `;
 
 export const YearTitle = styled.h3`
