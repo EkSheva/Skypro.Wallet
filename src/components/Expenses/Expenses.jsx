@@ -141,6 +141,7 @@ const Expenses = () => {
           <>
             <S.AddButton
               onClick={() => {
+                setEditModal(false)
                 setShowForm(true);
                 navigate("/expenses/new");
               }}
