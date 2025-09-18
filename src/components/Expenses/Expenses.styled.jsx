@@ -407,17 +407,18 @@ export const Icon = styled.img`
   padding-right: 3px;
 `;
 export const AddButtonF = styled.a`
+  font-family: "Montserrat";
   color: rgba(153, 153, 153, 1);
   font-weight: 600;
   font-size: 12px;
   line-height: 150%;
   align-items: center;
   justify-content: left;
-
   cursor: pointer;
   display: none;
   @media screen and (max-width: 495px) {
     display: block;
+    margin-bottom: -12px;
   }
 `;
 
