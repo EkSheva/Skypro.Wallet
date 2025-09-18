@@ -17,6 +17,8 @@ import {
   Modal,
 } from "./AuthForm.styled";
 import Header from "../Header/Header";
+import { ExpensesProvider } from "../../context/ExpensesProvider";
+
 
 const AuthForm = ({ isSignUp }) => {
   const navigate = useNavigate();
@@ -109,9 +111,11 @@ const AuthForm = ({ isSignUp }) => {
 
   return (
     <Bg>
-      <Header />
+      <ExpensesProvider>
+        <Header />
+      </ExpensesProvider>
       <Modal>
-        <FWrapper isSignUp>
+        <FWrapper $isSignUp={isSignUp}>
           <FTitle>{isSignUp ? "Регистрация" : "Вход"}</FTitle>
           <Form id="form" onSubmit={handleSubmit}>
             <InputWrapper>
