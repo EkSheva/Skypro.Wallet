@@ -11,7 +11,7 @@ export const Container = styled.div`
   padding-right: calc(50% - 600px);
   @media screen and (max-width: 495px) {
     gap: 24px;
-    padding: 24px 16px;
+    padding: 0px 16px 24px 16px;
     background-color: rgba(255, 255, 255, 1);
   }
 `;
@@ -39,7 +39,7 @@ export const Title = styled.h2`
 
   @media screen and (max-width: 495px) {
     font-size: 24px;
-    display: ${({ showForm }) => (showForm ? "none" : "block")};
+    display: ${({ $showForm }) => ($showForm ? "none" : "block")};
   }
 `;
 
@@ -47,7 +47,7 @@ export const Title = styled.h2`
 export const Content = styled.div`
   display: flex;
   gap: 34px;
-      align-items: stretch;
+  align-items: stretch;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -93,8 +93,8 @@ export const Table = styled.table`
     padding-top: 16px;
     font-weight: 400;
     font-size: 12px;
-     @media screen and (max-width: 495px) {
-    font-size: 10px;
+    @media screen and (max-width: 495px) {
+      font-size: 10px;
   }
   }
 
@@ -103,6 +103,9 @@ export const Table = styled.table`
     font-size: 12px;
     color: rgba(153, 153, 153, 1);
     border-bottom: 1px solid #eee;
+    @media screen and (max-width: 495px) {
+      font-size: 10px;
+    }
   }
 
   /* Кнопка удаления */
@@ -232,11 +235,17 @@ export const CategoryButton = styled.button`
 /* Фильтры */
 export const Filters = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 24px;
   font-family: Montserrat;
   font-weight: 400;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 150%;
+
+  /* Мобильная версия */
+  @media (max-width: 768px) {
+    gap: 16px;
+    font-size: 10px;
+  }
 `;
 
 export const Dropdown = styled.div`
@@ -253,8 +262,7 @@ export const DropdownToggle = styled.span`
   text-decoration: underline;
   display: inline-flex;
   align-items: center;
-
-  max-width: 80px;          /* ограничение ширины на мобилке */
+  max-width: 80px;       /* ограничение ширины на мобилке */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -276,8 +284,6 @@ export const ArrowIcon = styled.span`
   transition: transform 0.3s ease;
   margin-left: 4px;
 `;
-
-
 
 export const DropdownMenu = styled.div`
   position: absolute;
@@ -320,7 +326,6 @@ export const FilterButton = styled.button`
       font-weight: 600;
     `}
 `;
-
 /* Кнопки действий */
 export const ActionButton = styled.button`
   background: none;
@@ -337,8 +342,6 @@ export const ActionButton = styled.button`
     display: none;
   }
 `;
-
-
 /* Модалка */
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -363,7 +366,6 @@ export const Select = styled.select`
   width: auto; /* ширина по содержимому */
   min-width: fit-content; /* чтобы не схлопывалось */
   max-width: 100%; /* ограничение */
-
   padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
