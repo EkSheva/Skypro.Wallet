@@ -1,4 +1,4 @@
-import React, { useState,  useContext} from "react";
+import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
   addTransaction,
@@ -18,9 +18,23 @@ const categories = [
   { id: "others", label: "Другое", icon: "📦" },
 ];
 
+// хелпер для сокращения текста
+const truncateLabel = (text, max = 4) =>
+  text.length > max ? text.slice(0, max) + "..." : text;
+
 const Expenses = () => {
   const { user } = useContext(AuthContext);
-  const { fetchExpenses, isMobile, setShowForm, transactions, loading, errors, showForm, setErrors} = useContext(ExpensesContext);
+  const {
+    fetchExpenses,
+    isMobile,
+    setShowForm,
+    transactions,
+    loading,
+    errors,
+    showForm,
+    setErrors,
+  } = useContext(ExpensesContext);
+
   const [form, setForm] = useState({
     title: "",
     category: "",
@@ -144,133 +158,166 @@ const Expenses = () => {
       {/* Контент */}
       <S.Content>
         {(!isMobile || (isMobile && !showForm)) && (
-          <S.TableWrapper $isMobile={isMobile}>
-            <S.ContainerFilters>
-              <S.TableTitle>Таблица расходов</S.TableTitle>
-              {/* Фильтры */}
-              <S.Filters>
-                <label>
-                  Фильтровать по категории:{" "}
-                  <S.Dropdown>
-                    <S.DropdownToggle
-                      onClick={() => setOpenCategory((p) => !p)}
-                    >
-                      {categories.find((c) => c.id === filter)?.label || "все"}
-                    </S.DropdownToggle>
-                    {openCategory && (
-                      <S.DropdownMenu>
-                        <S.DropdownItem
-                          onClick={() => {
-                            setFilter("all");
-                            setOpenCategory(false);
-                          }}
-                        >
-                          Все
-                        </S.DropdownItem>
-                        {categories.map((c) => (
+          <>
+            <S.TableWrapper $isMobile={isMobile}>
+              <S.ContainerFilters>
+                <S.TableTitle>Таблица расходов</S.TableTitle>
+                {/* Фильтры */}
+                <S.Filters>
+                  <label>
+                    Фильтровать по категории:{" "}
+                    <S.Dropdown>
+                      <S.DropdownToggle onClick={() => setOpenCategory((p) => !p)}>
+                        {truncateLabel(
+                          categories.find((c) => c.id === filter)?.label || "все"
+                        )}
+                        <S.ArrowIcon open={openCategory}><svg width="7" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3.5101 4.47876L0.930499 0.010757L6.0897 0.0107574L3.5101 4.47876Z" fill="black"/>
+                        </svg>
+                        </S.ArrowIcon>
+                      </S.DropdownToggle>
+                      {openCategory && (
+                        <S.DropdownMenu>
                           <S.DropdownItem
-                            key={c.id}
                             onClick={() => {
-                              setFilter(c.id);
+                              setFilter("all");
                               setOpenCategory(false);
                             }}
                           >
-                            {c.label}
+                            Все
                           </S.DropdownItem>
-                        ))}
-                      </S.DropdownMenu>
-                    )}
-                  </S.Dropdown>
-                </label>
+                          {categories.map((c) => (
+                            <S.DropdownItem
+                              key={c.id}
+                              onClick={() => {
+                                setFilter(c.id);
+                                setOpenCategory(false);
+                              }}
+                            >
+                              {c.label}
+                            </S.DropdownItem>
+                          ))}
+                        </S.DropdownMenu>
+                      )}
+                    </S.Dropdown>
+                  </label>
 
-                <label>
-                  Сортировать по:{" "}
-                  <S.Dropdown>
-                    <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
-                      {sortBy === "date" ? "дате" : "сумме"}
-                    </S.DropdownToggle>
-                    {openSort && (
-                      <S.DropdownMenu>
-                        <S.DropdownItem
-                          onClick={() => {
-                            setSortBy("date");
-                            setOpenSort(false);
-                          }}
-                        >
-                          Дате
-                        </S.DropdownItem>
-                        <S.DropdownItem
-                          onClick={() => {
-                            setSortBy("sum");
-                            setOpenSort(false);
-                          }}
-                        >
-                          Сумме
-                        </S.DropdownItem>
-                      </S.DropdownMenu>
-                    )}
-                  </S.Dropdown>
-                </label>
-              </S.Filters>
-            </S.ContainerFilters>
-            <S.Table>
-              <thead>
-                <tr>
-                  <th>Описание</th>
-                  <th>Категория</th>
-                  <th>Дата</th>
-                  <th>Сумма</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTransactions.length > 0 ? (
-                  filteredTransactions.map((t) => (
-                    <S.TableRow
-                      key={t._id}
-                      onClick={() => handleRowClick(t._id)}
-                      $isSelected={selectedTransactionId === t._id}
-                    >
-                      <td>{t.description}</td>
-                      <td>
-                        {categories.find((c) => c.id === t.category)?.label ||
-                          t.category}
-                      </td>
-                      <td>
-                        {new Date(t.date).toLocaleDateString("ru-RU", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
-                      </td>
-                      <td>{t.sum} ₽</td>
-                      <S.ConteunerActionButton
-                        style={{
-                          display: "flex",
-                          gap: "5px",
-                          alignItems: "center",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <S.ActionButton onClick={() => handleEdit(t)}>
-                          ✏️
-                        </S.ActionButton>
-                        <S.ActionButton
-                          onClick={() => handleDeleteTransaction(t._id)}
-                        >
-                          🗑️
-                        </S.ActionButton>
-                      </S.ConteunerActionButton>
-                    </S.TableRow>
-                  ))
-                ) : (
+                  <label>
+                    Сортировать по:{" "}
+                    <S.Dropdown>
+                      <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
+                        {sortBy === "date" ? "Дата" : "Сумма"}
+                        <S.ArrowIcon open={openSort}><svg width="7" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3.5101 4.47876L0.930499 0.010757L6.0897 0.0107574L3.5101 4.47876Z" fill="black"/>
+                        </svg>
+                        </S.ArrowIcon>
+                      </S.DropdownToggle>
+                      {openSort && (
+                        <S.DropdownMenu>
+                          <S.DropdownItem
+                            onClick={() => {
+                              setSortBy("date");
+                              setOpenSort(false);
+                            }}
+                          >
+                            Дате
+                          </S.DropdownItem>
+                          <S.DropdownItem
+                            onClick={() => {
+                              setSortBy("sum");
+                              setOpenSort(false);
+                            }}
+                          >
+                            Сумме
+                          </S.DropdownItem>
+                        </S.DropdownMenu>
+                      )}
+                    </S.Dropdown>
+                  </label>
+                </S.Filters>
+              </S.ContainerFilters>
+              <S.Table>
+                <thead>
                   <tr>
-                    <td colSpan={5}>Нет транзакций</td>
+                    <th>Описание</th>
+                    <th>Категория</th>
+                    <th>Дата</th>
+                    <th>Сумма</th>
+                    <th></th>
                   </tr>
-                )}
-              </tbody>
-            </S.Table>
-          </S.TableWrapper>
+                </thead>
+                <tbody>
+                  {filteredTransactions.length > 0 ? (
+                    filteredTransactions.map((t) => (
+                      <S.TableRow
+                        key={t._id}
+                        onClick={() => handleRowClick(t._id)}
+                        $isSelected={selectedTransactionId === t._id}
+                      >
+                        <td>{t.description}</td>
+                        <td>
+                          {categories.find((c) => c.id === t.category)?.label || t.category}
+                        </td>
+                        <td>
+                          {new Date(t.date).toLocaleDateString("ru-RU", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
+                        </td>
+                        <td>{t.sum} ₽</td>
+
+                        {/* Кнопки редактирования/удаления только для ПК */}
+                        {!isMobile && (
+                          <S.ConteunerActionButton
+                            style={{
+                              display: "flex",
+                              gap: "5px",
+                              alignItems: "center",
+                              justifyContent: "flex-end",
+                            }}
+                          >
+                            <S.ActionButton onClick={() => handleEdit(t)}>✏️</S.ActionButton>
+                            <S.ActionButton onClick={() => handleDeleteTransaction(t._id)}>🗑️</S.ActionButton>
+                          </S.ConteunerActionButton>
+                        )}
+                      </S.TableRow>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5}>Нет транзакций</td>
+                    </tr>
+                  )}
+                </tbody>
+
+              </S.Table>
+            </S.TableWrapper>
+            {/* Мобильные действия под таблицей */}
+            {isMobile && !showForm && filteredTransactions.length > 0 && (
+              <S.MobileActions>
+                <BaseButton
+                  text="Редактировать расход"
+                  onClick={() => {
+                    if (selectedTransactionId) {
+                      const t = transactions.find(t => t._id === selectedTransactionId);
+                      handleEdit(t);
+                    }
+                  }}
+                  disabled={!selectedTransactionId} // активна только если выбрана строка
+                />
+                <S.DeleteText
+                  onClick={() => {
+                    if (selectedTransactionId) {
+                      handleDeleteTransaction(selectedTransactionId);
+                      setSelectedTransactionId(null);
+                    }
+                  }}
+                >
+                  Удалить расход
+                </S.DeleteText>
+              </S.MobileActions>
+            )}
+          </> 
         )}
         {/* Форма */}
         {showForm && (

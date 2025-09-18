@@ -232,10 +232,10 @@ export const CategoryButton = styled.button`
 /* Фильтры */
 export const Filters = styled.div`
   display: flex;
-  gap: 24px;
+  gap: 16px;
   font-family: Montserrat;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 150%;
 `;
 
@@ -247,14 +247,37 @@ export const Dropdown = styled.div`
 export const DropdownToggle = styled.span`
   cursor: pointer;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 150%;
   color: #7c3aed;
   text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+
+  max-width: 80px;          /* ограничение ширины на мобилке */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   &:hover {
     color: #7b2cbf;
   }
+
+  @media screen and (min-width: 496px) {
+    max-width: none; /* на десктопе показываем полностью */
+  }
 `;
+
+export const ArrowIcon = styled.span`
+  font-size: 10px;
+  display: inline-block;
+  color: #000; /* полностью черная */
+  transform: rotate(${(props) => (props.open ? "180deg" : "0deg")});
+  transition: transform 0.3s ease;
+  margin-left: 4px;
+`;
+
+
 
 export const DropdownMenu = styled.div`
   position: absolute;
@@ -416,4 +439,19 @@ export const ConteunerActionButton = styled.td`
   @media screen and (max-width: 495px) {
     display: none;
   }
+`;
+export const MobileActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: center;
+`;
+
+export const DeleteText = styled.span`
+  color: #999999;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 12px;
 `;
