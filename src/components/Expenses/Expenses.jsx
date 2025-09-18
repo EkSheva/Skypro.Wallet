@@ -1,9 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import {
-  addTransaction,
-  deleteTransaction,
-} from "../../services/transactions";
+import { addTransaction, deleteTransaction } from "../../services/transactions";
 import * as S from "./Expenses.styled";
 import BaseButton from "../BaseButton/BaseButton";
 import { useNavigate } from "react-router-dom";
@@ -137,7 +134,7 @@ const Expenses = () => {
   if (loading) return <p>Загрузка...</p>;
 
   return (
-    <S.Container $isMobile={isMobile}>
+    <S.Container $showForm={showForm}>
       <S.ContainerTBM>
         <S.Title $showForm={showForm}>Мои расходы </S.Title>
         {isMobile && !showForm && (
@@ -167,13 +164,26 @@ const Expenses = () => {
                   <label>
                     Фильтровать по категории:{" "}
                     <S.Dropdown>
-                      <S.DropdownToggle onClick={() => setOpenCategory((p) => !p)}>
+                      <S.DropdownToggle
+                        onClick={() => setOpenCategory((p) => !p)}
+                      >
                         {truncateLabel(
-                          categories.find((c) => c.id === filter)?.label || "все"
+                          categories.find((c) => c.id === filter)?.label ||
+                            "все"
                         )}
-                        <S.ArrowIcon open={openCategory}><svg width="7" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3.5101 4.47876L0.930499 0.010757L6.0897 0.0107574L3.5101 4.47876Z" fill="black"/>
-                        </svg>
+                        <S.ArrowIcon open={openCategory}>
+                          <svg
+                            width="7"
+                            height="5"
+                            viewBox="0 0 7 5"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3.5101 4.47876L0.930499 0.010757L6.0897 0.0107574L3.5101 4.47876Z"
+                              fill="black"
+                            />
+                          </svg>
                         </S.ArrowIcon>
                       </S.DropdownToggle>
                       {openCategory && (
@@ -207,9 +217,19 @@ const Expenses = () => {
                     <S.Dropdown>
                       <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
                         {sortBy === "date" ? "Дата" : "Сумма"}
-                        <S.ArrowIcon open={openSort}><svg width="7" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3.5101 4.47876L0.930499 0.010757L6.0897 0.0107574L3.5101 4.47876Z" fill="black"/>
-                        </svg>
+                        <S.ArrowIcon open={openSort}>
+                          <svg
+                            width="7"
+                            height="5"
+                            viewBox="0 0 7 5"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3.5101 4.47876L0.930499 0.010757L6.0897 0.0107574L3.5101 4.47876Z"
+                              fill="black"
+                            />
+                          </svg>
                         </S.ArrowIcon>
                       </S.DropdownToggle>
                       {openSort && (
@@ -256,7 +276,8 @@ const Expenses = () => {
                       >
                         <td>{t.description}</td>
                         <td>
-                          {categories.find((c) => c.id === t.category)?.label || t.category}
+                          {categories.find((c) => c.id === t.category)?.label ||
+                            t.category}
                         </td>
                         <td>
                           {new Date(t.date).toLocaleDateString("ru-RU", {
@@ -277,8 +298,14 @@ const Expenses = () => {
                               justifyContent: "flex-end",
                             }}
                           >
-                            <S.ActionButton onClick={() => handleEdit(t)}>✏️</S.ActionButton>
-                            <S.ActionButton onClick={() => handleDeleteTransaction(t._id)}>🗑️</S.ActionButton>
+                            <S.ActionButton onClick={() => handleEdit(t)}>
+                              ✏️
+                            </S.ActionButton>
+                            <S.ActionButton
+                              onClick={() => handleDeleteTransaction(t._id)}
+                            >
+                              🗑️
+                            </S.ActionButton>
                           </S.ConteunerActionButton>
                         )}
                       </S.TableRow>
@@ -289,18 +316,22 @@ const Expenses = () => {
                     </tr>
                   )}
                 </tbody>
-
               </S.Table>
             </S.TableWrapper>
             {/* Мобильные действия под таблицей */}
-            {isMobile && !showForm && filteredTransactions.length > 0 && (
+            {isMobile && filteredTransactions.length > 0 && (
               <S.MobileActions>
                 <BaseButton
                   text="Редактировать расход"
                   onClick={() => {
                     if (selectedTransactionId) {
-                      const t = transactions.find(t => t._id === selectedTransactionId);
+                      const t = transactions.find(
+                        (t) => t._id === selectedTransactionId
+                      );
                       handleEdit(t);
+
+                      setShowForm(true);
+                      navigate("/expenses/new");
                     }
                   }}
                   disabled={!selectedTransactionId} // активна только если выбрана строка
@@ -317,7 +348,7 @@ const Expenses = () => {
                 </S.DeleteText>
               </S.MobileActions>
             )}
-          </> 
+          </>
         )}
         {/* Форма */}
         {showForm && (
@@ -331,114 +362,141 @@ const Expenses = () => {
               <S.Icon src="../Str.svg" alt="Назад" />
               Мои расходы
             </S.AddButtonF>
-            <h3>Новый расход</h3>
+            <h3>{editModal ? "Редактирование" : "Новый расход"}</h3>
             <label>
               Описание {errors.title && <span>{errors.title}</span>}
-              <S.Input
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                $error={errors.title}
-                $valid={form.title && !errors.title}
-                placeholder="Введите описание"
-              />
+              {!editModal && (
+                <S.Input
+                  name="title"
+                  value={form.title}
+                  onChange={handleChange}
+                  $error={errors.title}
+                  $valid={form.title && !errors.title}
+                  placeholder="Введите описание"
+                />
+              )}
+              {editModal && (
+                <S.Input
+                  value={editModal.description}
+                  onChange={(e) =>
+                    setEditModal({ ...editModal, description: e.target.value })
+                  }
+                  $error={errors.title}
+                  $valid={form.title && !errors.title}
+                />
+              )}
             </label>
             <label>
               Категория {errors.category && <span>{errors.category}</span>}
-              <S.Categories>
-                {categories.map((c) => (
-                  <S.CategoryButton
-                    type="button"
-                    key={c.id}
-                    $active={form.category === c.id}
-                    onClick={() => handleCategorySelect(c.id)}
-                  >
-                    {c.icon} {c.label}
-                  </S.CategoryButton>
-                ))}
-              </S.Categories>
+              {!editModal && (
+                <S.Categories>
+                  {categories.map((c) => (
+                    <S.CategoryButton
+                      type="button"
+                      key={c.id}
+                      $active={form.category === c.id}
+                      onClick={() => handleCategorySelect(c.id)}
+                    >
+                      {c.icon} {c.label}
+                    </S.CategoryButton>
+                  ))}
+                </S.Categories>
+              )}
+              {editModal && (
+                <S.Categories>
+                  {categories.map((c) => (
+                    <S.CategoryButton
+                      type="button"
+                      key={c.id}
+                      $active={editModal.category === c.id}
+                      onClick={() =>
+                        setEditModal({ ...editModal, category: c.id })
+                      }
+                    >
+                      {c.icon} {c.label}
+                    </S.CategoryButton>
+                  ))}
+                </S.Categories>
+              )}
             </label>
             <label>
               Дата {errors.date && <span>{errors.date}</span>}
-              <S.Input
-                type="date"
-                name="date"
-                value={form.date}
-                onChange={handleChange}
-                $error={errors.date}
-                $valid={form.date && !errors.date}
-              />
+              {!editModal && (
+                <S.Input
+                  type="date"
+                  name="date"
+                  value={form.date}
+                  onChange={handleChange}
+                  $error={errors.date}
+                  $valid={form.date && !errors.date}
+                />
+              )}
+              {editModal && (
+                <S.Input
+                  type="date"
+                  value={editModal.date.split("T")[0]}
+                  onChange={(e) =>
+                    setEditModal({ ...editModal, date: e.target.value })
+                  }
+                  $error={errors.date}
+                  $valid={form.date && !errors.date}
+                  name="date"
+                />
+              )}
             </label>
             <label>
               Сумма {errors.amount && <span>{errors.amount}</span>}
-              <S.Input
-                type="number"
-                name="amount"
-                value={form.amount}
-                onChange={handleChange}
-                $error={errors.amount}
-                $valid={form.amount && !errors.amount}
-                placeholder="Введите сумму"
-              />
+              {!editModal && (
+                <S.Input
+                  type="number"
+                  name="amount"
+                  value={form.amount}
+                  onChange={handleChange}
+                  $error={errors.amount}
+                  $valid={form.amount && !errors.amount}
+                  placeholder="Введите сумму"
+                />
+              )}
+              {editModal && (
+                <S.Input
+                  type="number"
+                  name="amount"
+                  value={editModal.sum}
+                  $error={errors.amount}
+                  $valid={form.amount && !errors.amount}
+                  onChange={(e) =>
+                    setEditModal({ ...editModal, sum: e.target.value })
+                  }
+                />
+              )}
             </label>
-            <BaseButton
-              type="submit"
-              text="Добавить новый расход"
-              disabled={
-                !form.title.trim() ||
-                !form.category ||
-                !form.date ||
-                !form.amount ||
-                isNaN(form.amount) ||
-                +form.amount <= 0
-              }
-            />
+            {!editModal && (
+              <BaseButton
+                type="submit"
+                text={
+                  editModal
+                    ? "Сохранить редактирование"
+                    : "Добавить новый расход"
+                }
+                disabled={
+                  !form.title.trim() ||
+                  !form.category ||
+                  !form.date ||
+                  !form.amount ||
+                  isNaN(form.amount) ||
+                  +form.amount <= 0
+                }
+              />
+            )}
+            {editModal && (
+              <BaseButton
+                text="Сохранить редактирование"
+                onClick={handleSaveEdit}
+              />
+            )}
           </S.Form>
         )}
       </S.Content>
-      {/* Модалка редактирования */}
-      {editModal && (
-        <S.ModalOverlay>
-          <S.Modal>
-            <h3>Редактирование</h3>
-            <input
-              value={editModal.description}
-              onChange={(e) =>
-                setEditModal({ ...editModal, description: e.target.value })
-              }
-            />
-            <input
-              type="date"
-              value={editModal.date.split("T")[0]}
-              onChange={(e) =>
-                setEditModal({ ...editModal, date: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              value={editModal.sum}
-              onChange={(e) =>
-                setEditModal({ ...editModal, sum: e.target.value })
-              }
-            />
-            <S.Categories>
-              {categories.map((c) => (
-                <S.CategoryButton
-                  key={c.id}
-                  $active={editModal.category === c.id}
-                  onClick={() => setEditModal({ ...editModal, category: c.id })}
-                >
-                  {c.label}
-                </S.CategoryButton>
-              ))}
-            </S.Categories>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <BaseButton text="Сохранить" onClick={handleSaveEdit} />
-              <BaseButton text="Отмена" onClick={() => setEditModal(null)} />
-            </div>
-          </S.Modal>
-        </S.ModalOverlay>
-      )}
     </S.Container>
   );
 };

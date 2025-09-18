@@ -5,7 +5,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding: 24px;
+  padding-top:24px;
   background-color: rgba(244, 245, 246, 1);
   padding-left: calc(50% - 600px);
   padding-right: calc(50% - 600px);
@@ -13,6 +13,7 @@ export const Container = styled.div`
     gap: 24px;
     padding: 0px 16px 24px 16px;
     background-color: rgba(255, 255, 255, 1);
+    margin-top:${({ $showForm }) => ($showForm ? "0px" : "24px")};
   }
 `;
 
@@ -150,7 +151,6 @@ export const Form = styled.form`
   }
 
   h3 {
-    font-family: Montserrat;
     font-weight: 700;
     font-size: 24px;
     line-height: 100%;
@@ -160,7 +160,6 @@ export const Form = styled.form`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    font-family: Montserrat;
     font-weight: 600;
     font-size: 16px;
     line-height: 100%;
@@ -344,12 +343,29 @@ export const ActionButton = styled.button`
 `;
 /* Модалка */
 export const ModalOverlay = styled.div`
-  position: fixed;
+  /* position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
+    flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
+  max-width: ${({ isMobile }) => (isMobile ? "100%" : "379px")};
+  /* flex: 1; */
+  /* max-width: 379px; */
+  background: #fff;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  @media screen and (max-width: 495px) {
+    height: 100%;
+    padding: 0px;
+    box-shadow: none;
+  }
 `;
 
 export const Modal = styled.div`
