@@ -1,12 +1,27 @@
 import { ModalBlock, ModalConteiner, TitleModal } from "./ModalMobil.styled";
 
-const ModalMobil = () => {
-
+const ModalMobil = ({ setShowForm, setIsModalOpen }) => {
   return (
     <ModalConteiner>
       <ModalBlock>
-        <TitleModal to="expenses">Мои расходы</TitleModal>
-        <TitleModal to="/expenses/new">Новый расход</TitleModal>
+        <TitleModal
+          onClick={() => {
+            setShowForm(false);
+            setIsModalOpen(false);
+          }}
+          to="expenses"
+        >
+          Мои расходы
+        </TitleModal>
+        <TitleModal
+          onClick={() => {
+            setShowForm(true);
+            setIsModalOpen(false);
+          }}
+          to="/expenses/new"
+        >
+          Новый расход
+        </TitleModal>
         <TitleModal to="analysis">Анализ расходов</TitleModal>
       </ModalBlock>
     </ModalConteiner>

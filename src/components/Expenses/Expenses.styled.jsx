@@ -19,8 +19,8 @@ export const Container = styled.div`
 export const ContainerTBM = styled.div`
   display: flex;
   flex-direction: row;
-      justify-content: space-between;
-    align-items: center;
+  justify-content: space-between;
+  align-items: center;
 `;
 export const ContainerFilters = styled.div`
   display: flex;
@@ -36,10 +36,10 @@ export const Title = styled.h2`
   font-size: 32px;
   line-height: 150%;
   color: #1f2937;
- 
+
   @media screen and (max-width: 495px) {
     font-size: 24px;
-     display:${({showForm}) => (showForm ? "none": "block")};
+    display: ${({ showForm }) => (showForm ? "none" : "block")};
   }
 `;
 
@@ -47,7 +47,7 @@ export const Title = styled.h2`
 export const Content = styled.div`
   display: flex;
   gap: 34px;
-  align-items: flex-start;
+      align-items: stretch;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -61,9 +61,10 @@ export const TableWrapper = styled.div`
   border: none;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   padding: 32px;
-flex: ${({ isMobile }) => (isMobile ? 'none' : '1')}; 
-  width: ${({ isMobile }) => (isMobile ? '100%' : 'auto')};
-  display: ${({ isMobile, showForm }) => (isMobile && showForm ? 'none' : 'block')};
+  flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
+  width: ${({ isMobile }) => (isMobile ? "100%" : "auto")};
+  display: ${({ isMobile, showForm }) =>
+    isMobile && showForm ? "none" : "block"};
   @media screen and (max-width: 495px) {
     height: 100%;
     padding: 0px;
@@ -89,9 +90,12 @@ export const Table = styled.table`
   th,
   td {
     text-align: left;
-    padding-top: 24px;
+    padding-top: 16px;
     font-weight: 400;
     font-size: 12px;
+     @media screen and (max-width: 495px) {
+    font-size: 10px;
+  }
   }
 
   th {
@@ -124,8 +128,8 @@ export const Table = styled.table`
 
 /* Форма */
 export const Form = styled.form`
- flex: ${({ isMobile }) => (isMobile ? 'none' : '1')};
- max-width: ${({ isMobile }) => (isMobile ? '100%' : '379px')};
+  flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
+  max-width: ${({ isMobile }) => (isMobile ? "100%" : "379px")};
   /* flex: 1; */
   /* max-width: 379px; */
   background: #fff;
@@ -205,15 +209,15 @@ export const CategoryButton = styled.button`
   align-items: center;
   padding: 8px 20px 8px 20px;
   border-radius: 30px;
-  border: 1px solid #ddd;
+  border: none;
   background: #f5f5f5;
   cursor: pointer;
   transition: 0.2s;
-  font-size: 12px; /* явно задаём размер текста */
+  font-size: 12px;
   line-height: 1.2;
-  color: #070707; /* всегда тёмный текст */
-  font-family: Montserrat;
+  color: #070707;
   font-weight: 400;
+  outline: none;
 
   ${(p) =>
     p.$active &&
@@ -222,6 +226,7 @@ export const CategoryButton = styled.button`
       border-color: #7b2cbf;
       color: #7631bb; /* цвет текста в активном */
       font-weight: 600;
+      outline: none;
     `}
 `;
 /* Фильтры */
@@ -305,10 +310,11 @@ export const ActionButton = styled.button`
     color: #7b2cbf;
     transform: scale(1.2);
   }
-    @media screen and (max-width: 495px) {
+  @media screen and (max-width: 495px) {
     display: none;
   }
 `;
+
 
 /* Модалка */
 export const ModalOverlay = styled.div`
@@ -359,33 +365,55 @@ export const Select = styled.select`
 `;
 
 export const AddButton = styled.a`
-color:rgba(0, 0, 0, 1);
+  color: rgba(0, 0, 0, 1);
   font-weight: 600;
   font-size: 12px;
   line-height: 150%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3px; 
+  gap: 3px;
   cursor: pointer;
 `;
 
 export const Icon = styled.img`
-  width: 12px;  
+  width: 12px;
   height: 12px;
+  padding-right: 3px;
 `;
 export const AddButtonF = styled.a`
-color:rgba(153, 153, 153, 1);
+  color: rgba(153, 153, 153, 1);
   font-weight: 600;
   font-size: 12px;
   line-height: 150%;
-  display: flex;
   align-items: center;
   justify-content: left;
-  gap: 3px; 
+
   cursor: pointer;
   display: none;
-   @media screen and (max-width: 495px) {
+  @media screen and (max-width: 495px) {
     display: block;
+  }
+`;
+
+export const TableRow = styled.tr`
+ 
+  cursor: pointer;
+
+
+  ${({ $isSelected }) => 
+    $isSelected &&
+    `background-color:rgba(241, 235, 253, 1);
+      color: #7631bb;
+      padding:0px;
+    `}
+
+
+`;
+
+export const ConteunerActionButton = styled.td`
+
+  @media screen and (max-width: 495px) {
+    display: none;
   }
 `;

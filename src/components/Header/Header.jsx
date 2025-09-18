@@ -15,8 +15,10 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import ModalMobil from "../MadalMobil/ModalMobil";
+import { ExpensesContext } from "../../context/EspensesContext";
 
 const Header = () => {
+  const {  setShowForm, showForm} = useContext(ExpensesContext);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useContext(AuthContext);
@@ -32,7 +34,7 @@ const Header = () => {
         return "Мои расходы";
       case "/analysis":
         return "Анализ расходов";
-      case "/newExpense":
+      case "/expenses/new":
         return "Новый расход";
       default:
         return "Навигация";
@@ -73,12 +75,12 @@ const Header = () => {
                   {getLinkText()} <Icon src="../Head3.svg" alt="Клик" /> 
                 </HeaderLinkMobil>
 
-                {isModalOpen && <ModalMobil />}
+                {isModalOpen && <ModalMobil showForm={showForm} setShowForm={setShowForm} setIsModalOpen={setIsModalOpen}/>}
 
-                <div>
+              </MobilNav>
+              <div>
                   <ButtonExit onClick={handleLogout}>Выйти</ButtonExit>
                 </div>
-              </MobilNav>
             </>
           )}
         </HeaderBlock>

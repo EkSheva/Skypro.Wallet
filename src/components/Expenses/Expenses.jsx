@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState,  useContext} from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
-  getTransactions,
   addTransaction,
   deleteTransaction,
 } from "../../services/transactions";
 import * as S from "./Expenses.styled";
 import BaseButton from "../BaseButton/BaseButton";
-import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
+import { ExpensesContext } from "../../context/EspensesContext";
 
 const categories = [
   { id: "food", label: "Еда", icon: "🍔" },
@@ -21,42 +20,24 @@ const categories = [
 
 const Expenses = () => {
   const { user } = useContext(AuthContext);
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+  const { fetchExpenses, isMobile, setShowForm, transactions, loading, errors, showForm, setErrors} = useContext(ExpensesContext);
   const [form, setForm] = useState({
     title: "",
     category: "",
     date: "",
     amount: "",
   });
-  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [editModal, setEditModal] = useState(null);
-  const [showForm, setShowForm] = useState(true);
   const [openCategory, setOpenCategory] = useState(false);
   const [openSort, setOpenSort] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState(null);
 
-  // --- загрузка транзакций ---
-  const fetchExpenses = useCallback(async () => {
-    if (!user?.token) return;
-    setLoading(true);
-    try {
-      const data = await getTransactions(user.token);
-      setTransactions(data || []);
-      if(isMobile) setShowForm(false);
-    } catch (err) {
-      console.error("Ошибка загрузки транзакций:", err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [isMobile, user?.token]);
-
-  useEffect(() => {
-    fetchExpenses();
-  }, [fetchExpenses]);
+  const handleRowClick = (id) => {
+    setSelectedTransactionId(id === selectedTransactionId ? null : id);
+  };
 
   // --- валидация формы ---
   const validate = () => {
@@ -142,216 +123,231 @@ const Expenses = () => {
   if (loading) return <p>Загрузка...</p>;
 
   return (
-    <S.Container $isMobile={isMobile}><S.ContainerTBM><S.Title $showForm={!showForm}>Мои расходы </S.Title>
-      {isMobile && !showForm &&(
-        <>
-        <S.AddButton
-          onClick={() => {
-            setShowForm(true);
-            navigate("/expenses/new");
-          }}
-        ><S.Icon src="../+.svg" alt="Плюс" />
-          Новый расход
-        </S.AddButton></>
-      )}</S.ContainerTBM>
-      
+    <S.Container $isMobile={isMobile}>
+      <S.ContainerTBM>
+        <S.Title $showForm={showForm}>Мои расходы </S.Title>
+        {isMobile && !showForm && (
+          <>
+            <S.AddButton
+              onClick={() => {
+                setShowForm(true);
+                navigate("/expenses/new");
+              }}
+            >
+              <S.Icon src="../+.svg" alt="Плюс" />
+              Новый расход
+            </S.AddButton>
+          </>
+        )}
+      </S.ContainerTBM>
+
       {/* Контент */}
       <S.Content>
-        {(!isMobile || (isMobile && !showForm))&&(
-        <S.TableWrapper $isMobile={isMobile}>
-          <S.ContainerFilters>
-            <S.TableTitle>Таблица расходов</S.TableTitle>
-            {/* Фильтры */}
-            <S.Filters>
-              <label>
-                Фильтровать по категории:{" "}
-                <S.Dropdown>
-                  <S.DropdownToggle onClick={() => setOpenCategory((p) => !p)}>
-                    {categories.find((c) => c.id === filter)?.label || "все"}
-                  </S.DropdownToggle>
-                  {openCategory && (
-                    <S.DropdownMenu>
-                      <S.DropdownItem
-                        onClick={() => {
-                          setFilter("all");
-                          setOpenCategory(false);
-                        }}
-                      >
-                        Все
-                      </S.DropdownItem>
-                      {categories.map((c) => (
+        {(!isMobile || (isMobile && !showForm)) && (
+          <S.TableWrapper $isMobile={isMobile}>
+            <S.ContainerFilters>
+              <S.TableTitle>Таблица расходов</S.TableTitle>
+              {/* Фильтры */}
+              <S.Filters>
+                <label>
+                  Фильтровать по категории:{" "}
+                  <S.Dropdown>
+                    <S.DropdownToggle
+                      onClick={() => setOpenCategory((p) => !p)}
+                    >
+                      {categories.find((c) => c.id === filter)?.label || "все"}
+                    </S.DropdownToggle>
+                    {openCategory && (
+                      <S.DropdownMenu>
                         <S.DropdownItem
-                          key={c.id}
                           onClick={() => {
-                            setFilter(c.id);
+                            setFilter("all");
                             setOpenCategory(false);
                           }}
                         >
-                          {c.label}
+                          Все
                         </S.DropdownItem>
-                      ))}
-                    </S.DropdownMenu>
-                  )}
-                </S.Dropdown>
-              </label>
+                        {categories.map((c) => (
+                          <S.DropdownItem
+                            key={c.id}
+                            onClick={() => {
+                              setFilter(c.id);
+                              setOpenCategory(false);
+                            }}
+                          >
+                            {c.label}
+                          </S.DropdownItem>
+                        ))}
+                      </S.DropdownMenu>
+                    )}
+                  </S.Dropdown>
+                </label>
 
-              <label>
-                Сортировать по:{" "}
-                <S.Dropdown>
-                  <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
-                    {sortBy === "date" ? "дате" : "сумме"}
-                  </S.DropdownToggle>
-                  {openSort && (
-                    <S.DropdownMenu>
-                      <S.DropdownItem
-                        onClick={() => {
-                          setSortBy("date");
-                          setOpenSort(false);
-                        }}
-                      >
-                        Дате
-                      </S.DropdownItem>
-                      <S.DropdownItem
-                        onClick={() => {
-                          setSortBy("sum");
-                          setOpenSort(false);
-                        }}
-                      >
-                        Сумме
-                      </S.DropdownItem>
-                    </S.DropdownMenu>
-                  )}
-                </S.Dropdown>
-              </label>
-            </S.Filters>
-          </S.ContainerFilters>
-          <S.Table>
-            <thead>
-              <tr>
-                <th>Описание</th>
-                <th>Категория</th>
-                <th>Дата</th>
-                <th>Сумма</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredTransactions.length > 0 ? (
-                filteredTransactions.map((t) => (
-                  <tr key={t._id}>
-                    <td>{t.description}</td>
-                    <td>
-                      {categories.find((c) => c.id === t.category)?.label ||
-                        t.category}
-                    </td>
-                    <td>
-                      {new Date(t.date).toLocaleDateString("ru-RU", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td>{t.sum} ₽</td>
-                    <td
-                      style={{
-                        display: "flex",
-                        gap: "5px",
-                        alignItems: "center",
-                        justifyContent: "flex-end",
-                      }}
-                    >
-                      <S.ActionButton onClick={() => handleEdit(t)}>
-                        ✏️
-                      </S.ActionButton>
-                      <S.ActionButton
-                        onClick={() => handleDeleteTransaction(t._id)}
-                      >
-                        🗑️
-                      </S.ActionButton>
-                    </td>
-                  </tr>
-                ))
-              ) : (
+                <label>
+                  Сортировать по:{" "}
+                  <S.Dropdown>
+                    <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
+                      {sortBy === "date" ? "дате" : "сумме"}
+                    </S.DropdownToggle>
+                    {openSort && (
+                      <S.DropdownMenu>
+                        <S.DropdownItem
+                          onClick={() => {
+                            setSortBy("date");
+                            setOpenSort(false);
+                          }}
+                        >
+                          Дате
+                        </S.DropdownItem>
+                        <S.DropdownItem
+                          onClick={() => {
+                            setSortBy("sum");
+                            setOpenSort(false);
+                          }}
+                        >
+                          Сумме
+                        </S.DropdownItem>
+                      </S.DropdownMenu>
+                    )}
+                  </S.Dropdown>
+                </label>
+              </S.Filters>
+            </S.ContainerFilters>
+            <S.Table>
+              <thead>
                 <tr>
-                  <td colSpan={5}>Нет транзакций</td>
+                  <th>Описание</th>
+                  <th>Категория</th>
+                  <th>Дата</th>
+                  <th>Сумма</th>
+                  <th></th>
                 </tr>
-              )}
-            </tbody>
-          </S.Table>
-        </S.TableWrapper>)}
+              </thead>
+              <tbody>
+                {filteredTransactions.length > 0 ? (
+                  filteredTransactions.map((t) => (
+                    <S.TableRow
+                      key={t._id}
+                      onClick={() => handleRowClick(t._id)}
+                      $isSelected={selectedTransactionId === t._id}
+                    >
+                      <td>{t.description}</td>
+                      <td>
+                        {categories.find((c) => c.id === t.category)?.label ||
+                          t.category}
+                      </td>
+                      <td>
+                        {new Date(t.date).toLocaleDateString("ru-RU", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td>{t.sum} ₽</td>
+                      <S.ConteunerActionButton
+                        style={{
+                          display: "flex",
+                          gap: "5px",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <S.ActionButton onClick={() => handleEdit(t)}>
+                          ✏️
+                        </S.ActionButton>
+                        <S.ActionButton
+                          onClick={() => handleDeleteTransaction(t._id)}
+                        >
+                          🗑️
+                        </S.ActionButton>
+                      </S.ConteunerActionButton>
+                    </S.TableRow>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5}>Нет транзакций</td>
+                  </tr>
+                )}
+              </tbody>
+            </S.Table>
+          </S.TableWrapper>
+        )}
         {/* Форма */}
-        {showForm && (<S.Form $isMobile={isMobile} onSubmit={handleSubmit}>
-          <S.AddButtonF
-          onClick={() => {
-            setShowForm(false);
-            navigate("/expenses");
-          }}
-        ><S.Icon src="../Str.svg" alt="Назад" />
-          Мои расходы
-        </S.AddButtonF>
-          <h3>Новый расход</h3>
-          <label>
-            Описание {errors.title && <span>{errors.title}</span>}
-            <S.Input
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              $error={errors.title}
-              $valid={form.title && !errors.title}
-              placeholder="Введите описание"
+        {showForm && (
+          <S.Form $isMobile={isMobile} onSubmit={handleSubmit}>
+            <S.AddButtonF
+              onClick={() => {
+                setShowForm(false);
+                navigate("/expenses");
+              }}
+            >
+              <S.Icon src="../Str.svg" alt="Назад" />
+              Мои расходы
+            </S.AddButtonF>
+            <h3>Новый расход</h3>
+            <label>
+              Описание {errors.title && <span>{errors.title}</span>}
+              <S.Input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                $error={errors.title}
+                $valid={form.title && !errors.title}
+                placeholder="Введите описание"
+              />
+            </label>
+            <label>
+              Категория {errors.category && <span>{errors.category}</span>}
+              <S.Categories>
+                {categories.map((c) => (
+                  <S.CategoryButton
+                    type="button"
+                    key={c.id}
+                    $active={form.category === c.id}
+                    onClick={() => handleCategorySelect(c.id)}
+                  >
+                    {c.icon} {c.label}
+                  </S.CategoryButton>
+                ))}
+              </S.Categories>
+            </label>
+            <label>
+              Дата {errors.date && <span>{errors.date}</span>}
+              <S.Input
+                type="date"
+                name="date"
+                value={form.date}
+                onChange={handleChange}
+                $error={errors.date}
+                $valid={form.date && !errors.date}
+              />
+            </label>
+            <label>
+              Сумма {errors.amount && <span>{errors.amount}</span>}
+              <S.Input
+                type="number"
+                name="amount"
+                value={form.amount}
+                onChange={handleChange}
+                $error={errors.amount}
+                $valid={form.amount && !errors.amount}
+                placeholder="Введите сумму"
+              />
+            </label>
+            <BaseButton
+              type="submit"
+              text="Добавить новый расход"
+              disabled={
+                !form.title.trim() ||
+                !form.category ||
+                !form.date ||
+                !form.amount ||
+                isNaN(form.amount) ||
+                +form.amount <= 0
+              }
             />
-          </label>
-          <label>
-            Категория {errors.category && <span>{errors.category}</span>}
-            <S.Categories>
-              {categories.map((c) => (
-                <S.CategoryButton
-                  type="button"
-                  key={c.id}
-                  $active={form.category === c.id}
-                  onClick={() => handleCategorySelect(c.id)}
-                >
-                  {c.icon} {c.label}
-                </S.CategoryButton>
-              ))}
-            </S.Categories>
-          </label>
-          <label>
-            Дата {errors.date && <span>{errors.date}</span>}
-            <S.Input
-              type="date"
-              name="date"
-              value={form.date}
-              onChange={handleChange}
-              $error={errors.date}
-              $valid={form.date && !errors.date}
-            />
-          </label>
-          <label>
-            Сумма {errors.amount && <span>{errors.amount}</span>}
-            <S.Input
-              type="number"
-              name="amount"
-              value={form.amount}
-              onChange={handleChange}
-              $error={errors.amount}
-              $valid={form.amount && !errors.amount}
-              placeholder="Введите сумму"
-            />
-          </label>
-          <BaseButton
-            type="submit"
-            text="Добавить новый расход"
-            disabled={
-              !form.title.trim() ||
-              !form.category ||
-              !form.date ||
-              !form.amount ||
-              isNaN(form.amount) ||
-              +form.amount <= 0
-            }
-          />
-        </S.Form>)}
+          </S.Form>
+        )}
       </S.Content>
       {/* Модалка редактирования */}
       {editModal && (
