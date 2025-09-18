@@ -1,4 +1,3 @@
-// Expenses.jsx
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
@@ -8,13 +7,15 @@ import {
 } from "../../services/transactions";
 import * as S from "./Expenses.styled";
 import BaseButton from "../BaseButton/BaseButton";
+import { useMediaQuery } from "react-responsive";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
-   { id: "food", label: "Еда", icon: "🍔" },
+  { id: "food", label: "Еда", icon: "🍔" },
   { id: "transport", label: "Транспорт", icon: "🚕" },
   { id: "housing", label: "Жилье", icon: "🏠" },
   { id: "joy", label: "Развлечения", icon: "🎮" },
- { id: "education", label: "Образование", icon: "📚" },
+  { id: "education", label: "Образование", icon: "📚" },
   { id: "others", label: "Другое", icon: "📦" },
 ];
 
@@ -22,7 +23,7 @@ const Expenses = () => {
   const { user } = useContext(AuthContext);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
   const [form, setForm] = useState({
     title: "",
     category: "",
@@ -30,14 +31,13 @@ const Expenses = () => {
     amount: "",
   });
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [editModal, setEditModal] = useState(null);
-
+  const [showForm, setShowForm] = useState(true);
   const [openCategory, setOpenCategory] = useState(false);
   const [openSort, setOpenSort] = useState(false);
-
 
   // --- загрузка транзакций ---
   const fetchExpenses = useCallback(async () => {
@@ -46,12 +46,13 @@ const Expenses = () => {
     try {
       const data = await getTransactions(user.token);
       setTransactions(data || []);
+      if(isMobile) setShowForm(false);
     } catch (err) {
       console.error("Ошибка загрузки транзакций:", err.message);
     } finally {
       setLoading(false);
     }
-  }, [user?.token]);
+  }, [isMobile, user?.token]);
 
   useEffect(() => {
     fetchExpenses();
@@ -141,14 +142,26 @@ const Expenses = () => {
   if (loading) return <p>Загрузка...</p>;
 
   return (
-    <S.Container>      
-      <S.Title>Мои расходы</S.Title>    
+    <S.Container $isMobile={isMobile}><S.ContainerTBM><S.Title $showForm={!showForm}>Мои расходы </S.Title>
+      {isMobile && !showForm &&(
+        <>
+        <S.AddButton
+          onClick={() => {
+            setShowForm(true);
+            navigate("/expenses/new");
+          }}
+        ><S.Icon src="../+.svg" alt="Плюс" />
+          Новый расход
+        </S.AddButton></>
+      )}</S.ContainerTBM>
+      
       {/* Контент */}
       <S.Content>
-        <S.TableWrapper>          
+        {(!isMobile || (isMobile && !showForm))&&(
+        <S.TableWrapper $isMobile={isMobile}>
           <S.ContainerFilters>
             <S.TableTitle>Таблица расходов</S.TableTitle>
-             {/* Фильтры */}
+            {/* Фильтры */}
             <S.Filters>
               <label>
                 Фильтровать по категории:{" "}
@@ -239,9 +252,20 @@ const Expenses = () => {
                       })}
                     </td>
                     <td>{t.sum} ₽</td>
-                    <td style={{ display: "flex", gap: "5px", alignItems: "center", justifyContent: "flex-end" }}>
-                      <S.ActionButton onClick={() => handleEdit(t)}>✏️</S.ActionButton>
-                      <S.ActionButton onClick={() => handleDeleteTransaction(t._id)}>
+                    <td
+                      style={{
+                        display: "flex",
+                        gap: "5px",
+                        alignItems: "center",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <S.ActionButton onClick={() => handleEdit(t)}>
+                        ✏️
+                      </S.ActionButton>
+                      <S.ActionButton
+                        onClick={() => handleDeleteTransaction(t._id)}
+                      >
                         🗑️
                       </S.ActionButton>
                     </td>
@@ -254,9 +278,17 @@ const Expenses = () => {
               )}
             </tbody>
           </S.Table>
-        </S.TableWrapper>
+        </S.TableWrapper>)}
         {/* Форма */}
-        <S.Form onSubmit={handleSubmit}>
+        {showForm && (<S.Form $isMobile={isMobile} onSubmit={handleSubmit}>
+          <S.AddButtonF
+          onClick={() => {
+            setShowForm(false);
+            navigate("/expenses");
+          }}
+        ><S.Icon src="../Str.svg" alt="Назад" />
+          Мои расходы
+        </S.AddButtonF>
           <h3>Новый расход</h3>
           <label>
             Описание {errors.title && <span>{errors.title}</span>}
@@ -319,7 +351,7 @@ const Expenses = () => {
               +form.amount <= 0
             }
           />
-        </S.Form>
+        </S.Form>)}
       </S.Content>
       {/* Модалка редактирования */}
       {editModal && (
@@ -358,7 +390,7 @@ const Expenses = () => {
               ))}
             </S.Categories>
             <div style={{ display: "flex", gap: "10px" }}>
-              <BaseButton  text="Сохранить" onClick={handleSaveEdit} />
+              <BaseButton text="Сохранить" onClick={handleSaveEdit} />
               <BaseButton text="Отмена" onClick={() => setEditModal(null)} />
             </div>
           </S.Modal>

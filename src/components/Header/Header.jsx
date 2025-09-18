@@ -5,6 +5,7 @@ import {
   HeaderLinkMobil,
   HeaderLogo,
   HeaderNav,
+  Icon,
   Img,
   MobilNav,
   NavLinkS,
@@ -69,7 +70,7 @@ const Header = () => {
 
               <MobilNav>
                 <HeaderLinkMobil onClick={toggleModal}>
-                  {getLinkText()}
+                  {getLinkText()} <Icon src="../Head3.svg" alt="Клик" /> 
                 </HeaderLinkMobil>
 
                 {isModalOpen && <ModalMobil />}

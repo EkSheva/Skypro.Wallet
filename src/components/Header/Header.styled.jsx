@@ -28,12 +28,14 @@ export const HeaderBlock = styled.div`
 export const HeaderLogo = styled.div`
   width: 144px;
 `;
+
 export const Img = styled.img`
   width: 144px;
   @media screen and (max-width: 495px) {
     width: ${({ $user }) => ($user ? "109px" : "144px")};
   }
 `;
+
 export const HeaderNav = styled.div`
   max-width: 274px;
   padding: 0;
@@ -42,11 +44,13 @@ export const HeaderNav = styled.div`
   justify-content: center;
   gap: 48px;
 `;
+
 const activeLinkStyles = `
   color: rgba(115, 52, 234, 1);
   font-weight: 600;
   text-decoration: 1px underline rgba(115, 52, 234, 1);
 `;
+
 export const NavLinkS = styled(RouterNavLink)`
   font-weight: 400;
   font-size: 14px;
@@ -75,6 +79,7 @@ export const ButtonExit = styled.a`
     line-height: 150%;
   }
 `;
+
 export const HeaderLinkMobil = styled(RouterNavLink)`
   display: none;
   @media screen and (max-width: 495px) and (min-width: 375px) {
@@ -88,22 +93,16 @@ export const HeaderLinkMobil = styled(RouterNavLink)`
     color: rgba(115, 52, 234, 1);
     text-decoration: 1px underline rgba(115, 52, 234, 1);
     text-align: center;
-
-    &::after {
-      content: "";
-      display: block;
-      width: 7px;
-      height: 7px;
-      border-radius: 1px;
-      border-left: 1.9px rgba(0, 0, 0, 1);
-      border-bottom: 1.9px rgba(0, 0, 0, 1);
-      transform: rotate(-45deg);
-      margin: 4px 0 0 5px;
-      padding: 0;
-    }
   }
 `;
+
 export const MobilNav = styled.nav`
   display: flex;
   gap: 20px;
+`;
+
+export const Icon = styled.img`
+  margin-left: 8px;
+  width: 7px;
+  height: 7px;
 `;
