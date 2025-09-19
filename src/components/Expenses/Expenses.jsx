@@ -1,6 +1,10 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { addTransaction, deleteTransaction } from "../../services/transactions";
+import {
+  addTransaction,
+  deleteTransaction,
+  redactTransaction,
+} from "../../services/transactions";
 import * as S from "./Expenses.styled";
 import BaseButton from "../BaseButton/BaseButton";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +26,6 @@ const truncateLabel = (text, max = 4) =>
 const Expenses = () => {
   const { user } = useContext(AuthContext);
   const {
-    fetchExpenses,
     isMobile,
     setShowForm,
     transactions,
@@ -30,6 +33,7 @@ const Expenses = () => {
     errors,
     showForm,
     setErrors,
+    setTransactions,
   } = useContext(ExpensesContext);
 
   const [form, setForm] = useState({
@@ -80,8 +84,8 @@ const Expenses = () => {
     };
 
     try {
-      await addTransaction(newTransaction, user.token);
-      await fetchExpenses();
+      const updateTrans = await addTransaction(newTransaction, user.token);
+      setTransactions(updateTrans);
       setForm({ title: "", category: "", date: "", amount: "" });
       setErrors({});
     } catch (err) {
@@ -92,33 +96,36 @@ const Expenses = () => {
   // --- удаление транзакции ---
   const handleDeleteTransaction = async (id) => {
     try {
-      await deleteTransaction(id, user.token);
-      await fetchExpenses();
+      const updateTrans = await deleteTransaction(id, user.token);
+      setTransactions(updateTrans);
     } catch (err) {
       console.error("Ошибка удаления транзакции:", err.message);
     }
   };
 
-  // --- открыть модал редактирования ---
+  // --- сменить на редактирование ---
   const handleEdit = (t) => setEditModal(t);
 
   // --- сохранить изменения ---
   const handleSaveEdit = async () => {
     try {
-      await deleteTransaction(editModal._id, user.token);
-      await addTransaction(
-        {
+      const updateTrans = await redactTransaction({
+        token: user.token,
+        id: editModal._id,
+        transaction: {
           description: editModal.description,
           category: editModal.category,
           date: editModal.date,
           sum: Number(editModal.sum),
         },
-        user.token
-      );
+      });
+
       setEditModal(null);
-      await fetchExpenses();
-    } catch (err) {
-      console.error("Ошибка редактирования транзакции:", err.message);
+      setErrors({});
+      setTransactions(updateTrans);
+      navigate("/");
+    } catch (error) {
+      console.error("Ошибка при сохранении изменений:", error.message);
     }
   };
 
@@ -141,7 +148,7 @@ const Expenses = () => {
           <>
             <S.AddButton
               onClick={() => {
-                setEditModal(false)
+                setEditModal(false);
                 setShowForm(true);
                 navigate("/expenses/new");
               }}

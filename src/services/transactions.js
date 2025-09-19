@@ -75,3 +75,19 @@ export const deleteTransaction = async (id, token) => {
     throw new Error(err.response?.data?.error || "Ошибка при удалении транзакции");
   }
 };
+
+// Функция изменения задачи:
+
+export async function redactTransaction({ id, token, transaction }) {
+  try {
+    const data = await axios.patch(`${API_URL}/${id}`, transaction, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': '',
+      },
+    })
+    return data.data.transactions
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}
