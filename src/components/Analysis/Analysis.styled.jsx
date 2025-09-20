@@ -63,6 +63,7 @@ export const PeriodHeader = styled.div`
 export const ToggleButton = styled.span`
   font-family: "Montserrat";
   font-size: 12px;
+  font-weight: 400;
   line-height: 150%;
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
   color: ${({ $active }) => ($active ? "#7c3aed" : "#000000")};
@@ -393,4 +394,27 @@ export const ApplyButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+export const Icon = styled.img`
+  width: 12px;
+  height: 12px;
+  padding-right: 3px;
+`;
+
+export const AddButtonF = styled.a`
+  font-family: "Montserrat";
+  color: rgba(153, 153, 153, 1);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+  align-items: center;
+  justify-content: left;
+  cursor: pointer;
+  display: none;
+
+  @media screen and (max-width: 495px) {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px; 
+  }
 `;

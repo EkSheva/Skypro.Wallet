@@ -19,6 +19,7 @@ import {
   BarChart,
 } from "recharts";
 import { useDeviceDetect } from "../hooks/useDeviceDetect";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   { id: "food", name: "Еда", color: "#c19aff" },
@@ -56,6 +57,7 @@ export default function Analysis() {
   const [mobileView, setMobileView] = useState("chart"); // "chart", "period"
   const calendarScrollRef = useRef(null);
   const yearScrollRef = useRef(null);
+  const navigate = useNavigate();
 
   // Сокращение названий (только мобилка)
   const shortenLabel = (name) => {
@@ -294,6 +296,17 @@ export default function Analysis() {
     return (
       <S.MobileContainer>
         {/* Шапка для мобильной версии */}
+        {mobileView === "period" && (
+        <S.AddButtonF
+          onClick={() => {
+            setMobileView("chart");     // вернуться к экрану анализа
+            navigate("/analysis");      // навигация (на тот же роут, безопасно)
+          }}
+        >
+          <S.Icon src="../Str.svg" alt="Назад" />
+          Анализ расходов
+        </S.AddButtonF>
+      )}
         <S.MobileHeader>
           <S.MobileTitle>
             {mobileView === "chart" ? "Анализ расходов" : "Выбор периода"}
