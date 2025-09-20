@@ -1,4 +1,4 @@
-// services/transactions.js
+// src/services/transactions.js
 import axios from "axios";
 
 const API_URL = "https://wedev-api.sky.pro/api/transactions";
@@ -11,12 +11,13 @@ const formatDate = (dateStr) => {
 };
 
 // Получение всех транзакций с возможной сортировкой и фильтром
+// FIX/NOTE: используется в Analysis.jsx с параметрами (token, sortBy, filterBy[])
 export const getTransactions = async (token, sortBy = "", filterBy = []) => {
   try {
     let url = API_URL;
     const params = [];
-    if (sortBy) params.push(`sortBy=${sortBy}`);
-    if (filterBy.length > 0) params.push(`filterBy=${filterBy.join(",")}`);
+    if (sortBy) params.push(`sortBy=${sortBy}`); // 'date' | 'sum'
+    if (filterBy.length > 0) params.push(`filterBy=${filterBy.join(",")}`); // ["food","transport"]
     if (params.length) url += `?${params.join("&")}`;
 
     const response = await axios.get(url, {
@@ -25,7 +26,7 @@ export const getTransactions = async (token, sortBy = "", filterBy = []) => {
       },
     });
 
-    // Проверяем, где лежит массив транзакций
+    // API может вернуть либо { transactions: [...] }, либо просто [...]
     return response.data.transactions || response.data || [];
   } catch (err) {
     console.error("Ошибка при загрузке транзакций:", err.response?.data || err);
@@ -33,8 +34,6 @@ export const getTransactions = async (token, sortBy = "", filterBy = []) => {
   }
 };
 
-
-// Добавление новой транзакции
 export const addTransaction = async (transaction, token) => {
   try {
     const body = {
@@ -51,7 +50,6 @@ export const addTransaction = async (transaction, token) => {
       },
     });
 
-    // API возвращает обновленный список всех транзакций
     return response.data.transactions;
   } catch (err) {
     console.error("Ошибка при добавлении транзакции:", err.response?.data || err);
@@ -59,7 +57,6 @@ export const addTransaction = async (transaction, token) => {
   }
 };
 
-// Удаление транзакции по ID
 export const deleteTransaction = async (id, token) => {
   try {
     const response = await axios.delete(`${API_URL}/${id}`, {
@@ -68,7 +65,6 @@ export const deleteTransaction = async (id, token) => {
       },
     });
 
-    // API возвращает обновленный список всех транзакций
     return response.data.transactions;
   } catch (err) {
     console.error("Ошибка при удалении транзакции:", err.response?.data || err);
@@ -76,18 +72,17 @@ export const deleteTransaction = async (id, token) => {
   }
 };
 
-// Функция изменения задачи:
-
+// Редактирование транзакции
 export async function redactTransaction({ id, token, transaction }) {
   try {
     const data = await axios.patch(`${API_URL}/${id}`, transaction, {
       headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': '',
+        Authorization: "Bearer " + token,
+        "Content-Type": "",
       },
-    })
-    return data.data.transactions
+    });
+    return data.data.transactions;
   } catch (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
 }

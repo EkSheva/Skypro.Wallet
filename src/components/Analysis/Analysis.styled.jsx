@@ -1,3 +1,4 @@
+// src/components/Analysis/Analysis.styled.jsx
 import styled from "styled-components";
 import { ResponsiveContainer as RC, BarChart as BC } from "recharts";
 
@@ -198,7 +199,6 @@ export const MonthSelectButton = styled.button`
   }
 `;
 
-
 export const ChartWrapper = styled.div`
   flex: 1;
   background: #fff;
@@ -238,14 +238,23 @@ export const ResponsiveContainer = styled(RC).attrs({
 export const BarChart = styled(BC).attrs({
   margin: { top: 20 },
 })``;
-// Добавьте эти стили в Analysis.styled.jsx
+
+// Плейсхолдер при отсутствии данных
+export const EmptyState = styled.div`
+  height: 387px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 14px;
+  text-align: center;
+`;
+
+// Мобильные стили
 export const MobileContainer = styled.div`
   padding: 16px;
-  //background: #fff;
-  //width: 375px;
-  //min-height: 504px;
   margin: 0 auto;
-  
+
   @media (min-width: 768px) {
     display: none;
   }
@@ -255,7 +264,6 @@ export const MobileHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
   align-items: baseline;
 `;
 
@@ -297,11 +305,7 @@ export const PeriodText = styled.p`
   margin-bottom: 24px;
 `;
 
-export const ChartWrapperMobile = styled.div`
-  //width: 343px;
-  //height: 376px;
-  //margin-bottom: 24px;
-`;
+export const ChartWrapperMobile = styled.div``;
 
 export const ChangePeriodButton = styled.button`
   background: #7c3aed;
@@ -316,9 +320,7 @@ export const ChangePeriodButton = styled.button`
   margin-top: 24px;
 `;
 
-export const PeriodSelection = styled.div`
-  padding: 16px 0;
-`;
+export const PeriodSelection = styled.div``;
 
 export const ToggleGroup = styled.div`
   display: flex;
@@ -331,7 +333,7 @@ export const ToggleGroup = styled.div`
 export const YearSelection = styled.div`
   margin-bottom: 24px;
   overflow-y: auto;
-  height: 380px;
+  max-height: 396px;
 `;
 
 export const YearTitle = styled.h3`
@@ -350,28 +352,28 @@ export const MonthsGrid = styled.div`
 
 export const MonthButton = styled.button`
   padding: 12px 8px;
-  border: 1px solid ${props => {
+  border: 1px solid ${(props) => {
     if (props.$selected) return "#9653e2";
-    if (props.$current) return "#9653e2"; 
+    if (props.$current) return "#9653e2";
     return "#e5e7eb";
   }};
-  background: ${props => {
+  background: ${(props) => {
     if (props.$selected) return "#f3f0ff";
-    if (props.$current) return "#f3f0ff"; 
+    if (props.$current) return "#f3f0ff";
     return "white";
   }};
-  color: ${props => {
+  color: ${(props) => {
     if (props.$selected) return "#7c3aed";
-    if (props.$current) return "#7c3aed"; 
+    if (props.$current) return "#7c3aed";
     return "#374151";
   }};
   border-radius: 8px;
   font-size: 12px;
-  font-weight: ${props => props.$selected || props.$current ? 600 : 400};
+  font-weight: ${(props) => (props.$selected || props.$current ? 600 : 400)};
   cursor: pointer;
-  
+
   &:hover {
-    border-color: ${props => props.$selected ? "#7c3aed" : "#10b981"};
+    border-color: ${(props) => (props.$selected ? "#7c3aed" : "#10b981")};
   }
 `;
 

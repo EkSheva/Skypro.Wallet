@@ -1,3 +1,4 @@
+// src/components/Analysis/Analysis.jsx
 import React, {
   useState,
   useRef,
@@ -56,20 +57,18 @@ export default function Analysis() {
   const calendarScrollRef = useRef(null);
   const yearScrollRef = useRef(null);
 
-  // Функция для сокращения названий только в мобильной версии
+  // Сокращение названий (только мобилка)
   const shortenLabel = (name) => {
     if (!isMobile) return name;
-
     const abbreviations = {
       Транспорт: "Трансп...",
       Развлечения: "Развл...",
       Образование: "Образ...",
     };
-
     return abbreviations[name] || name;
   };
 
-  // --- загрузка транзакций ---
+  // Загрузка транзакций (без фильтров/сортировки через API)
   const fetchTransactions = useCallback(async () => {
     if (!user?.token) return;
     try {
@@ -84,7 +83,7 @@ export default function Analysis() {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // --- генерация месяцев для календаря ---
+  // Генерация месяцев для скролла
   const generateScrollMonths = () => {
     const monthsData = [];
     const currentDate = new Date();
@@ -125,7 +124,7 @@ export default function Analysis() {
 
   const scrollMonths = generateScrollMonths();
 
-  // --- автоскролл к текущему месяцу (месячный режим) ---
+  // Автоскролл к текущему месяцу (месячный режим)
   useEffect(() => {
     if (viewMode === "month" && calendarScrollRef.current) {
       const currentMonthElement = calendarScrollRef.current.querySelector(
@@ -139,7 +138,7 @@ export default function Analysis() {
     }
   }, [viewMode]);
 
-  // --- автоскролл к текущему месяцу (годовой режим) ---
+  // Автоскролл к текущему месяцу (годовой режим)
   useEffect(() => {
     if (viewMode === "year" && yearScrollRef.current) {
       const now = new Date();
@@ -154,7 +153,8 @@ export default function Analysis() {
       }
     }
   }, [viewMode]);
-  // --- выбор дней ---
+
+  // Выбор дней
   const handleDaySelect = (year, month, day) => {
     if (!day) return;
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
@@ -166,7 +166,7 @@ export default function Analysis() {
     else setSelectedDays([dateStr]);
   };
 
-  // --- выбор месяца ---
+  // Выбор месяца (в годовом режиме)
   const handleMonthClick = (year, month) => {
     const monthStr = `${year}-${month}`;
     if (selectedMonths.includes(monthStr)) {
@@ -176,7 +176,7 @@ export default function Analysis() {
     }
   };
 
-  // --- подсветка выбранных дней ---
+  // Подсветка выбранных дней
   const isDaySelected = (year, month, day) => {
     if (!day) return false;
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
@@ -188,19 +188,19 @@ export default function Analysis() {
     return dateStr >= sorted[0] && dateStr <= sorted[1];
   };
 
-  // --- подсветка текущего дня ---
+  // Подсветка текущего дня
   const isCurrentDay = (year, month, day, monthData) => {
     if (!day || !monthData.isCurrentMonth) return false;
     return day === monthData.currentDay;
   };
 
-  // --- функция для подсветки текущего месяца в годовом режиме ---
+  // Подсветка текущего месяца в годовом режиме
   const isCurrentMonthInYearView = (year, month) => {
     const now = new Date();
     return year === now.getFullYear() && month === now.getMonth();
   };
 
-  // --- фильтрация по периоду ---
+  // Фильтрация по периоду (локально)
   let filtered = transactions;
   if (viewMode === "month" && selectedDays.length === 2) {
     const [start, end] = [...selectedDays].sort();
@@ -209,7 +209,6 @@ export default function Analysis() {
       return d >= new Date(start) && d <= new Date(end);
     });
   }
-
   if (viewMode === "year" && selectedMonths.length > 0) {
     filtered = transactions.filter((t) => {
       const tDate = new Date(t.date);
@@ -220,7 +219,7 @@ export default function Analysis() {
     });
   }
 
-  // --- группировка по категориям с минимальной высотой для нулевых значений ---
+  // Группировка по категориям (без displayValue)
   const expenses = categories.map((cat) => {
     const value = filtered
       .filter((t) => t.category === cat.id)
@@ -228,13 +227,14 @@ export default function Analysis() {
 
     return {
       name: cat.name,
-      value: value,
+      value,
       color: cat.color,
-      displayValue: value === 0 ? 1 : value, // Минимальная высота для нулевых значений
+      id: cat.id,
     };
   });
 
   const total = expenses.reduce((acc, cur) => acc + cur.value, 0);
+  const hasExpenses = total > 0;
 
   const formatDisplayDate = (dateStr) => {
     const [year, month, day] = dateStr.split("-");
@@ -276,22 +276,16 @@ export default function Analysis() {
     }
   };
 
-  // --- кастомный форматтер для тултипа ---
-  const customTooltipFormatter = (value, name, props) => {
-    // Показываем реальное значение, а не displayValue
-    const realValue = props.payload.value;
+  // Tooltip форматтер
+  const customTooltipFormatter = (value, _name, props) => {
+    const realValue = props?.payload?.value ?? 0;
     return [`${realValue.toLocaleString("ru-RU")} ₽`, "Сумма"];
   };
 
-  // --- мобильные обработчики ---
+  // Мобильные обработчики
   const handleSelectPeriod = () => {
     setMobileView("period");
   };
-
-  //const handleBackToChart = () => {
-  //  setMobileView("chart");
-  //};
-
   const handleApplyPeriod = () => {
     setMobileView("chart");
   };
@@ -331,52 +325,50 @@ export default function Analysis() {
               <S.PeriodText>{getSelectedPeriodText()}</S.PeriodText>
 
               <S.ChartWrapperMobile>
-                <BarChart
-                  width={342}
-                  height={376}
-                  data={expenses}
-                  margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-                >
-                  <XAxis
-                    dataKey="name"
-                    tick={{
-                      fontSize: 10,
-                      fontFamily: "Montserrat",
-                      fontWeight: 400,
-                      fill: "#000000",
-                    }}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={shortenLabel}
-                    interval={0}
-                  />
-                  <YAxis hide />
-                  <Tooltip formatter={customTooltipFormatter} />
-                  <Bar
-                    dataKey="displayValue"
-                    radius={[6, 6, 6, 6]}
-                    barSize={52}
+                {hasExpenses ? (
+                  <BarChart
+                    width={342}
+                    height={376}
+                    data={expenses}
+                    margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
                   >
-                    {expenses.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                    <LabelList
-                      dataKey="value"
-                      position="top"
-                      formatter={(value) =>
-                        value === 0
-                          ? "0 ₽"
-                          : value.toLocaleString("ru-RU") + " ₽"
-                      }
-                      style={{
+                    <XAxis
+                      dataKey="name"
+                      tick={{
                         fontSize: 10,
-                        fontWeight: 600,
                         fontFamily: "Montserrat",
+                        fontWeight: 400,
                         fill: "#000000",
                       }}
+                      axisLine={false}
+                      tickLine={false}
+                      tickFormatter={shortenLabel}
+                      interval={0}
                     />
-                  </Bar>
-                </BarChart>
+                    <YAxis hide />
+                    <Tooltip formatter={customTooltipFormatter} />
+                    <Bar dataKey="value" radius={[6, 6, 6, 6]} barSize={52}>
+                      {expenses.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                      <LabelList
+                        dataKey="value"
+                        position="top"
+                        formatter={(value) =>
+                          value === 0 ? "" : value.toLocaleString("ru-RU") + " ₽"
+                        }
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          fontFamily: "Montserrat",
+                          fill: "#000000",
+                        }}
+                      />
+                    </Bar>
+                  </BarChart>
+                ) : (
+                  <S.EmptyState>Нет расходов за выбранный период</S.EmptyState>
+                )}
               </S.ChartWrapperMobile>
             </S.ChartSection>
 
@@ -387,8 +379,6 @@ export default function Analysis() {
         ) : (
           // Страница выбора периода
           <S.PeriodSelection>
-            
-
             {viewMode === "year" ? (
               <S.YearSelection ref={yearScrollRef}>
                 {Array.from(new Set(scrollMonths.map((m) => m.year))).map(
@@ -429,9 +419,7 @@ export default function Analysis() {
                     {scrollMonths.map((md) => (
                       <div
                         key={`${md.year}-${md.month}`}
-                        data-current-month={
-                          md.isCurrentMonth ? "true" : "false"
-                        }
+                        data-current-month={md.isCurrentMonth ? "true" : "false"}
                       >
                         <S.MonthTitle>{md.title}</S.MonthTitle>
                         <S.DaysGrid>
@@ -439,12 +427,7 @@ export default function Analysis() {
                             <S.DayCell
                               key={idx}
                               selected={isDaySelected(md.year, md.month, day)}
-                              $current={isCurrentDay(
-                                md.year,
-                                md.month,
-                                day,
-                                md
-                              )}
+                              $current={isCurrentDay(md.year, md.month, day, md)}
                               disabled={!day}
                               onClick={() =>
                                 handleDaySelect(md.year, md.month, day)
@@ -568,9 +551,7 @@ export default function Analysis() {
                           selected={isDaySelected(md.year, md.month, day)}
                           $current={isCurrentDay(md.year, md.month, day, md)}
                           disabled={!day}
-                          onClick={() =>
-                            handleDaySelect(md.year, md.month, day)
-                          }
+                          onClick={() => handleDaySelect(md.year, md.month, day)}
                         >
                           {day}
                         </S.DayCell>
@@ -589,41 +570,41 @@ export default function Analysis() {
             <S.Total>{total.toLocaleString("ru-RU")} ₽</S.Total>
             <S.Subtitle>{getSelectedPeriodText()}</S.Subtitle>
           </S.ChartHeader>
-          <S.ResponsiveContainer>
-            <S.BarChart data={expenses}>
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 12, fontWeight: 400, fill: "#000000" }}
-                axisLine={false}
-                tickLine={false}
-                // Без tickFormatter - полные названия для десктопа
-              />
-              <YAxis hide />
-              <Tooltip formatter={customTooltipFormatter} />
-              <Bar
-                dataKey="displayValue"
-                radius={[12, 12, 12, 12]}
-                barSize={94}
-              >
-                {expenses.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-                <LabelList
-                  dataKey="value"
-                  position="top"
-                  formatter={(value) =>
-                    value === 0 ? "0 ₽" : value.toLocaleString("ru-RU") + " ₽"
-                  }
-                  style={{
-                    fontFamily: "Montserrat",
-                    fontWeight: 600,
-                    fontSize: 16,
-                    fill: "#000000",
-                  }}
+
+          {hasExpenses ? (
+            <S.ResponsiveContainer>
+              <S.BarChart data={expenses}>
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 12, fontWeight: 400, fill: "#000000" }}
+                  axisLine={false}
+                  tickLine={false}
                 />
-              </Bar>
-            </S.BarChart>
-          </S.ResponsiveContainer>
+                <YAxis hide />
+                <Tooltip formatter={customTooltipFormatter} />
+                <Bar dataKey="value" radius={[12, 12, 12, 12]} barSize={94}>
+                  {expenses.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                  <LabelList
+                    dataKey="value"
+                    position="top"
+                    formatter={(value) =>
+                      value === 0 ? "" : value.toLocaleString("ru-RU") + " ₽"
+                    }
+                    style={{
+                      fontFamily: "Montserrat",
+                      fontWeight: 600,
+                      fontSize: 16,
+                      fill: "#000000",
+                    }}
+                  />
+                </Bar>
+              </S.BarChart>
+            </S.ResponsiveContainer>
+          ) : (
+            <S.EmptyState>Нет расходов за выбранный период</S.EmptyState>
+          )}
         </S.ChartWrapper>
       </S.CalendarBox>
     </S.Container>
