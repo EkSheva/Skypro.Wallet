@@ -26,6 +26,7 @@ export const ContainerTBM = styled.div`
 `;
 export const ContainerFilters = styled.div`
   display: flex;
+  padding-bottom: 22px;
   align-items: baseline;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -91,7 +92,7 @@ export const Table = styled.table`
   th,
   td {
     text-align: left;
-    padding-top: 16px;
+    padding-top: 10px;
     font-weight: 400;
     font-size: 12px;
     @media screen and (max-width: 495px) {
@@ -102,8 +103,9 @@ export const Table = styled.table`
   th {
     font-weight: 400;
     font-size: 12px;
-    color: rgba(153, 153, 153, 1);
-    border-bottom: 1px solid #eee;
+    color: #999999;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 6px;
     @media screen and (max-width: 495px) {
       font-size: 10px;
     }
