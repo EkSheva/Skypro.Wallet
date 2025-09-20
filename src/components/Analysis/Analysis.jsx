@@ -510,7 +510,7 @@ export default function Analysis() {
 
           {/* Годовой выбор месяцев */}
           {viewMode === "year" && (
-            <S.CalendarScroll ref={yearScrollRef} style={{ height: "380px" }}>
+            <S.CalendarScroll ref={yearScrollRef} style={{ height: "425px" }}>
               {Array.from(new Set(scrollMonths.map((m) => m.year))).map(
                 (year) => (
                   <div key={year}>

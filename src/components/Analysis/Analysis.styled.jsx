@@ -41,7 +41,7 @@ export const CalendarWrapper = styled.div`
   width: 379px;
   background: #fff;
   border-radius: 30px;
-  padding: 24px;
+  padding: 24px 27px 0;
   border: none;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   display: flex;
@@ -104,7 +104,6 @@ export const DayHeader = styled.div`
 
 export const CalendarScroll = styled.div`
   overflow-y: auto;
-  height: 574px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -145,7 +144,7 @@ export const DayCell = styled.div`
   height: 40px;
   border-radius: 60px;
   background: ${({ selected, $current }) =>
-    selected ? "#ceb8e0" : $current ? "#ceb8e0" : "transparent"};
+    selected ? "#ceb8e0" : $current ? "#cdc6d3" : "transparent"};
   color: ${({ disabled, selected, $current }) => {
     if (disabled) return "#DBFFE9";
     if (selected) return "#855bb9";
