@@ -197,7 +197,7 @@ export const Input = styled.input`
     `}
 `;
 
-/* Категории */
+/* Категории в форме */
 export const Categories = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -207,25 +207,25 @@ export const Categories = styled.div`
 export const CategoryButton = styled.button`
   display: inline-flex;
   align-items: center;
-  padding: 8px 20px 8px 20px;
-  border-radius: 30px;
+  gap: 12px;                    /* по ТЗ */
+  padding: 8px 20px;            /* по ТЗ */                /* по ТЗ */
+  border-radius: 30px;          /* по ТЗ */
   border: none;
-  background: #f5f5f5;
+  background: #F4F5F6;          /* по ТЗ */
   cursor: pointer;
   transition: 0.2s;
-  font-size: 12px;
+  font-size: 12px;              /* по ТЗ */
   line-height: 1.2;
   color: #070707;
-  font-weight: 400;
+  font-weight: 400;             /* по ТЗ */
   outline: none;
 
   ${(p) =>
     p.$active &&
     css`
-      background: #d6cbe0;
-      border-color: #7b2cbf;
-      color: #7631bb;
-      font-weight: 600;
+      background: #dbe2ff;      /* по ТЗ */
+      color: #070707;
+      font-weight: 400;
       outline: none;
     `}
 `;
@@ -236,7 +236,7 @@ export const Filters = styled.div`
   gap: 24px;
   font-family: Montserrat;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 12px; /* по ТЗ */
   line-height: 150%;
 
   @media (max-width: 768px) {
@@ -252,8 +252,8 @@ export const Dropdown = styled.div`
 
 export const DropdownToggle = styled.span`
   cursor: pointer;
-  font-weight: 600;
-  font-size: 10px;
+  font-weight: 600;  /* по ТЗ */
+  font-size: 12px;   /* по ТЗ */
   line-height: 150%;
   color: #7c3aed;
   text-decoration: underline;
@@ -263,13 +263,12 @@ export const DropdownToggle = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
 
   &:hover {
     color: #7b2cbf;
-  }
-
-  @media screen and (min-width: 496px) {
-    max-width: none;
   }
 `;
 
@@ -284,71 +283,78 @@ export const ArrowIcon = styled.span`
 
 export const DropdownMenu = styled.div`
   position: absolute;
-  margin-top: 8px; /* немного больше расстояние как в макете */
+  top: calc(100% + 6px);
+  right: calc(10% + 1px);
+  overflow-y: auto;
   background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px; /* более «мягкие» углы */
-  min-width: 220px;   /* ширина под иконки + текст */
-  padding: 12px;      /* внутренние отступы как в макете */
+  border: 1px solid #999999;
+  border-radius: 6px;
+  padding: 12px 12px;
   box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.08);
-  z-index: 10;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  @media (max-width: 768px) {
+    padding: 10px 10px;
+  }           /* по ТЗ */
 `;
 
-/* NEW: пункты меню категорий с иконкой и «пилюлей» */
+/* Пункты меню категорий */
 export const CatDropdownItem = styled.button`
-  width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;                    /* по ТЗ */
   border: none;
-  background: ${({ $active }) => ($active ? "#DDFCE5" : "#F3F4F6")};
+  border-radius: 30px;          /* по ТЗ */
+  padding: 8px 20px 8px 20px;            /* по ТЗ */
+  background: ${({ $active }) => ($active ? "#f1dbff" : "#e6e6e6")};
   color: #111827;
-  border-radius: 20px;
-  padding: 10px 12px;
   cursor: pointer;
-  font-size: 14px;
+  font-weight: 400;             /* по ТЗ */
+  font-size: 12px;              /* по ТЗ */
+  line-height: 1;
   text-align: left;
   transition: background 0.2s ease;
-
-  &:not(:last-child) {
-    margin-bottom: 8px;
+  @media (max-width: 768px) {
+    font-size: 10px;
   }
-
   &:hover {
-    background: ${({ $active }) => ($active ? "#CCF6DA" : "#E5E7EB")};
+    background: ${({ $active }) => ($active ? "#ddd2f8" : "#E9EAEB")};
   }
 `;
 
 export const CatIcon = styled.span`
-  width: 22px;
-  height: 22px;
+  width: 14px;                  /* по ТЗ */
+  height: 14px;                 /* по ТЗ */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1px; /* размер эмодзи */
+  font-size: 14px;              /* чтобы эмодзи стали 14px */
+  line-height: 1;
 `;
 
-/* NEW: пункты меню сортировки с «пилюлей» */
+/* Пункты меню сортировки */
 export const SortDropdownItem = styled.button`
-  width: 100%;
   display: flex;
   align-items: center;
+  gap: 12px;
   border: none;
-  background: ${({ $active }) => ($active ? "#DDFCE5" : "#F3F4F6")};
+  border-radius: 30px;
+  padding: 8px 20px;
+  background: ${({ $active }) => ($active ? "#f1dbff" : "#E9EAEB")};
   color: #111827;
-  border-radius: 20px;
-  padding: 10px 12px;
   cursor: pointer;
-  font-size: 14px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
   text-align: left;
   transition: background 0.2s ease;
-
-  &:not(:last-child) {
-    margin-bottom: 8px;
+  @media (max-width: 768px) {
+    font-size: 10px;
   }
-
   &:hover {
-    background: ${({ $active }) => ($active ? "#CCF6DA" : "#E5E7EB")};
+    background: ${({ $active }) => ($active ? "#efdbff" : "#E9EAEB")};
   }
 `;
 

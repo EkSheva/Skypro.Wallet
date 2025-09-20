@@ -21,35 +21,6 @@ const categories = [
   { id: "others", label: "Другое", icon: "📦" },
 ];
 
-// для стилизации “выпадашек” без styled-components
-const menuStyle = {
-  position: "absolute",
-  marginTop: 8,
-  background: "#fff",
-  border: "1px solid #e5e7eb",
-  borderRadius: 16,
-  minWidth: 220,
-  padding: 12,
-  boxShadow: "0px 12px 30px rgba(0,0,0,0.08)",
-  zIndex: 1000,
-};
-const menuItemStyle = (active) => ({
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  gap: 10,
-  border: "none",
-  background: active ? "#F1EBFD" : "#F3F4F6",
-  color: active ? "#7631bb" : "#111827",
-  borderRadius: 20,
-  padding: "10px 12px",
-  cursor: "pointer",
-  fontSize: 14,
-  textAlign: "left",
-  marginBottom: 8,
-});
-const iconStyle = { width: 22, height: 22, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 16 };
-
 const truncateLabel = (text, max = 4) =>
   text.length > max ? text.slice(0, max) + "..." : text;
 
@@ -255,31 +226,31 @@ const Expenses = () => {
                       </S.DropdownToggle>
 
                       {openCategory && (
-                        <div style={menuStyle}>
-                          <button
-                            style={menuItemStyle(filter === "all")}
+                        <S.DropdownMenu>
+                          <S.CatDropdownItem
+                            $active={filter === "all"}
                             onClick={() => {
                               setFilter("all");
                               setOpenCategory(false);
                             }}
                           >
-                            <span style={iconStyle}>✨</span>
+                            <S.CatIcon>✨</S.CatIcon>
                             <span>Все</span>
-                          </button>
+                          </S.CatDropdownItem>
                           {categories.map((c) => (
-                            <button
+                            <S.CatDropdownItem
                               key={c.id}
-                              style={menuItemStyle(filter === c.id)}
+                              $active={filter === c.id}
                               onClick={() => {
                                 setFilter(c.id);
                                 setOpenCategory(false);
                               }}
                             >
-                              <span style={iconStyle}>{c.icon}</span>
+                              <S.CatIcon>{c.icon}</S.CatIcon>
                               <span>{c.label}</span>
-                            </button>
+                            </S.CatDropdownItem>
                           ))}
-                        </div>
+                        </S.DropdownMenu>
                       )}
                     </S.Dropdown>
                   </div>
@@ -294,7 +265,7 @@ const Expenses = () => {
                           setOpenCategory(false);
                         }}
                       >
-                        {sortBy === "date" ? "Дата" : "Сумма"}
+                        {sortBy === "date" ? "дата" : "сумма"}
                         <S.ArrowIcon open={openSort}>
                           <svg
                             width="7"
@@ -312,26 +283,26 @@ const Expenses = () => {
                       </S.DropdownToggle>
 
                       {openSort && (
-                        <div style={menuStyle}>
-                          <button
-                            style={menuItemStyle(sortBy === "date")}
+                        <S.DropdownMenu>
+                          <S.SortDropdownItem
+                            $active={sortBy === "date"}
                             onClick={() => {
                               setSortBy("date");
                               setOpenSort(false);
                             }}
                           >
-                            <span>Дате</span>
-                          </button>
-                          <button
-                            style={menuItemStyle(sortBy === "sum")}
+                            Дате
+                          </S.SortDropdownItem>
+                          <S.SortDropdownItem
+                            $active={sortBy === "sum"}
                             onClick={() => {
                               setSortBy("sum");
                               setOpenSort(false);
                             }}
                           >
-                            <span>Сумме</span>
-                          </button>
-                        </div>
+                            Сумме
+                          </S.SortDropdownItem>
+                        </S.DropdownMenu>
                       )}
                     </S.Dropdown>
                   </div>
@@ -477,7 +448,8 @@ const Expenses = () => {
                       $active={form.category === c.id}
                       onClick={() => handleCategorySelect(c.id)}
                     >
-                      {c.icon} {c.label}
+                      <S.CatIcon>{c.icon}</S.CatIcon>
+                      {c.label}
                     </S.CategoryButton>
                   ))}
                 </S.Categories>
@@ -493,7 +465,8 @@ const Expenses = () => {
                         setEditModal({ ...editModal, category: c.id })
                       }
                     >
-                      {c.icon} {c.label}
+                      <S.CatIcon>{c.icon}</S.CatIcon>
+                      {c.label}
                     </S.CategoryButton>
                   ))}
                 </S.Categories>

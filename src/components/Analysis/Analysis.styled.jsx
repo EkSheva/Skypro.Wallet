@@ -80,7 +80,7 @@ export const ToggleButton = styled.span`
 export const CalendarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 440px;
+  height: 472px;
   overflow: hidden;
 `;
 
@@ -88,18 +88,14 @@ export const FixedDaysHeader = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-  margin-bottom: 8px;
   background: #fff;
-  padding: 8px 0;
   border-bottom: 2px solid #e5e7eb;
   position: sticky;
-  top: 0;
-  z-index: 10;
 `;
 
 export const DayHeader = styled.div`
   text-align: center;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 12px;
   color: #6b7280;
   padding: 6px;
@@ -107,7 +103,7 @@ export const DayHeader = styled.div`
 
 export const CalendarScroll = styled.div`
   overflow-y: auto;
-  height: 380px;
+  height: 574px;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -130,7 +126,7 @@ export const CalendarScroll = styled.div`
 
 export const MonthTitle = styled.h4`
   display: flex;
-  margin: 16px 0 8px 0;
+  margin: 24px 0 12px 0;
   color: #000000;
   font-weight: 600;
   font-size: 16px;
@@ -141,7 +137,6 @@ export const DaysGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  margin-bottom: 20px;
 `;
 
 export const DayCell = styled.div`
@@ -163,7 +158,7 @@ export const DayCell = styled.div`
   justify-content: center;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
   transition: all 0.2s ease;
-  font-size: 14px;
+  font-size: 12px;
 
   &:hover {
     background: ${({ disabled }) => (disabled ? "transparent" : "#eeeef0")};
@@ -252,7 +247,7 @@ export const EmptyState = styled.div`
 
 // Мобильные стили
 export const MobileContainer = styled.div`
-  padding: 16px;
+  padding: 24px 16px;
   margin: 0 auto;
 
   @media (min-width: 768px) {
@@ -285,7 +280,8 @@ export const MobileTitle = styled.h1`
 
 export const ChartSection = styled.div`
   text-align: center;
-  margin-bottom: 31px;
+  margin-top: 24px;
+  margin-bottom: 34px;
   width: 343px;
 `;
 
@@ -294,7 +290,7 @@ export const TotalAmount = styled.h2`
   font-size: 20px;
   font-weight: 700;
   color: #000;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 `;
 
 export const PeriodText = styled.p`
@@ -312,12 +308,16 @@ export const ChangePeriodButton = styled.button`
   color: white;
   border: none;
   padding: 16px;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
   margin-top: 24px;
+  max-height: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const PeriodSelection = styled.div``;
@@ -325,15 +325,14 @@ export const PeriodSelection = styled.div``;
 export const ToggleGroup = styled.div`
   display: flex;
   gap: 12px;
-  border-radius: 8px;
   padding: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `;
 
 export const YearSelection = styled.div`
-  margin-bottom: 24px;
+  margin-bottom: 52px;
   overflow-y: auto;
-  max-height: 396px;
+  max-height: 444px;
 `;
 
 export const YearTitle = styled.h3`
@@ -346,20 +345,19 @@ export const YearTitle = styled.h3`
 export const MonthsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px;
 `;
 
 export const MonthButton = styled.button`
-  padding: 12px 8px;
+  padding: 8px;
   border: 1px solid ${(props) => {
-    if (props.$selected) return "#9653e2";
-    if (props.$current) return "#9653e2";
-    return "#e5e7eb";
+    if (props.$selected) return "#ffffff";
+    if (props.$current) return "#dbdbdb";
+    return "#d4d4d4";
   }};
   background: ${(props) => {
-    if (props.$selected) return "#f3f0ff";
-    if (props.$current) return "#f3f0ff";
+    if (props.$selected) return "#b7aaf0";
+    if (props.$current) return "#d2d1d4";
     return "white";
   }};
   color: ${(props) => {
@@ -367,7 +365,7 @@ export const MonthButton = styled.button`
     if (props.$current) return "#7c3aed";
     return "#374151";
   }};
-  border-radius: 8px;
+  border-radius: 30px;
   font-size: 12px;
   font-weight: ${(props) => (props.$selected || props.$current ? 600 : 400)};
   cursor: pointer;
@@ -378,17 +376,21 @@ export const MonthButton = styled.button`
 `;
 
 export const MonthSelection = styled.div`
-  margin-bottom: 24px;
 `;
 
 export const ApplyButton = styled.button`
   background: #7c3aed;
   color: white;
   border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
+  margin-top: 24px;
+  max-height: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
