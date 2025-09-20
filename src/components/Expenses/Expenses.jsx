@@ -1,9 +1,11 @@
-import React, { useState, useContext } from "react";
+// src/components/Expenses/Expenses.jsx
+import React, { useState, useContext, useEffect, useCallback, useRef } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
   addTransaction,
   deleteTransaction,
   redactTransaction,
+  getTransactions,
 } from "../../services/transactions";
 import * as S from "./Expenses.styled";
 import BaseButton from "../BaseButton/BaseButton";
@@ -19,7 +21,35 @@ const categories = [
   { id: "others", label: "Другое", icon: "📦" },
 ];
 
-// хелпер для сокращения текста
+// для стилизации “выпадашек” без styled-components
+const menuStyle = {
+  position: "absolute",
+  marginTop: 8,
+  background: "#fff",
+  border: "1px solid #e5e7eb",
+  borderRadius: 16,
+  minWidth: 220,
+  padding: 12,
+  boxShadow: "0px 12px 30px rgba(0,0,0,0.08)",
+  zIndex: 1000,
+};
+const menuItemStyle = (active) => ({
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+  border: "none",
+  background: active ? "#F1EBFD" : "#F3F4F6",
+  color: active ? "#7631bb" : "#111827",
+  borderRadius: 20,
+  padding: "10px 12px",
+  cursor: "pointer",
+  fontSize: 14,
+  textAlign: "left",
+  marginBottom: 8,
+});
+const iconStyle = { width: 22, height: 22, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 16 };
+
 const truncateLabel = (text, max = 4) =>
   text.length > max ? text.slice(0, max) + "..." : text;
 
@@ -43,18 +73,26 @@ const Expenses = () => {
     amount: "",
   });
   const navigate = useNavigate();
-  const [filter, setFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("date");
+
+  // фильтрация/сортировка через API
+  const [filter, setFilter] = useState("all"); // 'all' | categoryId
+  const [sortBy, setSortBy] = useState("date"); // 'date' | 'sum'
+
   const [editModal, setEditModal] = useState(null);
   const [openCategory, setOpenCategory] = useState(false);
   const [openSort, setOpenSort] = useState(false);
   const [selectedTransactionId, setSelectedTransactionId] = useState(null);
 
+  const [listLoading, setListLoading] = useState(false);
+
+  // refs для закрытия по клику вне
+  const catRef = useRef(null);
+  const sortRef = useRef(null);
+
   const handleRowClick = (id) => {
     setSelectedTransactionId(id === selectedTransactionId ? null : id);
   };
 
-  // --- валидация формы ---
   const validate = () => {
     const newErrors = {};
     if (!form.title.trim()) newErrors.title = "*";
@@ -66,12 +104,29 @@ const Expenses = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // --- изменение формы ---
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
   const handleCategorySelect = (id) => setForm({ ...form, category: id });
 
-  // --- добавление транзакции ---
+  const reloadList = useCallback(async () => {
+    if (!user?.token) return;
+    try {
+      setListLoading(true);
+      const filterBy = filter === "all" ? [] : [filter];
+      const data = await getTransactions(user.token, sortBy, filterBy);
+      setTransactions(data || []);
+    } catch (err) {
+      console.error("Ошибка при загрузке с фильтрами:", err.message);
+      setErrors({ api: "Ошибка загрузки списка" });
+    } finally {
+      setListLoading(false);
+    }
+  }, [user?.token, sortBy, filter, setTransactions, setErrors]);
+
+  useEffect(() => {
+    reloadList();
+  }, [reloadList]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
@@ -84,8 +139,8 @@ const Expenses = () => {
     };
 
     try {
-      const updateTrans = await addTransaction(newTransaction, user.token);
-      setTransactions(updateTrans);
+      await addTransaction(newTransaction, user.token);
+      await reloadList();
       setForm({ title: "", category: "", date: "", amount: "" });
       setErrors({});
     } catch (err) {
@@ -93,23 +148,20 @@ const Expenses = () => {
     }
   };
 
-  // --- удаление транзакции ---
   const handleDeleteTransaction = async (id) => {
     try {
-      const updateTrans = await deleteTransaction(id, user.token);
-      setTransactions(updateTrans);
+      await deleteTransaction(id, user.token);
+      await reloadList();
     } catch (err) {
       console.error("Ошибка удаления транзакции:", err.message);
     }
   };
 
-  // --- сменить на редактирование ---
   const handleEdit = (t) => setEditModal(t);
 
-  // --- сохранить изменения ---
   const handleSaveEdit = async () => {
     try {
-      const updateTrans = await redactTransaction({
+      await redactTransaction({
         token: user.token,
         id: editModal._id,
         transaction: {
@@ -122,23 +174,26 @@ const Expenses = () => {
 
       setEditModal(null);
       setErrors({});
-      setTransactions(updateTrans);
+      await reloadList();
       navigate("/");
     } catch (error) {
       console.error("Ошибка при сохранении изменений:", error.message);
     }
   };
 
-  // --- фильтрация + сортировка ---
-  const filteredTransactions = transactions
-    .filter((t) => (filter === "all" ? true : t.category === filter))
-    .sort((a, b) => {
-      if (sortBy === "date") return new Date(b.date) - new Date(a.date);
-      if (sortBy === "sum") return b.sum - a.sum;
-      return 0;
-    });
+  // закрытие выпадашек по клику вне
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (catRef.current && !catRef.current.contains(e.target)) setOpenCategory(false);
+      if (sortRef.current && !sortRef.current.contains(e.target)) setOpenSort(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
 
-  if (loading) return <p>Загрузка...</p>;
+  const rows = transactions;
+
+  if (loading || listLoading) return <p>Загрузка...</p>;
 
   return (
     <S.Container $showForm={showForm}>
@@ -160,20 +215,24 @@ const Expenses = () => {
         )}
       </S.ContainerTBM>
 
-      {/* Контент */}
       <S.Content>
         {(!isMobile || (isMobile && !showForm)) && (
           <>
             <S.TableWrapper $isMobile={isMobile}>
               <S.ContainerFilters>
                 <S.TableTitle>Таблица расходов</S.TableTitle>
-                {/* Фильтры */}
+
+                {/* Фильтры/сортировка */}
                 <S.Filters>
-                  <label>
-                    Фильтровать по категории:{" "}
+                  {/* Фильтр по категории */}
+                  <div ref={catRef}>
+                    <span>Фильтровать по категории: </span>
                     <S.Dropdown>
                       <S.DropdownToggle
-                        onClick={() => setOpenCategory((p) => !p)}
+                        onClick={() => {
+                          setOpenCategory((p) => !p);
+                          setOpenSort(false);
+                        }}
                       >
                         {truncateLabel(
                           categories.find((c) => c.id === filter)?.label ||
@@ -194,36 +253,47 @@ const Expenses = () => {
                           </svg>
                         </S.ArrowIcon>
                       </S.DropdownToggle>
+
                       {openCategory && (
-                        <S.DropdownMenu>
-                          <S.DropdownItem
+                        <div style={menuStyle}>
+                          <button
+                            style={menuItemStyle(filter === "all")}
                             onClick={() => {
                               setFilter("all");
                               setOpenCategory(false);
                             }}
                           >
-                            Все
-                          </S.DropdownItem>
+                            <span style={iconStyle}>✨</span>
+                            <span>Все</span>
+                          </button>
                           {categories.map((c) => (
-                            <S.DropdownItem
+                            <button
                               key={c.id}
+                              style={menuItemStyle(filter === c.id)}
                               onClick={() => {
                                 setFilter(c.id);
                                 setOpenCategory(false);
                               }}
                             >
-                              {c.label}
-                            </S.DropdownItem>
+                              <span style={iconStyle}>{c.icon}</span>
+                              <span>{c.label}</span>
+                            </button>
                           ))}
-                        </S.DropdownMenu>
+                        </div>
                       )}
                     </S.Dropdown>
-                  </label>
+                  </div>
 
-                  <label>
-                    Сортировать по:{" "}
+                  {/* Сортировка */}
+                  <div ref={sortRef}>
+                    <span>Сортировать по: </span>
                     <S.Dropdown>
-                      <S.DropdownToggle onClick={() => setOpenSort((p) => !p)}>
+                      <S.DropdownToggle
+                        onClick={() => {
+                          setOpenSort((p) => !p);
+                          setOpenCategory(false);
+                        }}
+                      >
                         {sortBy === "date" ? "Дата" : "Сумма"}
                         <S.ArrowIcon open={openSort}>
                           <svg
@@ -240,30 +310,34 @@ const Expenses = () => {
                           </svg>
                         </S.ArrowIcon>
                       </S.DropdownToggle>
+
                       {openSort && (
-                        <S.DropdownMenu>
-                          <S.DropdownItem
+                        <div style={menuStyle}>
+                          <button
+                            style={menuItemStyle(sortBy === "date")}
                             onClick={() => {
                               setSortBy("date");
                               setOpenSort(false);
                             }}
                           >
-                            Дате
-                          </S.DropdownItem>
-                          <S.DropdownItem
+                            <span>Дате</span>
+                          </button>
+                          <button
+                            style={menuItemStyle(sortBy === "sum")}
                             onClick={() => {
                               setSortBy("sum");
                               setOpenSort(false);
                             }}
                           >
-                            Сумме
-                          </S.DropdownItem>
-                        </S.DropdownMenu>
+                            <span>Сумме</span>
+                          </button>
+                        </div>
                       )}
                     </S.Dropdown>
-                  </label>
+                  </div>
                 </S.Filters>
               </S.ContainerFilters>
+
               <S.Table>
                 <thead>
                   <tr>
@@ -275,8 +349,8 @@ const Expenses = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTransactions.length > 0 ? (
-                    filteredTransactions.map((t) => (
+                  {rows && rows.length > 0 ? (
+                    rows.map((t) => (
                       <S.TableRow
                         key={t._id}
                         onClick={() => handleRowClick(t._id)}
@@ -296,7 +370,6 @@ const Expenses = () => {
                         </td>
                         <td>{t.sum} ₽</td>
 
-                        {/* Кнопки редактирования/удаления только для ПК */}
                         {!isMobile && (
                           <S.ConteunerActionButton
                             style={{
@@ -326,8 +399,8 @@ const Expenses = () => {
                 </tbody>
               </S.Table>
             </S.TableWrapper>
-            {/* Мобильные действия под таблицей */}
-            {isMobile && filteredTransactions.length > 0 && (
+
+            {isMobile && rows && rows.length > 0 && (
               <S.MobileActions>
                 <BaseButton
                   text="Редактировать расход"
@@ -337,12 +410,11 @@ const Expenses = () => {
                         (t) => t._id === selectedTransactionId
                       );
                       handleEdit(t);
-
                       setShowForm(true);
                       navigate("/expenses/new");
                     }
                   }}
-                  disabled={!selectedTransactionId} // активна только если выбрана строка
+                  disabled={!selectedTransactionId}
                 />
                 <S.DeleteText
                   onClick={() => {
@@ -358,7 +430,7 @@ const Expenses = () => {
             )}
           </>
         )}
-        {/* Форма */}
+
         {showForm && (
           <S.Form $isMobile={isMobile} onSubmit={handleSubmit}>
             <S.AddButtonF
@@ -481,11 +553,7 @@ const Expenses = () => {
             {!editModal && (
               <BaseButton
                 type="submit"
-                text={
-                  editModal
-                    ? "Сохранить редактирование"
-                    : "Добавить новый расход"
-                }
+                text="Добавить новый расход"
                 disabled={
                   !form.title.trim() ||
                   !form.category ||

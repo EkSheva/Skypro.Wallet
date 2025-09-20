@@ -1,3 +1,4 @@
+// src/components/Expenses/Expenses.styled.jsx
 import styled, { css } from "styled-components";
 
 /* Контейнер */
@@ -56,7 +57,6 @@ export const Content = styled.div`
 `;
 /* Таблица */
 export const TableWrapper = styled.div`
-  /* flex: 2; */
   background: #fff;
   border-radius: 30px;
   border: none;
@@ -96,7 +96,7 @@ export const Table = styled.table`
     font-size: 12px;
     @media screen and (max-width: 495px) {
       font-size: 10px;
-  }
+    }
   }
 
   th {
@@ -120,13 +120,13 @@ export const Table = styled.table`
     justify-content: center;
     transition:
       transform 0.2s ease,
-      color 0.2s ease; /* анимация цвета */
-    color: #999999; /* начальный цвет иконки */
+      color 0.2s ease;
+    color: #999999;
   }
 
   button:hover {
-    transform: scale(1.6); /* увеличение иконки */
-    color: #7b2cbf; /* цвет при наведении */
+    transform: scale(1.6);
+    color: #7b2cbf;
   }
 `;
 
@@ -134,8 +134,6 @@ export const Table = styled.table`
 export const Form = styled.form`
   flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
   max-width: ${({ isMobile }) => (isMobile ? "100%" : "379px")};
-  /* flex: 1; */
-  /* max-width: 379px; */
   background: #fff;
   border-radius: 30px;
   border: none;
@@ -207,7 +205,7 @@ export const Categories = styled.div`
 `;
 
 export const CategoryButton = styled.button`
-  display: inline-flex; /* иконка + текст рядом */
+  display: inline-flex;
   align-items: center;
   padding: 8px 20px 8px 20px;
   border-radius: 30px;
@@ -226,11 +224,12 @@ export const CategoryButton = styled.button`
     css`
       background: #d6cbe0;
       border-color: #7b2cbf;
-      color: #7631bb; /* цвет текста в активном */
+      color: #7631bb;
       font-weight: 600;
       outline: none;
     `}
 `;
+
 /* Фильтры */
 export const Filters = styled.div`
   display: flex;
@@ -240,7 +239,6 @@ export const Filters = styled.div`
   font-size: 12px;
   line-height: 150%;
 
-  /* Мобильная версия */
   @media (max-width: 768px) {
     gap: 16px;
     font-size: 10px;
@@ -261,7 +259,7 @@ export const DropdownToggle = styled.span`
   text-decoration: underline;
   display: inline-flex;
   align-items: center;
-  max-width: 80px;       /* ограничение ширины на мобилке */
+  max-width: 80px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -271,14 +269,14 @@ export const DropdownToggle = styled.span`
   }
 
   @media screen and (min-width: 496px) {
-    max-width: none; /* на десктопе показываем полностью */
+    max-width: none;
   }
 `;
 
 export const ArrowIcon = styled.span`
   font-size: 10px;
   display: inline-block;
-  color: #000; /* полностью черная */
+  color: #000;
   transform: rotate(${(props) => (props.open ? "180deg" : "0deg")});
   transition: transform 0.3s ease;
   margin-left: 4px;
@@ -286,25 +284,71 @@ export const ArrowIcon = styled.span`
 
 export const DropdownMenu = styled.div`
   position: absolute;
-  margin-top: 4px;
+  margin-top: 8px; /* немного больше расстояние как в макете */
   background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  min-width: 120px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  border-radius: 16px; /* более «мягкие» углы */
+  min-width: 220px;   /* ширина под иконки + текст */
+  padding: 12px;      /* внутренние отступы как в макете */
+  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.08);
   z-index: 10;
 `;
 
-export const DropdownItem = styled.div`
-  padding: 6px 12px;
+/* NEW: пункты меню категорий с иконкой и «пилюлей» */
+export const CatDropdownItem = styled.button`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: ${({ $active }) => ($active ? "#DDFCE5" : "#F3F4F6")};
+  color: #111827;
+  border-radius: 20px;
+  padding: 10px 12px;
   cursor: pointer;
   font-size: 14px;
-  color: #333;
-  transition: 0.2s;
+  text-align: left;
+  transition: background 0.2s ease;
+
+  &:not(:last-child) {
+    margin-bottom: 8px;
+  }
 
   &:hover {
-    background: #f5eaff;
-    color: #7b2cbf;
+    background: ${({ $active }) => ($active ? "#CCF6DA" : "#E5E7EB")};
+  }
+`;
+
+export const CatIcon = styled.span`
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1px; /* размер эмодзи */
+`;
+
+/* NEW: пункты меню сортировки с «пилюлей» */
+export const SortDropdownItem = styled.button`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: none;
+  background: ${({ $active }) => ($active ? "#DDFCE5" : "#F3F4F6")};
+  color: #111827;
+  border-radius: 20px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.2s ease;
+
+  &:not(:last-child) {
+    margin-bottom: 8px;
+  }
+
+  &:hover {
+    background: ${({ $active }) => ($active ? "#CCF6DA" : "#E5E7EB")};
   }
 `;
 
@@ -325,6 +369,7 @@ export const FilterButton = styled.button`
       font-weight: 600;
     `}
 `;
+
 /* Кнопки действий */
 export const ActionButton = styled.button`
   background: none;
@@ -341,18 +386,11 @@ export const ActionButton = styled.button`
     display: none;
   }
 `;
-/* Модалка */
+
+/* Модалка (остальное без изменений, это ваш стиль) */
 export const ModalOverlay = styled.div`
-  /* position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center; */
-    flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
+  flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
   max-width: ${({ isMobile }) => (isMobile ? "100%" : "379px")};
-  /* flex: 1; */
-  /* max-width: 379px; */
   background: #fff;
   border-radius: 30px;
   border: none;
@@ -377,11 +415,12 @@ export const Modal = styled.div`
   flex-direction: column;
   gap: 12px;
 `;
-/* Select (выпадающий список) */
+
+/* Select */
 export const Select = styled.select`
-  width: auto; /* ширина по содержимому */
-  min-width: fit-content; /* чтобы не схлопывалось */
-  max-width: 100%; /* ограничение */
+  width: auto;
+  min-width: fit-content;
+  max-width: 100%;
   padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -396,7 +435,7 @@ export const Select = styled.select`
     background: #f5eaff;
     color: #7631bb;
     font-weight: 600;
-    text-decoration: underline; /* Подчёркивание выбранного */
+    text-decoration: underline;
   }
 
   option {
@@ -439,22 +478,24 @@ export const AddButtonF = styled.a`
 `;
 
 export const TableRow = styled.tr`
- 
   cursor: pointer;
-
 
   ${({ $isSelected }) => 
     $isSelected &&
-    `background-color:rgba(241, 235, 253, 1);
+    `
+      background-color: rgba(241, 235, 253, 1);
       color: #7631bb;
       padding:0px;
+      
+      /* чтобы фон и цвет применились ко всем ячейкам */
+      & > td {
+        background-color: #e1daf0;
+        color: #7631bb;
+      }
     `}
-
-
 `;
 
 export const ConteunerActionButton = styled.td`
-
   @media screen and (max-width: 495px) {
     display: none;
   }
