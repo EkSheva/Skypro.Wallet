@@ -1,4 +1,3 @@
-// src/components/Analysis/Analysis.styled.jsx
 import styled from "styled-components";
 import { ResponsiveContainer as RC, BarChart as BC } from "recharts";
 
@@ -179,8 +178,7 @@ export const MonthSelectButton = styled.button`
   background: ${({ $active, $current }) =>
     $active || $current ? "#d7c9ec" : "#e4e4e4"};
   font-family: "Montserrat";
-  font-weight: ${({ $active, $current }) =>
-    $active || $current ? 600 : 400};
+  font-weight: ${({ $active, $current }) => ($active || $current ? 600 : 400)};
   font-size: 12px;
   color: ${({ $active, $current }) =>
     $active || $current ? "#b24aee" : "#000000"};
@@ -189,7 +187,7 @@ export const MonthSelectButton = styled.button`
 
   &:hover {
     background: #7c3aed;
-    color: #FFFFFF;
+    color: #ffffff;
     font-weight: 600;
   }
 `;
@@ -234,7 +232,6 @@ export const BarChart = styled(BC).attrs({
   margin: { top: 20 },
 })``;
 
-// Плейсхолдер при отсутствии данных
 export const EmptyState = styled.div`
   height: 387px;
   display: flex;
@@ -245,7 +242,6 @@ export const EmptyState = styled.div`
   text-align: center;
 `;
 
-// Мобильные стили
 export const MobileContainer = styled.div`
   padding: 24px 16px;
   margin: 0 auto;
@@ -350,11 +346,12 @@ export const MonthsGrid = styled.div`
 
 export const MonthButton = styled.button`
   padding: 8px;
-  border: 1px solid ${(props) => {
-    if (props.$selected) return "#ffffff";
-    if (props.$current) return "#dbdbdb";
-    return "#d4d4d4";
-  }};
+  border: 1px solid
+    ${(props) => {
+      if (props.$selected) return "#ffffff";
+      if (props.$current) return "#dbdbdb";
+      return "#d4d4d4";
+    }};
   background: ${(props) => {
     if (props.$selected) return "#b7aaf0";
     if (props.$current) return "#d2d1d4";
@@ -375,8 +372,7 @@ export const MonthButton = styled.button`
   }
 `;
 
-export const MonthSelection = styled.div`
-`;
+export const MonthSelection = styled.div``;
 
 export const ApplyButton = styled.button`
   background: #7c3aed;
@@ -414,6 +410,6 @@ export const AddButtonF = styled.a`
   @media screen and (max-width: 495px) {
     display: flex;
     align-items: center;
-    margin-bottom: 12px; 
+    margin-bottom: 12px;
   }
 `;

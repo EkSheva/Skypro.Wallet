@@ -11,7 +11,6 @@ const Input = ({
   onChange,
   required = false,
 }) => {
-  // Выбираем компонент в зависимости от тега
   const Component = tag === "textarea" ? StyledTextarea : StyledInput;
   return (
     <InputWrapper $required={required}>

@@ -13,26 +13,20 @@ import { AuthContext } from "../../context/AuthContext";
 function AppRoutes() {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) return <div>Загрузка...</div>; // пока проверяем пользователя
+  if (loading) return <div>Загрузка...</div>;
 
   return (
     <Routes>
-      {/* Главная страница */}
       <Route
         path="/"
         element={user ? <MainPage /> : <Navigate to="/sign-in" replace />}
       >
-        {/* Приватные маршруты */}
         <Route element={<PrivateRoute />}>
           <Route path="expenses" element={<ExpensesPage />}>
-            {/* Вложенные маршруты для мобильного отображения */}
             <Route index element={<ExpensesPage />} />{" "}
-            {/* Отображает таблицу по умолчанию */}
             <Route path="new" element={<ExpensesPage />} />{" "}
-            {/* Отображает форму для добавления */}
           </Route>
           <Route path="analysis" element={<AnalysisPage />}>
-            {/* Вложенные маршруты для мобильного отображения */}
             <Route index element={<AnalysisPage />} />
             <Route path="calendar" element={<AnalysisPage />} />
             <Route path="chart" element={<AnalysisPage />} />
@@ -40,8 +34,6 @@ function AppRoutes() {
           <Route index element={<ExpensesPage />} />
         </Route>
       </Route>
-
-      {/* Страницы аутентификации */}
       <Route
         path="/sign-in"
         element={user ? <Navigate to="/" replace /> : <SignInPage />}
@@ -50,8 +42,6 @@ function AppRoutes() {
         path="/sign-up"
         element={user ? <Navigate to="/" replace /> : <SignUpPage />}
       />
-
-      {/* 404 */}
       <Route path="/*" element={<NotFoundPage />} />
     </Routes>
   );

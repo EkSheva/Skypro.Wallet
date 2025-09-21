@@ -68,7 +68,6 @@ export const InputWrapper = styled.div`
   gap: 12px;
   position: relative;
 
-  /* Звездочка для обязательного поля */
   ${({ $required }) =>
     $required &&
     `

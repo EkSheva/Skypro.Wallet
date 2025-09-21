@@ -19,29 +19,23 @@ import {
 import Header from "../Header/Header";
 import { ExpensesProvider } from "../../context/ExpensesProvider";
 
-
 const AuthForm = ({ isSignUp }) => {
   const navigate = useNavigate();
   const { updateUserInfo } = useContext(AuthContext);
-  // Получаем setUser из хука useContext
-  // состояние полей
   const [formData, setFormData] = useState({
     name: "",
     login: "",
     password: "",
   });
 
-  // состояние ошибок
   const [errors, setErrors] = useState({
     name: "",
     login: "",
     password: "",
   });
 
-  // состояние текста ошибки, чтобы показать её пользователю
   const [error, setError] = useState("");
 
-  // функция валидации
   const validateForm = () => {
     const newErrors = { name: "", login: "email", password: "" };
     let isValid = true;
@@ -74,8 +68,6 @@ const AuthForm = ({ isSignUp }) => {
     return isValid;
   };
 
-  // функция, которая отслеживает в полях изменения
-  // и меняет состояние компонента
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -86,16 +78,12 @@ const AuthForm = ({ isSignUp }) => {
     setError("");
   };
 
-  // функция отправки формы
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      // если у нас форма не прошла валидацию, то дальше не продолжаем
       return;
     }
     try {
-      // чтобы не писать две разных функции, выберем нужный запрос через
-      // тернарный оператор
       const data = !isSignUp
         ? await signIn({ login: formData.login, password: formData.password })
         : await signUp(formData);

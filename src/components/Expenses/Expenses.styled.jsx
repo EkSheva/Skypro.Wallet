@@ -1,12 +1,10 @@
-// src/components/Expenses/Expenses.styled.jsx
 import styled, { css } from "styled-components";
 
-/* Контейнер */
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding-top:24px;
+  padding-top: 24px;
   background-color: rgba(244, 245, 246, 1);
   padding-left: calc(50% - 600px);
   padding-right: calc(50% - 600px);
@@ -14,7 +12,7 @@ export const Container = styled.div`
     gap: 24px;
     padding: 0px 16px 24px 16px;
     background-color: rgba(255, 255, 255, 1);
-    margin-top:${({ $showForm }) => ($showForm ? "0px" : "24px")};
+    margin-top: ${({ $showForm }) => ($showForm ? "0px" : "24px")};
   }
 `;
 
@@ -46,7 +44,6 @@ export const Title = styled.h2`
   }
 `;
 
-/* Контент */
 export const Content = styled.div`
   display: flex;
   gap: 34px;
@@ -56,7 +53,7 @@ export const Content = styled.div`
     flex-direction: column;
   }
 `;
-/* Таблица */
+
 export const TableWrapper = styled.div`
   background: #fff;
   border-radius: 30px;
@@ -111,7 +108,6 @@ export const Table = styled.table`
     }
   }
 
-  /* Кнопка удаления */
   button {
     background: none;
     border: none;
@@ -120,9 +116,7 @@ export const Table = styled.table`
     display: flex;
     align-items: center;
     justify-content: center;
-    transition:
-      transform 0.2s ease,
-      color 0.2s ease;
+    transition: transform 0.2s ease, color 0.2s ease;
     color: #999999;
   }
 
@@ -132,7 +126,6 @@ export const Table = styled.table`
   }
 `;
 
-/* Форма */
 export const Form = styled.form`
   flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
   max-width: ${({ isMobile }) => (isMobile ? "100%" : "379px")};
@@ -170,7 +163,6 @@ export const Form = styled.form`
     }
   }
 `;
-
 /* Поля */
 export const Input = styled.input`
   padding: 12px;
@@ -199,7 +191,6 @@ export const Input = styled.input`
     `}
 `;
 
-/* Категории в форме */
 export const Categories = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -209,36 +200,35 @@ export const Categories = styled.div`
 export const CategoryButton = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 12px;                    /* по ТЗ */
-  padding: 8px 20px;            /* по ТЗ */                /* по ТЗ */
-  border-radius: 30px;          /* по ТЗ */
+  gap: 12px;
+  padding: 8px 20px;
+  border-radius: 30px;
   border: none;
-  background: #F4F5F6;          /* по ТЗ */
+  background: #f4f5f6;
   cursor: pointer;
   transition: 0.2s;
-  font-size: 12px;              /* по ТЗ */
+  font-size: 12px;
   line-height: 1.2;
   color: #070707;
-  font-weight: 400;             /* по ТЗ */
+  font-weight: 400;
   outline: none;
 
   ${(p) =>
     p.$active &&
     css`
-      background: #dbe2ff;      /* по ТЗ */
+      background: #dbe2ff;
       color: #070707;
       font-weight: 400;
       outline: none;
     `}
 `;
 
-/* Фильтры */
 export const Filters = styled.div`
   display: flex;
   gap: 24px;
   font-family: Montserrat;
   font-weight: 400;
-  font-size: 12px; /* по ТЗ */
+  font-size: 12px;
   line-height: 150%;
 
   @media (max-width: 768px) {
@@ -254,8 +244,8 @@ export const Dropdown = styled.div`
 
 export const DropdownToggle = styled.span`
   cursor: pointer;
-  font-weight: 600;  /* по ТЗ */
-  font-size: 12px;   /* по ТЗ */
+  font-weight: 600;
+  font-size: 12px;
   line-height: 150%;
   color: #7c3aed;
   text-decoration: underline;
@@ -299,22 +289,21 @@ export const DropdownMenu = styled.div`
   gap: 6px;
   @media (max-width: 768px) {
     padding: 10px 10px;
-  }           /* по ТЗ */
+  }
 `;
 
-/* Пункты меню категорий */
 export const CatDropdownItem = styled.button`
   display: flex;
   align-items: center;
-  gap: 12px;                    /* по ТЗ */
+  gap: 12px;
   border: none;
-  border-radius: 30px;          /* по ТЗ */
-  padding: 8px 20px 8px 20px;            /* по ТЗ */
+  border-radius: 30px;
+  padding: 8px 20px 8px 20px;
   background: ${({ $active }) => ($active ? "#f1dbff" : "#e6e6e6")};
   color: #111827;
   cursor: pointer;
-  font-weight: 400;             /* по ТЗ */
-  font-size: 12px;              /* по ТЗ */
+  font-weight: 400;
+  font-size: 12px;
   line-height: 1;
   text-align: left;
   transition: background 0.2s ease;
@@ -327,16 +316,15 @@ export const CatDropdownItem = styled.button`
 `;
 
 export const CatIcon = styled.span`
-  width: 14px;                  /* по ТЗ */
-  height: 14px;                 /* по ТЗ */
+  width: 14px;
+  height: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;              /* чтобы эмодзи стали 14px */
+  font-size: 14px;
   line-height: 1;
 `;
 
-/* Пункты меню сортировки */
 export const SortDropdownItem = styled.button`
   display: flex;
   align-items: center;
@@ -378,7 +366,6 @@ export const FilterButton = styled.button`
     `}
 `;
 
-/* Кнопки действий */
 export const ActionButton = styled.button`
   background: none;
   border: none;
@@ -395,7 +382,6 @@ export const ActionButton = styled.button`
   }
 `;
 
-/* Модалка (остальное без изменений, это ваш стиль) */
 export const ModalOverlay = styled.div`
   flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
   max-width: ${({ isMobile }) => (isMobile ? "100%" : "379px")};
@@ -424,7 +410,6 @@ export const Modal = styled.div`
   gap: 12px;
 `;
 
-/* Select */
 export const Select = styled.select`
   width: auto;
   min-width: fit-content;
@@ -488,7 +473,7 @@ export const AddButtonF = styled.a`
 export const TableRow = styled.tr`
   cursor: pointer;
 
-  ${({ $isSelected }) => 
+  ${({ $isSelected }) =>
     $isSelected &&
     `
       background-color: rgba(241, 235, 253, 1);

@@ -24,8 +24,7 @@ export const StyledInput = styled.input`
     &::placeholder {
     font: inherit;
     color: #000;
-  }`
-}
+  }`}
 `;
 
 export const StyledTextarea = styled.textarea`
@@ -51,8 +50,7 @@ export const StyledTextarea = styled.textarea`
     &::placeholder {
     font: inherit;
     color: #000;
-  }`
-}
+  }`}
 `;
 
 export const ErrorP = styled.p`

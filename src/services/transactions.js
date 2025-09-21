@@ -1,23 +1,19 @@
-// src/services/transactions.js
 import axios from "axios";
 
 const API_URL = "https://wedev-api.sky.pro/api/transactions";
 
-// Форматирование даты для API (M-D-YYYY)
 const formatDate = (dateStr) => {
   if (!dateStr) return null;
   const [year, month, day] = dateStr.split("-");
-  return `${+month}-${+day}-${year}`; // убираем лидирующие нули
+  return `${+month}-${+day}-${year}`;
 };
 
-// Получение всех транзакций с возможной сортировкой и фильтром
-// FIX/NOTE: используется в Analysis.jsx с параметрами (token, sortBy, filterBy[])
 export const getTransactions = async (token, sortBy = "", filterBy = []) => {
   try {
     let url = API_URL;
     const params = [];
-    if (sortBy) params.push(`sortBy=${sortBy}`); // 'date' | 'sum'
-    if (filterBy.length > 0) params.push(`filterBy=${filterBy.join(",")}`); // ["food","transport"]
+    if (sortBy) params.push(`sortBy=${sortBy}`);
+    if (filterBy.length > 0) params.push(`filterBy=${filterBy.join(",")}`);
     if (params.length) url += `?${params.join("&")}`;
 
     const response = await axios.get(url, {
@@ -26,11 +22,12 @@ export const getTransactions = async (token, sortBy = "", filterBy = []) => {
       },
     });
 
-    // API может вернуть либо { transactions: [...] }, либо просто [...]
     return response.data.transactions || response.data || [];
   } catch (err) {
     console.error("Ошибка при загрузке транзакций:", err.response?.data || err);
-    throw new Error(err.response?.data?.error || "Ошибка при загрузке транзакций");
+    throw new Error(
+      err.response?.data?.error || "Ошибка при загрузке транзакций"
+    );
   }
 };
 
@@ -52,8 +49,13 @@ export const addTransaction = async (transaction, token) => {
 
     return response.data.transactions;
   } catch (err) {
-    console.error("Ошибка при добавлении транзакции:", err.response?.data || err);
-    throw new Error(err.response?.data?.error || "Ошибка при добавлении транзакции");
+    console.error(
+      "Ошибка при добавлении транзакции:",
+      err.response?.data || err
+    );
+    throw new Error(
+      err.response?.data?.error || "Ошибка при добавлении транзакции"
+    );
   }
 };
 
@@ -68,11 +70,12 @@ export const deleteTransaction = async (id, token) => {
     return response.data.transactions;
   } catch (err) {
     console.error("Ошибка при удалении транзакции:", err.response?.data || err);
-    throw new Error(err.response?.data?.error || "Ошибка при удалении транзакции");
+    throw new Error(
+      err.response?.data?.error || "Ошибка при удалении транзакции"
+    );
   }
 };
 
-// Редактирование транзакции
 export async function redactTransaction({ id, token, transaction }) {
   try {
     const data = await axios.patch(`${API_URL}/${id}`, transaction, {

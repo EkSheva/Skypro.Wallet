@@ -18,7 +18,7 @@ import ModalMobil from "../MadalMobil/ModalMobil";
 import { ExpensesContext } from "../../context/EspensesContext";
 
 const Header = () => {
-  const {  setShowForm, showForm} = useContext(ExpensesContext);
+  const { setShowForm, showForm } = useContext(ExpensesContext);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useContext(AuthContext);
@@ -41,7 +41,6 @@ const Header = () => {
     }
   };
 
-  // Закрываем модалку при смене маршрута
   useEffect(() => {
     if (isModalOpen) {
       setIsModalOpen(false);
@@ -72,15 +71,20 @@ const Header = () => {
 
               <MobilNav>
                 <HeaderLinkMobil onClick={toggleModal}>
-                  {getLinkText()} <Icon src="../Head3.svg" alt="Клик" /> 
+                  {getLinkText()} <Icon src="../Head3.svg" alt="Клик" />
                 </HeaderLinkMobil>
 
-                {isModalOpen && <ModalMobil showForm={showForm} setShowForm={setShowForm} setIsModalOpen={setIsModalOpen}/>}
-
+                {isModalOpen && (
+                  <ModalMobil
+                    showForm={showForm}
+                    setShowForm={setShowForm}
+                    setIsModalOpen={setIsModalOpen}
+                  />
+                )}
               </MobilNav>
               <div>
-                  <ButtonExit onClick={handleLogout}>Выйти</ButtonExit>
-                </div>
+                <ButtonExit onClick={handleLogout}>Выйти</ButtonExit>
+              </div>
             </>
           )}
         </HeaderBlock>

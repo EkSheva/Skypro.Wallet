@@ -1,4 +1,3 @@
-// src/components/Analysis/Analysis.jsx
 import React, {
   useState,
   useRef,
@@ -54,12 +53,11 @@ export default function Analysis() {
   const [selectedDays, setSelectedDays] = useState([]);
   const [viewMode, setViewMode] = useState("month");
   const [selectedMonths, setSelectedMonths] = useState([]);
-  const [mobileView, setMobileView] = useState("chart"); // "chart", "period"
+  const [mobileView, setMobileView] = useState("chart");
   const calendarScrollRef = useRef(null);
   const yearScrollRef = useRef(null);
   const navigate = useNavigate();
 
-  // Сокращение названий (только мобилка)
   const shortenLabel = (name) => {
     if (!isMobile) return name;
     const abbreviations = {
@@ -70,7 +68,6 @@ export default function Analysis() {
     return abbreviations[name] || name;
   };
 
-  // Загрузка транзакций (без фильтров/сортировки через API)
   const fetchTransactions = useCallback(async () => {
     if (!user?.token) return;
     try {
@@ -85,7 +82,6 @@ export default function Analysis() {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // Генерация месяцев для скролла
   const generateScrollMonths = () => {
     const monthsData = [];
     const currentDate = new Date();
@@ -126,7 +122,6 @@ export default function Analysis() {
 
   const scrollMonths = generateScrollMonths();
 
-  // Автоскролл к текущему месяцу (месячный режим)
   useEffect(() => {
     if (viewMode === "month" && calendarScrollRef.current) {
       const currentMonthElement = calendarScrollRef.current.querySelector(
@@ -140,7 +135,6 @@ export default function Analysis() {
     }
   }, [viewMode]);
 
-  // Автоскролл к текущему месяцу (годовой режим)
   useEffect(() => {
     if (viewMode === "year" && yearScrollRef.current) {
       const now = new Date();
@@ -156,7 +150,6 @@ export default function Analysis() {
     }
   }, [viewMode]);
 
-  // Выбор дней
   const handleDaySelect = (year, month, day) => {
     if (!day) return;
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
@@ -168,7 +161,6 @@ export default function Analysis() {
     else setSelectedDays([dateStr]);
   };
 
-  // Выбор месяца (в годовом режиме)
   const handleMonthClick = (year, month) => {
     const monthStr = `${year}-${month}`;
     if (selectedMonths.includes(monthStr)) {
@@ -178,7 +170,6 @@ export default function Analysis() {
     }
   };
 
-  // Подсветка выбранных дней
   const isDaySelected = (year, month, day) => {
     if (!day) return false;
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
@@ -190,19 +181,16 @@ export default function Analysis() {
     return dateStr >= sorted[0] && dateStr <= sorted[1];
   };
 
-  // Подсветка текущего дня
   const isCurrentDay = (year, month, day, monthData) => {
     if (!day || !monthData.isCurrentMonth) return false;
     return day === monthData.currentDay;
   };
 
-  // Подсветка текущего месяца в годовом режиме
   const isCurrentMonthInYearView = (year, month) => {
     const now = new Date();
     return year === now.getFullYear() && month === now.getMonth();
   };
 
-  // Фильтрация по периоду (локально)
   let filtered = transactions;
   if (viewMode === "month" && selectedDays.length === 2) {
     const [start, end] = [...selectedDays].sort();
@@ -221,7 +209,6 @@ export default function Analysis() {
     });
   }
 
-  // Группировка по категориям (без displayValue)
   const expenses = categories.map((cat) => {
     const value = filtered
       .filter((t) => t.category === cat.id)
@@ -278,13 +265,11 @@ export default function Analysis() {
     }
   };
 
-  // Tooltip форматтер
   const customTooltipFormatter = (value, _name, props) => {
     const realValue = props?.payload?.value ?? 0;
     return [`${realValue.toLocaleString("ru-RU")} ₽`, "Сумма"];
   };
 
-  // Мобильные обработчики
   const handleSelectPeriod = () => {
     setMobileView("period");
   };
@@ -295,18 +280,17 @@ export default function Analysis() {
   if (isMobile) {
     return (
       <S.MobileContainer>
-        {/* Шапка для мобильной версии */}
         {mobileView === "period" && (
-        <S.AddButtonF
-          onClick={() => {
-            setMobileView("chart");     // вернуться к экрану анализа
-            navigate("/analysis");      // навигация (на тот же роут, безопасно)
-          }}
-        >
-          <S.Icon src="../Str.svg" alt="Назад" />
-          Анализ расходов
-        </S.AddButtonF>
-      )}
+          <S.AddButtonF
+            onClick={() => {
+              setMobileView("chart");
+              navigate("/analysis");
+            }}
+          >
+            <S.Icon src="../Str.svg" alt="Назад" />
+            Анализ расходов
+          </S.AddButtonF>
+        )}
         <S.MobileHeader>
           <S.MobileTitle>
             {mobileView === "chart" ? "Анализ расходов" : "Выбор периода"}
@@ -331,12 +315,10 @@ export default function Analysis() {
         </S.MobileHeader>
 
         {mobileView === "chart" ? (
-          // Страница с графиком (ТОЛЬКО ГРАФИК)
           <>
             <S.ChartSection>
               <S.TotalAmount>{total.toLocaleString("ru-RU")} ₽</S.TotalAmount>
               <S.PeriodText>{getSelectedPeriodText()}</S.PeriodText>
-
               <S.ChartWrapperMobile>
                 {hasExpenses ? (
                   <BarChart
@@ -368,7 +350,9 @@ export default function Analysis() {
                         dataKey="value"
                         position="top"
                         formatter={(value) =>
-                          value === 0 ? "" : value.toLocaleString("ru-RU") + " ₽"
+                          value === 0
+                            ? ""
+                            : value.toLocaleString("ru-RU") + " ₽"
                         }
                         style={{
                           fontSize: 10,
@@ -384,13 +368,11 @@ export default function Analysis() {
                 )}
               </S.ChartWrapperMobile>
             </S.ChartSection>
-
             <S.ChangePeriodButton onClick={handleSelectPeriod}>
               Выбрать другой период
             </S.ChangePeriodButton>
           </>
         ) : (
-          // Страница выбора периода
           <S.PeriodSelection>
             {viewMode === "year" ? (
               <S.YearSelection ref={yearScrollRef}>
@@ -432,7 +414,9 @@ export default function Analysis() {
                     {scrollMonths.map((md) => (
                       <div
                         key={`${md.year}-${md.month}`}
-                        data-current-month={md.isCurrentMonth ? "true" : "false"}
+                        data-current-month={
+                          md.isCurrentMonth ? "true" : "false"
+                        }
                       >
                         <S.MonthTitle>{md.title}</S.MonthTitle>
                         <S.DaysGrid>
@@ -440,7 +424,12 @@ export default function Analysis() {
                             <S.DayCell
                               key={idx}
                               selected={isDaySelected(md.year, md.month, day)}
-                              $current={isCurrentDay(md.year, md.month, day, md)}
+                              $current={isCurrentDay(
+                                md.year,
+                                md.month,
+                                day,
+                                md
+                              )}
                               disabled={!day}
                               onClick={() =>
                                 handleDaySelect(md.year, md.month, day)
@@ -456,7 +445,6 @@ export default function Analysis() {
                 </S.CalendarContainer>
               </S.MonthSelection>
             )}
-
             <S.ApplyButton onClick={handleApplyPeriod}>
               Выбрать период
             </S.ApplyButton>
@@ -465,15 +453,11 @@ export default function Analysis() {
       </S.MobileContainer>
     );
   }
-
-  // Десктопная версия
   return (
     <S.Container>
       <S.Title>Анализ расходов</S.Title>
-
       <S.CalendarBox>
         <S.CalendarWrapper>
-          {/* Период с кнопками справа */}
           <S.PeriodHeader>
             <span
               style={{
@@ -507,8 +491,6 @@ export default function Analysis() {
               </S.ToggleButton>
             </div>
           </S.PeriodHeader>
-
-          {/* Годовой выбор месяцев */}
           {viewMode === "year" && (
             <S.CalendarScroll ref={yearScrollRef} style={{ height: "425px" }}>
               {Array.from(new Set(scrollMonths.map((m) => m.year))).map(
@@ -541,8 +523,6 @@ export default function Analysis() {
               )}
             </S.CalendarScroll>
           )}
-
-          {/* Месячный календарь */}
           {viewMode === "month" && (
             <S.CalendarContainer>
               <S.FixedDaysHeader>
@@ -564,7 +544,9 @@ export default function Analysis() {
                           selected={isDaySelected(md.year, md.month, day)}
                           $current={isCurrentDay(md.year, md.month, day, md)}
                           disabled={!day}
-                          onClick={() => handleDaySelect(md.year, md.month, day)}
+                          onClick={() =>
+                            handleDaySelect(md.year, md.month, day)
+                          }
                         >
                           {day}
                         </S.DayCell>
@@ -576,14 +558,11 @@ export default function Analysis() {
             </S.CalendarContainer>
           )}
         </S.CalendarWrapper>
-
-        {/* График расходов */}
         <S.ChartWrapper>
           <S.ChartHeader>
             <S.Total>{total.toLocaleString("ru-RU")} ₽</S.Total>
             <S.Subtitle>{getSelectedPeriodText()}</S.Subtitle>
           </S.ChartHeader>
-
           {hasExpenses ? (
             <S.ResponsiveContainer>
               <S.BarChart data={expenses}>

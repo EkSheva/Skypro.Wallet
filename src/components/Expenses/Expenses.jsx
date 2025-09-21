@@ -1,5 +1,10 @@
-// src/components/Expenses/Expenses.jsx
-import React, { useState, useContext, useEffect, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
   addTransaction,
@@ -45,9 +50,8 @@ const Expenses = () => {
   });
   const navigate = useNavigate();
 
-  // фильтрация/сортировка через API
-  const [filter, setFilter] = useState("all"); // 'all' | categoryId
-  const [sortBy, setSortBy] = useState("date"); // 'date' | 'sum'
+  const [filter, setFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
 
   const [editModal, setEditModal] = useState(null);
   const [openCategory, setOpenCategory] = useState(false);
@@ -56,7 +60,6 @@ const Expenses = () => {
 
   const [listLoading, setListLoading] = useState(false);
 
-  // refs для закрытия по клику вне
   const catRef = useRef(null);
   const sortRef = useRef(null);
 
@@ -152,11 +155,12 @@ const Expenses = () => {
     }
   };
 
-  // закрытие выпадашек по клику вне
   useEffect(() => {
     const onDocClick = (e) => {
-      if (catRef.current && !catRef.current.contains(e.target)) setOpenCategory(false);
-      if (sortRef.current && !sortRef.current.contains(e.target)) setOpenSort(false);
+      if (catRef.current && !catRef.current.contains(e.target))
+        setOpenCategory(false);
+      if (sortRef.current && !sortRef.current.contains(e.target))
+        setOpenSort(false);
     };
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
@@ -192,10 +196,7 @@ const Expenses = () => {
             <S.TableWrapper $isMobile={isMobile}>
               <S.ContainerFilters>
                 <S.TableTitle>Таблица расходов</S.TableTitle>
-
-                {/* Фильтры/сортировка */}
                 <S.Filters>
-                  {/* Фильтр по категории */}
                   <div ref={catRef}>
                     <span>Фильтровать по категории: </span>
                     <S.Dropdown>
@@ -255,7 +256,6 @@ const Expenses = () => {
                     </S.Dropdown>
                   </div>
 
-                  {/* Сортировка */}
                   <div ref={sortRef}>
                     <span>Сортировать по: </span>
                     <S.Dropdown>

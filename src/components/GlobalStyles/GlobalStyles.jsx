@@ -33,7 +33,6 @@ body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  /* font-family: "Montserrat", Arial, Helvetica, sans-serif; */
   color: #000000;
 }
 
@@ -53,14 +52,12 @@ body {
 }
 
 .btn-icon.edit:hover {
-  color: #0f9d58; /* зелёный */
+  color: #0f9d58; 
 }
 
 .btn-icon.delete:hover {
-  color: #d11a2a; /* красный */
+  color: #d11a2a; 
 }
-
 `;
 
 export default GlobalStyle;
-
