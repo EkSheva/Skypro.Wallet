@@ -67,6 +67,7 @@ const Expenses = () => {
     setSelectedTransactionId(id === selectedTransactionId ? null : id);
   };
 
+  // --- валидация формы ---
   const validate = () => {
     const newErrors = {};
     if (!form.title.trim()) newErrors.title = "*";
@@ -78,10 +79,12 @@ const Expenses = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // --- изменение формы ---
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
   const handleCategorySelect = (id) => setForm({ ...form, category: id });
-
+ 
+  // --- добавление транзакции ---
   const reloadList = useCallback(async () => {
     if (!user?.token) return;
     try {
@@ -113,8 +116,8 @@ const Expenses = () => {
     };
 
     try {
-      await addTransaction(newTransaction, user.token);
-      await reloadList();
+      const updateTrans = await addTransaction(newTransaction, user.token);
+      setTransactions(updateTrans);
       setForm({ title: "", category: "", date: "", amount: "" });
       setErrors({});
     } catch (err) {
@@ -122,20 +125,23 @@ const Expenses = () => {
     }
   };
 
+  // --- удаление транзакции ---
   const handleDeleteTransaction = async (id) => {
     try {
-      await deleteTransaction(id, user.token);
-      await reloadList();
+      const updateTrans = await deleteTransaction(id, user.token);
+      setTransactions(updateTrans);
     } catch (err) {
       console.error("Ошибка удаления транзакции:", err.message);
     }
   };
 
+  // --- сменить на редактирование ---
   const handleEdit = (t) => setEditModal(t);
 
+  // --- сохранить изменения ---
   const handleSaveEdit = async () => {
     try {
-      await redactTransaction({
+        const updateTrans = await redactTransaction({
         token: user.token,
         id: editModal._id,
         transaction: {
@@ -148,7 +154,7 @@ const Expenses = () => {
 
       setEditModal(null);
       setErrors({});
-      await reloadList();
+      setTransactions(updateTrans);
       navigate("/");
     } catch (error) {
       console.error("Ошибка при сохранении изменений:", error.message);
