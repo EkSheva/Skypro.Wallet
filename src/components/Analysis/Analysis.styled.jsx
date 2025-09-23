@@ -413,3 +413,11 @@ export const AddButtonF = styled.a`
     margin-bottom: 12px;
   }
 `;
+export const ResponsiveContainer = styled(RC).attrs({
+  width: "100%",
+  height: 387,
+})``;
+
+export const BarChart = styled(BC).attrs({
+  margin: { top: 20 },
+})``;
