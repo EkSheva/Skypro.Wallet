@@ -1,11 +1,10 @@
 import { SBaseButton } from "./BaseButton.styled";
 
-const BaseButton = ({ type = "button", text, disabled, onClick, ...rest }) => {
+const BaseButton = ({ type = "button", text, disabled, onClick }) => {
   return (
-    <SBaseButton type={type} onClick={onClick} disabled={disabled} {...rest}>
+    <SBaseButton type={type} onClick={onClick} disabled={disabled}>
       {text}
     </SBaseButton>
   );
 };
-
 export default BaseButton;

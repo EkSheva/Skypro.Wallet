@@ -18,6 +18,7 @@ import {
 } from "./AuthForm.styled";
 import Header from "../Header/Header";
 
+
 const AuthForm = ({ isSignUp }) => {
   const navigate = useNavigate();
   const { updateUserInfo } = useContext(AuthContext);
@@ -28,22 +29,18 @@ const AuthForm = ({ isSignUp }) => {
     login: "",
     password: "",
   });
-
   // состояние ошибок
   const [errors, setErrors] = useState({
     name: "",
     login: "",
     password: "",
   });
-
   // состояние текста ошибки, чтобы показать её пользователю
   const [error, setError] = useState("");
-
   // функция валидации
   const validateForm = () => {
     const newErrors = { name: "", login: "", password: "" };
     let isValid = true;
-
     if (isSignUp && !formData.name.trim()) {
       newErrors.name = true;
       setError(
@@ -51,7 +48,6 @@ const AuthForm = ({ isSignUp }) => {
       );
       isValid = false;
     }
-
     if (!formData.login.trim()) {
       newErrors.login = true;
       setError(
@@ -59,7 +55,6 @@ const AuthForm = ({ isSignUp }) => {
       );
       isValid = false;
     }
-
     if (!formData.password.trim()) {
       newErrors.password = true;
       setError(
@@ -67,11 +62,9 @@ const AuthForm = ({ isSignUp }) => {
       );
       isValid = false;
     }
-
     setErrors(newErrors);
     return isValid;
   };
-
   // функция, которая отслеживает в полях изменения
   // и меняет состояние компонента
   const handleChange = (e) => {
@@ -83,7 +76,6 @@ const AuthForm = ({ isSignUp }) => {
     setErrors({ ...errors, [name]: false });
     setError("");
   };
-
   // функция отправки формы
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,7 +89,6 @@ const AuthForm = ({ isSignUp }) => {
       const data = !isSignUp
         ? await signIn({ login: formData.login, password: formData.password })
         : await signUp(formData);
-
       if (data) {
         updateUserInfo(data);
         navigate("/expenses");
@@ -106,7 +97,6 @@ const AuthForm = ({ isSignUp }) => {
       setError(err.message);
     }
   };
-
   return (
     <Bg>
       <Header />
@@ -149,7 +139,6 @@ const AuthForm = ({ isSignUp }) => {
               />
               <ErrorP>{error}</ErrorP>
             </InputWrapper>
-
             <BaseButton
               onClick={handleSubmit}
               type="submit"
@@ -178,5 +167,4 @@ const AuthForm = ({ isSignUp }) => {
     </Bg>
   );
 };
-
 export default AuthForm;

@@ -12,16 +12,15 @@ import {
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
+
 const Header = () => {
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
-
   function handleLogout(e) {
     e.preventDefault();
     logout();
     navigate("/sign-in");
   }
-
   return (
     <SHeader>
       <SContainer>
@@ -45,5 +44,4 @@ const Header = () => {
     </SHeader>
   );
 };
-
 export default Header;

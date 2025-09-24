@@ -1,24 +1,25 @@
 import { useState, useEffect } from "react";
 import { checkLs } from "../utils/checkLc";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "./AuthContext.jsx";
+
 
 const AuthProvider = ({ children }) => {
-  // checkLs проверяет лс на наличие ключа userInfo
-  const [user, setUser] = useState(checkLs()); // Здесь будет лежать инфа о юзере
+  const [user, setUser] = useState(null); // сначала null
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Проверяем ЛС, когда приложение запускается
     try {
-      const storedUser = localStorage.getItem("userInfo");
+      const storedUser = checkLs() || localStorage.getItem("userInfo");
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        setUser(typeof storedUser === "string" ? JSON.parse(storedUser) : storedUser);
       }
     } catch (error) {
-      console.error("Ошибка при загрузке данных из localStorage:", error);
+      console.error("Ошибка при загрузке данных из localStorage или checkLs():", error);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  // Обновляем данные о пользователе и сохраняем в лс
   const updateUserInfo = (userData) => {
     setUser(userData);
     if (userData) {
@@ -27,22 +28,19 @@ const AuthProvider = ({ children }) => {
       localStorage.removeItem("userInfo");
     }
   };
-
   const login = (loginData) => {
     updateUserInfo(loginData);
     return true;
   };
-
   const logout = () => {
     updateUserInfo(null);
     return true;
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateUserInfo }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, updateUserInfo }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export default AuthProvider;
+export default AuthProvider
