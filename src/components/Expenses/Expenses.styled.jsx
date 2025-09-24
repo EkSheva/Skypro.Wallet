@@ -1,323 +1,510 @@
-// ExpensesStyled.jsx
-import styled, { createGlobalStyle } from "styled-components";
+import styled, { css } from "styled-components";
 
-/* Глобальные переменные и базовые стили (взято из вашего CSS) */
-export const GlobalStyle = createGlobalStyle`
-  :root{
-    --bg:#f3f5f7;
-    --panel:#ffffff;
-    --muted:#8b8f98;
-    --accent:#6a42f4;
-    --radius:14px;
-    --shadow: 0 10px 30px rgba(15,23,42,0.06);
-    --text:#0f1724;
-    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    font-size:15px;
-  }
-
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    font-family: inherit;
-    font-size: inherit;
-  }
-
-  .page{
-    max-width:1200px;
-    margin:48px auto;
-    padding:0 20px;
-  }
-
-  /* Заголовок */
-  .page-header h1{
-    font-size:28px;
-    margin:0 0 18px;
-    font-weight:700;
-  }
-
-  /* Контент: две колонки */
-  .content{
-    display:flex;
-    gap:28px;
-    align-items:flex-start;
-  }
-
-  /* Панели */
-  .panel{
-    background:var(--panel);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    padding:22px;
-  }
-
-  .table-panel{
-    flex:1;
-    padding:28px 26px;
-  }
-
-  .form-panel{
-    width: 360px;
-    background: #fff;
-    border-radius: 14px;
-    padding: 26px 22px;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
-    border: 1px solid rgba(15,23,42,0.04);
-    box-sizing: border-box;
-    color: #0f1724;
-  }
-
-  /* Таблица */
-  .table-wrap{
-    overflow:auto;
-    border-radius:10px;
-  }
-
-  .expenses-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:620px;
-  }
-
-  .expenses-table thead th{
-    text-align:left;
-    padding:12px 10px;
-    color:var(--muted);
-    font-weight:600;
-    font-size:13px;
-    border-bottom:1px solid #f0f0f2;
-  }
-
-  .expenses-table tbody td{
-    padding:12px 10px;
-    border-bottom:1px solid #f6f6f7;
-    font-size:14px;
-    color:var(--text);
-  }
-
-  .expenses-table tbody tr:hover td{
-    background:linear-gradient(90deg, rgba(106,66,244,0.03), transparent);
-  }
-
-  .col-right{
-    text-align:right;
-  }
-
-  .col-action{
-    text-align:center;
-    width:48px;
-    color:#b6bac2;
-  }
-
-  /* Форма */
-  .field{
-    display:block;
-    margin-bottom:14px;
-  }
-
-  .field .label{
-    display:block;
-    color:var(--muted);
-    font-size:13px;
-    margin-bottom:8px;
-  }
-
-  .field input[type="text"],
-  .field input[type="date"],
-  .field input[type="number"]{
-    width:100%;
-    padding:10px 12px;
-    border:1px solid #e8e8ea;
-    border-radius:8px;
-    background:#fff;
-    font-size:14px;
-    color:var(--text);
-  }
-
-  .field input::placeholder{color:#c4c7cc}
-
-  /* Категории (чипы) — важно, т.к. Categories.jsx использует .categories и .chip */
-  .label{
-    color:var(--muted);
-    font-size:13px;
-    margin-bottom:8px;
-  }
-
-  .categories{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-bottom:14px;
-  }
-
-  .chip{
-    padding:8px 12px;
-    border-radius:999px;
-    border:1px solid #eef0f3;
-    background:#fbfbfd;
-    color:var(--text);
-    font-size:13px;
-    cursor:pointer;
-    box-shadow: 0 1px 0 rgba(15,23,42,0.02);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    box-sizing: border-box;
-  }
-
-  .chip.active{
-    background:linear-gradient(90deg,#7b5cff,#5b33ff);
-    color:#fff;
-    border:1px solid rgba(0,0,0,0.06);
-  }
-
-  /* Кнопка */
-  .btn-submit{
-    display:block;
-    width:100%;
-    padding:12px 14px;
-    border-radius:10px;
-    border:0;
-    background:var(--accent);
-    color:#fff;
-    font-weight:700;
-    cursor:pointer;
-    margin-top:6px;
-    box-shadow: 0 8px 20px rgba(106,66,244,0.18);
-  }
-
-  /* Мелкие адаптивы */
-  @media (max-width:980px){
-    .content{flex-direction:column}
-    .form-panel{width:100%}
-    .table-panel{order:1}
-    .form-panel{order:2}
-  }
-
-  /* Мобильные */
-  @media (max-width:480px){
-    .page{
-      margin:20px auto;
-      padding:0 12px;
-    }
-    .page-header h1{font-size:20px}
-    .panel{padding:16px}
-    .table-panel{padding:18px 12px}
-    .form-panel{padding:18px 12px}
-    .expenses-table thead th{padding:10px 6px}
-    .expenses-table tbody td{padding:10px 6px}
-  }
-`;
-
-/* Далее — именованные styled-компоненты, которые используются в Expenses.jsx */
 export const Container = styled.div`
-  padding: 16px;
-  max-width: 880px;
-  margin: 0 auto;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-top: 24px;
+  background-color: rgba(244, 245, 246, 1);
+  padding-left: calc(50% - 600px);
+  padding-right: calc(50% - 600px);
+  @media screen and (max-width: 495px) {
+    gap: 24px;
+    padding: 0px 16px 24px 16px;
+    background-color: rgba(255, 255, 255, 1);
+    margin-top: ${({ $showForm }) => ($showForm ? "0px" : "24px")};
+  }
 `;
 
-export const Header = styled.div`
+export const ContainerTBM = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: row;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
+  align-items: center;
+`;
+export const ContainerFilters = styled.div`
+  display: flex;
+  padding-bottom: 22px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 46px;
 `;
 
 export const Title = styled.h2`
-  margin: 0;
-  font-size: 20px;
+  text-align: left;
   font-weight: 700;
-  color: var(--text);
-`;
+  font-size: 32px;
+  line-height: 150%;
+  color: #1f2937;
 
-export const Total = styled.div`
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(90deg,#7b5cff,#5b33ff);
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-size: 14px;
-`;
-
-export const ChipsWrapper = styled.div`
-  margin-top: 4px;
-`;
-
-/* Список расходов — используется как <ul> */
-export const List = styled.ul`
-  margin-top: 16px;
-  list-style: none;
-  padding: 0;
-`;
-
-/* Пустой список */
-export const NoExpenses = styled.li`
-  color: var(--muted);
-  padding: 12px;
-  background: var(--panel);
-  border-radius: 8px;
-  border: 1px dashed #e5e7eb;
-`;
-
-/* Каждый элемент списка */
-export const Item = styled.li`
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: var(--panel);
-  border: 1px solid #eee;
-  margin-bottom: 8px;
-  align-items: center;
-  gap: 12px;
-
-  &:hover {
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+  @media screen and (max-width: 495px) {
+    font-size: 24px;
+    display: ${({ $showForm }) => ($showForm ? "none" : "block")};
   }
 `;
 
-export const ItemLeft = styled.div`
+export const Content = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
+  gap: 34px;
+  align-items: stretch;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
-export const ItemTitle = styled.div`
+export const TableWrapper = styled.div`
+  background: #fff;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
+  padding: 32px;
+  flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
+  width: ${({ isMobile }) => (isMobile ? "100%" : "auto")};
+  display: ${({ isMobile, showForm }) =>
+    isMobile && showForm ? "none" : "block"};
+  @media screen and (max-width: 495px) {
+    height: 100%;
+    padding: 0px;
+    box-shadow: none;
+  }
+`;
+
+export const TableTitle = styled.h3`
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 100%;
+  @media screen and (max-width: 495px) {
+    display: none;
+  }
+`;
+
+export const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  font-weight: 400;
+  font-size: 12px;
+
+  th,
+  td {
+    text-align: left;
+    padding-top: 10px;
+    font-weight: 400;
+    font-size: 12px;
+    @media screen and (max-width: 495px) {
+      font-size: 10px;
+    }
+  }
+
+  th {
+    font-weight: 400;
+    font-size: 12px;
+    color: #999999;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 6px;
+    @media screen and (max-width: 495px) {
+      font-size: 10px;
+    }
+  }
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, color 0.2s ease;
+    color: #999999;
+  }
+
+  button:hover {
+    transform: scale(1.6);
+    color: #7b2cbf;
+  }
+`;
+
+export const Form = styled.form`
+  flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
+  max-width: ${({ isMobile }) => (isMobile ? "100%" : "379px")};
+  background: #fff;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  @media screen and (max-width: 495px) {
+    height: 100%;
+    padding: 0px;
+    box-shadow: none;
+  }
+
+  h3 {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 100%;
+
+    span {
+      color: red;
+      margin-left: 4px;
+    }
+  }
+`;
+/* Поля */
+export const Input = styled.input`
+  padding: 12px;
+  border-radius: 6px;
+  border: 2px solid #ddd;
+  transition: 0.2s;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  font-family: Montserrat;
+
+  ${(p) =>
+    p.$valid &&
+    css`
+      background: #f5eaff;
+      border-color: #7b2cbf;
+      color: #5a189a;
+    `}
+
+  ${(p) =>
+    p.$error &&
+    css`
+      background: #ffe5e5;
+      border-color: #d00000;
+      color: #9d0208;
+    `}
+`;
+
+export const Categories = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+`;
+
+export const CategoryButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px;
+  border-radius: 30px;
+  border: none;
+  background: #f4f5f6;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #070707;
+  font-weight: 400;
+  outline: none;
+
+  ${(p) =>
+    p.$active &&
+    css`
+      background: #dbe2ff;
+      color: #070707;
+      font-weight: 400;
+      outline: none;
+    `}
+`;
+
+export const Filters = styled.div`
+  display: flex;
+  gap: 24px;
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 150%;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+    font-size: 10px;
+  }
+`;
+
+export const Dropdown = styled.div`
+  display: inline-block;
+  position: relative;
+`;
+
+export const DropdownToggle = styled.span`
+  cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
-  color: var(--text);
+  font-size: 12px;
+  line-height: 150%;
+  color: #7c3aed;
+  text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+  max-width: 80px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
+
+  &:hover {
+    color: #7b2cbf;
+  }
 `;
 
-export const ItemMeta = styled.div`
-  font-size: 12px;
-  color: var(--muted);
+export const ArrowIcon = styled.span`
+  font-size: 10px;
+  display: inline-block;
+  color: #000;
+  transform: rotate(${(props) => (props.open ? "180deg" : "0deg")});
+  transition: transform 0.3s ease;
+  margin-left: 4px;
+`;
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 6px);
+  right: calc(10% + 1px);
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #999999;
+  border-radius: 6px;
+  padding: 12px 12px;
+  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
+  @media (max-width: 768px) {
+    padding: 10px 10px;
+  }
+`;
+
+export const CatDropdownItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  border-radius: 30px;
+  padding: 8px 20px 8px 20px;
+  background: ${({ $active }) => ($active ? "#f1dbff" : "#e6e6e6")};
+  color: #111827;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  text-align: left;
+  transition: background 0.2s ease;
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
+  &:hover {
+    background: ${({ $active }) => ($active ? "#ddd2f8" : "#E9EAEB")};
+  }
+`;
+
+export const CatIcon = styled.span`
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+`;
+
+export const SortDropdownItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none;
+  border-radius: 30px;
+  padding: 8px 20px;
+  background: ${({ $active }) => ($active ? "#f1dbff" : "#E9EAEB")};
+  color: #111827;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  text-align: left;
+  transition: background 0.2s ease;
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
+  &:hover {
+    background: ${({ $active }) => ($active ? "#efdbff" : "#E9EAEB")};
+  }
+`;
+
+export const FilterButton = styled.button`
+  padding: 6px 10px;
+  border-radius: 16px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 14px;
+
+  ${(p) =>
+    p.$active &&
+    css`
+      background: #f5eaff;
+      border-color: #7b2cbf;
+      color: #7631bb;
+      font-weight: 600;
+    `}
+`;
+
+export const ActionButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 6px;
+  font-size: 16px;
+
+  &:hover {
+    color: #7b2cbf;
+    transform: scale(1.2);
+  }
+  @media screen and (max-width: 495px) {
+    display: none;
+  }
+`;
+
+export const ModalOverlay = styled.div`
+  flex: ${({ isMobile }) => (isMobile ? "none" : "1")};
+  max-width: ${({ isMobile }) => (isMobile ? "100%" : "379px")};
+  background: #fff;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  @media screen and (max-width: 495px) {
+    height: 100%;
+    padding: 0px;
+    box-shadow: none;
+  }
+`;
+
+export const Modal = styled.div`
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+export const Select = styled.select`
+  width: auto;
+  min-width: fit-content;
+  max-width: 100%;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #7b2cbf;
+    background: #f5eaff;
+    color: #7631bb;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  option {
+    background: #fff;
+    color: #333;
+  }
+`;
+
+export const AddButton = styled.a`
+  color: rgba(0, 0, 0, 1);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+`;
+
+export const Icon = styled.img`
+  width: 12px;
+  height: 12px;
+  padding-right: 3px;
+`;
+export const AddButtonF = styled.a`
+  font-family: "Montserrat";
+  color: rgba(153, 153, 153, 1);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+  align-items: center;
+  justify-content: left;
+  cursor: pointer;
+  display: none;
+  @media screen and (max-width: 495px) {
+    display: block;
+    margin-bottom: -12px;
+  }
+`;
+
+export const TableRow = styled.tr`
+  cursor: pointer;
+
+  ${({ $isSelected }) =>
+    $isSelected &&
+    `
+      background-color: rgba(241, 235, 253, 1);
+      color: #7631bb;
+      padding:0px;
+      
+      /* чтобы фон и цвет применились ко всем ячейкам */
+      & > td {
+        background-color: #e1daf0;
+        color: #7631bb;
+      }
+    `}
+`;
+
+export const ConteunerActionButton = styled.td`
+  @media screen and (max-width: 495px) {
+    display: none;
+  }
+`;
+export const MobileActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
   align-items: center;
 `;
 
-export const CategoryBadge = styled.span`
-  background: #f3f6ff;
-  color: #0a58ca;
-  padding: 2px 8px;
-  border-radius: 9999px;
+export const DeleteText = styled.span`
+  color: #999999;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 400;
   font-size: 12px;
-  font-weight: 600;
-`;
-
-export const ItemRight = styled.div`
-  font-weight: 700;
-  min-width: 80px;
-  text-align: right;
-  color: var(--text);
 `;
