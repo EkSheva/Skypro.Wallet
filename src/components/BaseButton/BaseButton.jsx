@@ -7,4 +7,5 @@ const BaseButton = ({ type = "button", text, disabled, onClick }) => {
     </SBaseButton>
   );
 };
+
 export default BaseButton;

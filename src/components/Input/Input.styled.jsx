@@ -16,11 +16,6 @@ export const StyledInput = styled.input`
     font: inherit;
     color: rgba(153, 153, 153, 1);
   }
-  /* ${({ $valid }) =>
-    $valid &&
-    `
-    background-color: rgba(241, 235, 253, 1) !important;
-    border: 0.5px solid rgba(115, 52, 234, 1);`} */
 
   ${({ $error }) =>
     $error &&

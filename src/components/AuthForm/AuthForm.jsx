@@ -17,30 +17,29 @@ import {
   Modal,
 } from "./AuthForm.styled";
 import Header from "../Header/Header";
-
+import { ExpensesProvider } from "../../context/ExpensesProvider";
 
 const AuthForm = ({ isSignUp }) => {
   const navigate = useNavigate();
   const { updateUserInfo } = useContext(AuthContext);
-  // Получаем setUser из хука useContext
-  // состояние полей
   const [formData, setFormData] = useState({
     name: "",
     login: "",
     password: "",
   });
-  // состояние ошибок
+
   const [errors, setErrors] = useState({
     name: "",
     login: "",
     password: "",
   });
-  // состояние текста ошибки, чтобы показать её пользователю
+
   const [error, setError] = useState("");
-  // функция валидации
+
   const validateForm = () => {
-    const newErrors = { name: "", login: "", password: "" };
+    const newErrors = { name: "", login: "email", password: "" };
     let isValid = true;
+
     if (isSignUp && !formData.name.trim()) {
       newErrors.name = true;
       setError(
@@ -48,6 +47,7 @@ const AuthForm = ({ isSignUp }) => {
       );
       isValid = false;
     }
+
     if (!formData.login.trim()) {
       newErrors.login = true;
       setError(
@@ -55,6 +55,7 @@ const AuthForm = ({ isSignUp }) => {
       );
       isValid = false;
     }
+
     if (!formData.password.trim()) {
       newErrors.password = true;
       setError(
@@ -62,11 +63,11 @@ const AuthForm = ({ isSignUp }) => {
       );
       isValid = false;
     }
+
     setErrors(newErrors);
     return isValid;
   };
-  // функция, которая отслеживает в полях изменения
-  // и меняет состояние компонента
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -76,19 +77,17 @@ const AuthForm = ({ isSignUp }) => {
     setErrors({ ...errors, [name]: false });
     setError("");
   };
-  // функция отправки формы
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      // если у нас форма не прошла валидацию, то дальше не продолжаем
       return;
     }
     try {
-      // чтобы не писать две разных функции, выберем нужный запрос через
-      // тернарный оператор
       const data = !isSignUp
         ? await signIn({ login: formData.login, password: formData.password })
         : await signUp(formData);
+
       if (data) {
         updateUserInfo(data);
         navigate("/expenses");
@@ -97,11 +96,14 @@ const AuthForm = ({ isSignUp }) => {
       setError(err.message);
     }
   };
+
   return (
     <Bg>
-      <Header />
+      <ExpensesProvider>
+        <Header />
+      </ExpensesProvider>
       <Modal>
-        <FWrapper>
+        <FWrapper $isSignUp={isSignUp}>
           <FTitle>{isSignUp ? "Регистрация" : "Вход"}</FTitle>
           <Form id="form" onSubmit={handleSubmit}>
             <InputWrapper>
@@ -114,18 +116,18 @@ const AuthForm = ({ isSignUp }) => {
                   placeholder="Имя"
                   value={formData.name}
                   onChange={handleChange}
-                  $valid={validateForm}
+                  required={!!error}
                 />
               )}
               <Input
                 error={errors.login}
-                type="text"
+                type="email"
                 name="login"
                 id="formlogin"
                 placeholder="Эл. почта"
                 value={formData.login}
                 onChange={handleChange}
-                $valid={validateForm}
+                required={!!error}
               />
               <Input
                 error={errors.password}
@@ -135,7 +137,7 @@ const AuthForm = ({ isSignUp }) => {
                 placeholder="Пароль"
                 value={formData.password}
                 onChange={handleChange}
-                $valid={() => validateForm()}
+                required={!!error}
               />
               <ErrorP>{error}</ErrorP>
             </InputWrapper>
@@ -167,4 +169,5 @@ const AuthForm = ({ isSignUp }) => {
     </Bg>
   );
 };
+
 export default AuthForm;

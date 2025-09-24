@@ -25,12 +25,14 @@ export const getTransactions = async (token, sortBy = "", filterBy = []) => {
       },
     });
 
-    return response.data.transactions;
+    // Проверяем, где лежит массив транзакций
+    return response.data.transactions || response.data || [];
   } catch (err) {
     console.error("Ошибка при загрузке транзакций:", err.response?.data || err);
     throw new Error(err.response?.data?.error || "Ошибка при загрузке транзакций");
   }
 };
+
 
 // Добавление новой транзакции
 export const addTransaction = async (transaction, token) => {
