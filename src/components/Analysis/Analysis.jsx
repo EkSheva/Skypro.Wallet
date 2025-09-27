@@ -20,6 +20,7 @@ import {
 import { useDeviceDetect } from "../hooks/useDeviceDetect";
 import { useNavigate } from "react-router-dom";
 
+
 const categories = [
   { id: "food", name: "Еда", color: "#c19aff" },
   { id: "transport", name: "Транспорт", color: "#ffb347" },
@@ -77,6 +78,7 @@ export default function Analysis() {
       console.error("Ошибка загрузки:", err.message);
     }
   }, [user?.token]);
+
 
   useEffect(() => {
     fetchTransactions();
@@ -193,6 +195,7 @@ export default function Analysis() {
 
   let filtered = transactions;
   if (viewMode === "month" && selectedDays.length === 2) {
+
     const [start, end] = [...selectedDays].sort();
     filtered = transactions.filter((t) => {
       const d = new Date(t.date);
