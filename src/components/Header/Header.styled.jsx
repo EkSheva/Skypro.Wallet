@@ -106,3 +106,4 @@ export const Icon = styled.img`
   width: 7px;
   height: 7px;
 `;
+

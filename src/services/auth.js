@@ -32,3 +32,4 @@ export async function signUp({ name, login, password }) {
     throw new Error(error.response.data.error);
   }
 }
+

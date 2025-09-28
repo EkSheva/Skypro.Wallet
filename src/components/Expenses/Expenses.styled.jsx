@@ -493,6 +493,7 @@ export const ConteunerActionButton = styled.td`
     display: none;
   }
 `;
+
 export const MobileActions = styled.div`
   display: flex;
   flex-direction: column;

@@ -7,3 +7,4 @@ export const useDeviceDetect = () => {
 
   return { isMobile, isTablet, isDesktop };
 };
+
