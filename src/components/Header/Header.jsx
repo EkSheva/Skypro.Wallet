@@ -65,8 +65,12 @@ const Header = () => {
           {user && (
             <>
               <HeaderNav>
-                <NavLinkS to="expenses">Мои расходы</NavLinkS>
-                <NavLinkS to="analysis">Анализ расходов</NavLinkS>
+                <NavLinkS
+                  to="/expenses"
+                  $active={location.pathname === "/" || location.pathname.startsWith("/expenses")}>
+                  Мои расходы
+                </NavLinkS>
+                <NavLinkS to="/analysis">Анализ расходов</NavLinkS>
               </HeaderNav>
 
               <MobilNav>
