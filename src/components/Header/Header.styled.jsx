@@ -57,9 +57,13 @@ export const NavLinkS = styled(RouterNavLink)`
   line-height: 170%;
   color: rgba(0, 0, 0, 1);
   text-align: center;
+
   &.active {
     ${activeLinkStyles}
   }
+  
+  ${({ $active }) => $active && activeLinkStyles};
+
   @media screen and (max-width: 495px) {
     display: none;
   }
