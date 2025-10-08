@@ -7,7 +7,7 @@ const API_URL = "https://wedev-api.sky.pro/api/transactions";
 const formatDate = (dateStr) => {
   if (!dateStr) return null;
   const [year, month, day] = dateStr.split("-");
-  return `${+month}-${+day}-${year}`; // убираем лидирующие нули
+  return `${+month}-${+day}-${year}`; 
 };
 
 // Получение всех транзакций с возможной сортировкой и фильтром
